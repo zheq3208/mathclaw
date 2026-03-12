@@ -1,4 +1,4 @@
-"""Chat session management."""
+﻿"""Chat session management."""
 
 from __future__ import annotations
 
@@ -28,14 +28,21 @@ class ChatSession:
         self.updated_at = time.time()
         self.messages: list[dict[str, Any]] = []
 
-    def add_message(self, role: str, content: str):
-        self.messages.append(
-            {
-                "role": role,
-                "content": content,
-                "timestamp": time.time(),
-            },
-        )
+    def add_message(
+        self,
+        role: str,
+        content: str,
+        metadata: dict[str, Any] | None = None,
+    ):
+        message: dict[str, Any] = {
+            "role": role,
+            "content": content,
+            "timestamp": time.time(),
+        }
+        if metadata:
+            message["metadata"] = metadata
+
+        self.messages.append(message)
         self.updated_at = time.time()
 
     def to_dict(self) -> dict[str, Any]:

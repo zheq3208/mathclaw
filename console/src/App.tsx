@@ -31,6 +31,7 @@ import ModelsPage from "./pages/ModelsPage";
 import ConsoleCronBubble from "./components/ConsoleCronBubble";
 import { IconBadge } from "./components/icons";
 import { useI18n } from "./i18n";
+import mathClawLogo from "../../logo.png";
 
 type ShellNavItem = {
   to: string;
@@ -296,14 +297,13 @@ export default function App() {
         <div className="mc-brand">
           <div className="mc-brand-mark">
             <img
-              src="/researchclaw-symbol.png"
-              alt="ResearchClaw Symbol"
+              src={mathClawLogo}
+              alt="MathClaw Logo"
               className="mc-brand-mark-img"
             />
           </div>
-          <div>
-            <div className="mc-brand-title">MathClaw Console</div>
-            <div className="mc-brand-sub">Research workflow + learning shell</div>
+          <div className="mc-brand-copy">
+            <div className="mc-brand-title">MathClaw</div>
           </div>
         </div>
 

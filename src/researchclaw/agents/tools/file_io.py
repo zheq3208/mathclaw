@@ -1,4 +1,4 @@
-"""File I/O tools for reading, writing, editing, and appending files.
+﻿"""File I/O tools for reading, writing, editing, and appending files.
 
 Improvements over CoPaw:
 - ``append_file`` for incremental writing
@@ -19,6 +19,37 @@ from ...constant import WORKING_DIR
 
 logger = logging.getLogger(__name__)
 
+_MAX_READ_CHARS = 120_000
+_BINARY_EXTENSIONS = {
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".gif",
+    ".bmp",
+    ".tif",
+    ".tiff",
+    ".ico",
+    ".pdf",
+    ".zip",
+    ".gz",
+    ".tar",
+    ".7z",
+    ".rar",
+    ".mp3",
+    ".wav",
+    ".mp4",
+    ".mov",
+    ".avi",
+    ".mkv",
+    ".doc",
+    ".docx",
+    ".ppt",
+    ".pptx",
+    ".xls",
+    ".xlsx",
+}
+
 
 def _resolve_file_path(file_path: str) -> str:
     """Resolve file path: absolute as-is, relative from WORKING_DIR."""
@@ -26,6 +57,34 @@ def _resolve_file_path(file_path: str) -> str:
     if path.is_absolute():
         return str(path)
     return str(Path(WORKING_DIR) / file_path)
+
+
+def _binary_hint_message(path: Path) -> str | None:
+    suffix = path.suffix.lower()
+    if suffix in {".pdf"}:
+        return (
+            f"Error: {path} appears to be a PDF/binary file. "
+            "Use read_paper(source=<pdf_path>) instead of read_file."
+        )
+    if suffix in _BINARY_EXTENSIONS:
+        return (
+            f"Error: {path} appears to be a binary file "
+            "(image/audio/video/archive/office). "
+            "read_file only supports text files."
+        )
+    return None
+
+
+def _looks_binary(sample: bytes, encoding: str) -> bool:
+    if not sample:
+        return False
+    if b"\x00" in sample:
+        return True
+    try:
+        sample.decode(encoding=encoding)
+        return False
+    except UnicodeDecodeError:
+        return True
 
 
 def read_file(
@@ -63,7 +122,19 @@ def read_file(
         if not path.is_file():
             return f"Error: Not a file: {file_path}"
 
-        content = path.read_text(encoding=encoding, errors="replace")
+        hint = _binary_hint_message(path)
+        if hint:
+            return hint
+
+        with path.open("rb") as fh:
+            sample = fh.read(8192)
+        if _looks_binary(sample, encoding=encoding):
+            return (
+                f"Error: {file_path} looks like a binary/non-text file. "
+                "read_file only supports text files."
+            )
+
+        content = path.read_text(encoding=encoding)
 
         if start_line is not None or end_line is not None:
             lines = content.splitlines(keepends=True)
@@ -86,9 +157,12 @@ def read_file(
             content = "".join(selected)
             return f"{file_path}  (lines {s}-{e} of {total})\n{content}"
 
-        # Truncate very large files
-        if len(content) > 500_000:
-            content = content[:500_000] + "\n... [truncated, file too large]"
+        # Truncate very large files to avoid blowing model context.
+        if len(content) > _MAX_READ_CHARS:
+            content = (
+                content[:_MAX_READ_CHARS]
+                + f"\n... [truncated, file too large for read_file; showing first {_MAX_READ_CHARS} chars]"
+            )
 
         return content
     except Exception as e:
@@ -211,3 +285,4 @@ def append_file(
         return f"Appended {len(content)} bytes to {file_path}."
     except Exception as e:
         return f"Error appending to file: {e}"
+

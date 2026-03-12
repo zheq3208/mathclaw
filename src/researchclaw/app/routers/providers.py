@@ -195,6 +195,12 @@ async def apply_provider(name: str, req: Request):
             "api_key": provider.api_key or "",
             "base_url": provider.base_url or "",
         }
+        if isinstance(provider.extra, dict) and provider.extra:
+            model_config["extra"] = provider.extra
+            if "supports_vision" in provider.extra:
+                model_config["supports_vision"] = bool(
+                    provider.extra.get("supports_vision"),
+                )
         await runner.apply_provider(model_config)
         # Also set enabled flag in store
         store.set_enabled(name)
@@ -243,6 +249,9 @@ async def list_available_models():
     except ImportError:
         return {
             "models": [
+                {"name": "gpt-5", "provider": "openai"},
+                {"name": "gpt-5-mini", "provider": "openai"},
+                {"name": "gpt-5-nano", "provider": "openai"},
                 {"name": "gpt-4o", "provider": "openai"},
                 {"name": "gpt-4o-mini", "provider": "openai"},
                 {"name": "claude-sonnet-4-20250514", "provider": "anthropic"},

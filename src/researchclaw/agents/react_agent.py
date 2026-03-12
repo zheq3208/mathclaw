@@ -1,4 +1,4 @@
-"""ScholarAgent – the core ReAct agent for ResearchClaw.
+﻿"""ScholarAgent 鈥?the core ReAct agent for ResearchClaw.
 
 Inherits from AgentScope's ReActAgent and extends it with research-specific
 tools, skills, memory, and hooks.
@@ -6,7 +6,9 @@ tools, skills, memory, and hooks.
 
 from __future__ import annotations
 
+import base64
 import logging
+import mimetypes
 from pathlib import Path
 from typing import Any, Literal, Optional
 
@@ -30,6 +32,27 @@ logger = logging.getLogger(__name__)
 # Paths to built-in Markdown prompt files
 _MD_FILES_DIR = Path(__file__).parent / "md_files"
 NamesakeStrategy = Literal["override", "skip", "raise", "rename"]
+_MAX_INLINE_IMAGE_BYTES = 3 * 1024 * 1024
+_MAX_INLINE_IMAGE_COUNT = 3
+_VISION_MODEL_HINTS = (
+    "gpt-4o",
+    "gpt-4.1",
+    "gpt-5",
+    "o4-",
+    "vision",
+    "vl",
+    "gemini",
+    "gemma-3",
+    "claude-3",
+    "claude-3.5",
+    "claude-3.7",
+    "claude-sonnet-4",
+    "llama-4",
+    "nova-lite",
+    "llava",
+    "pixtral",
+    "minicpm-v",
+)
 
 
 class ScholarAgent:
@@ -73,42 +96,43 @@ class ScholarAgent:
         self.max_iters = max_iters
         self.max_input_tokens = max_input_tokens
         self.namesake_strategy: NamesakeStrategy = namesake_strategy
+        self._llm_cfg: dict[str, Any] = dict(llm_cfg or {})
 
-        # ── 1. Build toolkit ────────────────────────────────────────────
+        # 鈹€鈹€ 1. Build toolkit 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         self._tools: dict[str, Any] = {}
         self._skill_docs: list[SkillDoc] = []
         self._last_skill_debug: dict[str, Any] = {}
         self._register_builtin_tools()
         self._register_skills()
 
-        # ── 2. Build system prompt ──────────────────────────────────────
+        # 鈹€鈹€ 2. Build system prompt 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         from .prompt import build_system_prompt_from_working_dir
 
         self.sys_prompt = build_system_prompt_from_working_dir()
 
-        # ── 3. Create model and formatter ───────────────────────────────
+        # 鈹€鈹€ 3. Create model and formatter 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         from .model_factory import create_model_and_formatter
 
         self.model, self.formatter = create_model_and_formatter(llm_cfg)
 
-        # ── 4. Initialise memory ────────────────────────────────────────
+        # 鈹€鈹€ 4. Initialise memory 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         self._init_memory()
 
-        # ── 5. Register hooks ───────────────────────────────────────────
+        # 鈹€鈹€ 5. Register hooks 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         self._hooks: list[Any] = []
         self._register_hooks()
 
-        # ── 6. Command handler ──────────────────────────────────────────
+        # 鈹€鈹€ 6. Command handler 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         from .command_handler import CommandHandler
 
         self.command_handler = CommandHandler(self)
 
-        # ── 7. Build tool schemas for OpenAI function calling ───────────
+        # 鈹€鈹€ 7. Build tool schemas for OpenAI function calling 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         self._tool_schemas: list[dict[str, Any]] = self._build_tool_schemas()
 
         logger.info("ScholarAgent initialised with %d tools", len(self._tools))
 
-    # ── Tool registration ───────────────────────────────────────────────
+    # 鈹€鈹€ Tool registration 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     def _register_builtin_tools(self) -> None:
         """Register all built-in research tools."""
@@ -315,7 +339,7 @@ class ScholarAgent:
             # (e.g. ``from ...tools.paper_reader``, ``from ....constant``)
             # resolve correctly against the installed researchclaw package.
             module_fqn = f"researchclaw.agents.skills.{skill_dir.name}"
-            package_fqn = module_fqn  # __init__.py ⇒ module IS the package
+            package_fqn = module_fqn  # __init__.py 鈬?module IS the package
 
             spec = importlib.util.spec_from_file_location(
                 module_fqn,
@@ -359,7 +383,7 @@ class ScholarAgent:
         except Exception:
             logger.exception("Failed to load skill: %s", skill_dir.name)
 
-    # ── Memory ──────────────────────────────────────────────────────────
+    # 鈹€鈹€ Memory 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     def _init_memory(self) -> None:
         """Initialise the research memory system."""
@@ -367,7 +391,7 @@ class ScholarAgent:
 
         self.memory = ResearchMemory(working_dir=self.working_dir)
 
-    # ── Hooks ───────────────────────────────────────────────────────────
+    # 鈹€鈹€ Hooks 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     def _register_hooks(self) -> None:
         """Register lifecycle hooks."""
@@ -377,7 +401,7 @@ class ScholarAgent:
         self._hooks.append(BootstrapHook(self))
         self._hooks.append(MemoryCompactionHook(self))
 
-    # ── MCP clients ─────────────────────────────────────────────────────
+    # 鈹€鈹€ MCP clients 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     def register_mcp_clients(self, mcp_clients: list[Any]) -> None:
         """Register MCP (Model Context Protocol) clients to the toolkit."""
@@ -428,7 +452,199 @@ class ScholarAgent:
         if changed:
             self._tool_schemas = self._build_tool_schemas()
 
-    # ── Reply ───────────────────────────────────────────────────────────
+    # 鈹€鈹€ Reply 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    @staticmethod
+    def _normalize_attachments(
+        attachments: Any,
+    ) -> list[dict[str, Any]]:
+        if not isinstance(attachments, list):
+            return []
+
+        normalized: list[dict[str, Any]] = []
+        for item in attachments:
+            if not isinstance(item, dict):
+                continue
+            kind = str(item.get("kind", "")).strip().lower()
+            if kind not in ("image", "pdf"):
+                continue
+
+            absolute_path = str(
+                item.get("absolute_path", item.get("absolutePath", "")),
+            ).strip()
+            relative_path = str(
+                item.get("relative_path", item.get("relativePath", "")),
+            ).strip()
+            name = str(item.get("name", "")).strip()
+            if not absolute_path or not relative_path or not name:
+                continue
+
+            normalized.append(
+                {
+                    "name": name,
+                    "kind": kind,
+                    "mime_type": str(
+                        item.get("mime_type", item.get("mimeType", "")),
+                    ).strip(),
+                    "size": int(item.get("size", 0) or 0),
+                    "absolute_path": absolute_path,
+                    "relative_path": relative_path,
+                    "download_url": str(
+                        item.get("download_url", item.get("downloadUrl", "")),
+                    ).strip(),
+                },
+            )
+        return normalized
+
+    def _model_name_hint(self) -> str:
+        for source in (
+            self._llm_cfg.get("model_name", ""),
+            getattr(self.model, "model_name", ""),
+            getattr(self.model, "name", ""),
+        ):
+            if isinstance(source, str) and source.strip():
+                return source.strip().lower()
+        return ""
+
+    def _supports_multimodal_messages(self) -> bool:
+        if isinstance(self._llm_cfg.get("supports_vision"), bool):
+            return bool(self._llm_cfg.get("supports_vision"))
+
+        extra = self._llm_cfg.get("extra")
+        if isinstance(extra, dict) and isinstance(
+            extra.get("supports_vision"),
+            bool,
+        ):
+            return bool(extra.get("supports_vision"))
+
+        model_name = self._model_name_hint()
+        return any(hint in model_name for hint in _VISION_MODEL_HINTS)
+
+    @staticmethod
+    def _image_block_from_attachment(
+        item: dict[str, Any],
+    ) -> tuple[dict[str, Any] | None, str | None]:
+        path = Path(str(item.get("absolute_path", "")).strip())
+        name = str(item.get("name", path.name)).strip() or path.name
+
+        if not path.exists() or not path.is_file():
+            return None, f"- {name}: file not found on server"
+
+        try:
+            data = path.read_bytes()
+        except Exception:
+            return None, f"- {name}: failed to read file"
+
+        if len(data) > _MAX_INLINE_IMAGE_BYTES:
+            size_mb = len(data) / (1024 * 1024)
+            limit_mb = _MAX_INLINE_IMAGE_BYTES / (1024 * 1024)
+            return (
+                None,
+                f"- {name}: image too large ({size_mb:.1f}MB > {limit_mb:.1f}MB)",
+            )
+
+        mime_type = str(item.get("mime_type", "")).strip().lower()
+        if not mime_type.startswith("image/"):
+            guessed = mimetypes.guess_type(path.name)[0] or ""
+            mime_type = guessed.lower() if guessed else "image/png"
+
+        if not mime_type.startswith("image/"):
+            return None, f"- {name}: unsupported image MIME type"
+
+        encoded = base64.b64encode(data).decode("ascii")
+        return (
+            {
+                "type": "image_url",
+                "image_url": {"url": f"data:{mime_type};base64,{encoded}"},
+            },
+            None,
+        )
+
+    def _build_user_message_with_attachments(
+        self,
+        text: str,
+        attachments: list[dict[str, Any]],
+    ) -> dict[str, Any] | None:
+        normalized = self._normalize_attachments(attachments)
+        if not normalized:
+            return None
+
+        base_text = text.strip() or "Please analyze the attached files."
+        image_items = [item for item in normalized if item.get("kind") == "image"]
+        pdf_items = [item for item in normalized if item.get("kind") == "pdf"]
+
+        # Prefer true multimodal payload when current model likely supports it.
+        if image_items and self._supports_multimodal_messages():
+            blocks: list[dict[str, Any]] = [{"type": "text", "text": base_text}]
+            skipped: list[str] = []
+            added = 0
+
+            for item in image_items:
+                if added >= _MAX_INLINE_IMAGE_COUNT:
+                    skipped.append(
+                        f"- {item.get('name', 'image')}: skipped (max {_MAX_INLINE_IMAGE_COUNT} images per turn)",
+                    )
+                    continue
+
+                image_block, note = self._image_block_from_attachment(item)
+                if image_block is not None:
+                    blocks.append(image_block)
+                    added += 1
+                elif note:
+                    skipped.append(note)
+
+            tail_lines: list[str] = []
+            if pdf_items:
+                tail_lines.append("Attached PDFs (use read_paper on these paths):")
+                tail_lines.extend(
+                    f"- {item['name']}: {item['absolute_path']}" for item in pdf_items
+                )
+            if skipped:
+                tail_lines.append(
+                    "Some images were not inlined; avoid read_file for image binaries:",
+                )
+                tail_lines.extend(skipped)
+
+            if tail_lines:
+                blocks.append({"type": "text", "text": "\n".join(tail_lines)})
+
+            return {"role": "user", "content": blocks}
+
+        # Fallback for text-only models.
+        lines = [base_text]
+        if image_items:
+            lines.append(
+                "Images are attached, but current model may be text-only. Do NOT call read_file on image files.",
+            )
+            lines.append(
+                "If possible, switch to a vision-capable model (e.g. GPT-4o / Qwen-VL / Gemini).",
+            )
+        if pdf_items:
+            lines.append("Attached PDFs (use read_paper on these paths):")
+            lines.extend(f"- {item['name']}: {item['absolute_path']}" for item in pdf_items)
+
+        return {"role": "user", "content": "\n\n".join(lines)}
+
+    def _inject_attachments_into_messages(
+        self,
+        messages: list[dict[str, Any]],
+        attachments: list[dict[str, Any]] | None,
+    ) -> None:
+        normalized = self._normalize_attachments(attachments)
+        if not normalized:
+            return
+
+        for idx in range(len(messages) - 1, -1, -1):
+            if messages[idx].get("role") != "user":
+                continue
+            content = messages[idx].get("content", "")
+            user_text = content if isinstance(content, str) else ""
+            replacement = self._build_user_message_with_attachments(
+                user_text,
+                normalized,
+            )
+            if replacement:
+                messages[idx] = replacement
+            return
 
     def reply(
         self,
@@ -494,11 +710,16 @@ class ScholarAgent:
                 "to set up your model provider."
             )
 
+        attachments = self._normalize_attachments(kwargs.get("attachments"))
+
         # Add message to memory
         self.memory.add_message("user", message, session_id=session_id)
 
         # Build messages for the model
-        messages = self._build_messages(user_message=message)
+        messages = self._build_messages(
+            user_message=message,
+            attachments=attachments,
+        )
 
         # Prepare tool kwargs
         model_kwargs: dict[str, Any] = {}
@@ -629,7 +850,7 @@ class ScholarAgent:
                             )
                     continue
 
-                # No structured tool calls — check for text-format tool calls
+                # No structured tool calls 鈥?check for text-format tool calls
                 content = (
                     response.content
                     if hasattr(response, "content")
@@ -686,7 +907,7 @@ class ScholarAgent:
                     messages.append({"role": "user", "content": combined})
                     continue
 
-                # Truly final response — no tool calls at all
+                # Truly final response 鈥?no tool calls at all
                 self.memory.add_message(
                     "assistant",
                     content,
@@ -718,7 +939,8 @@ class ScholarAgent:
     def _build_messages(
         self,
         user_message: str | None = None,
-    ) -> list[dict[str, str]]:
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> list[dict[str, Any]]:
         """Build the message list for the LLM from memory and system prompt."""
         self._refresh_skill_docs()
         messages = [{"role": "system", "content": self.sys_prompt}]
@@ -756,6 +978,7 @@ class ScholarAgent:
 
         # Add recent messages
         messages.extend(self.memory.get_recent_messages())
+        self._inject_attachments_into_messages(messages, attachments)
         return messages
 
     def get_last_skill_debug(self) -> dict[str, Any]:
@@ -870,7 +1093,7 @@ class ScholarAgent:
 
         results: list[dict[str, Any]] = []
 
-        # ── Pattern 1a: <FunctionCall><invoke name="..."><parameter ...>...</parameter></invoke></FunctionCall>
+        # 鈹€鈹€ Pattern 1a: <FunctionCall><invoke name="..."><parameter ...>...</parameter></invoke></FunctionCall>
         # Also handles bare <invoke> without outer <FunctionCall> wrapper
         invoke_blocks = re.findall(
             r"<invoke\s+name=[\"']([^\"']+)[\"']\s*>(.*?)</invoke>",
@@ -904,7 +1127,7 @@ class ScholarAgent:
         if results:
             return results
 
-        # ── Pattern 1b: <FunctionCall> {'tool' => 'name', 'args' => ...} </FunctionCall>
+        # 鈹€鈹€ Pattern 1b: <FunctionCall> {'tool' => 'name', 'args' => ...} </FunctionCall>
         fc_blocks = re.findall(
             r"<FunctionCall>(.*?)</FunctionCall>",
             content,
@@ -967,7 +1190,7 @@ class ScholarAgent:
         if results:
             return results
 
-        # ── Pattern 2: <tool_call>{"name": "...", "arguments": {...}}</tool_call> ──
+        # 鈹€鈹€ Pattern 2: <tool_call>{"name": "...", "arguments": {...}}</tool_call> 鈹€鈹€
         tc_blocks = re.findall(
             r"<tool_call>\s*(.*?)\s*</tool_call>",
             content,
@@ -986,7 +1209,7 @@ class ScholarAgent:
         if results:
             return results
 
-        # ── Pattern 3: ```json {"name": "tool_name", "arguments": {...}} ``` ──
+        # 鈹€鈹€ Pattern 3: ```json {"name": "tool_name", "arguments": {...}} ``` 鈹€鈹€
         json_blocks = re.findall(
             r"```(?:json)?\s*(\{[^`]*?\"name\"\s*:\s*\"[^`]*?\})\s*```",
             content,
@@ -1004,7 +1227,7 @@ class ScholarAgent:
 
         return results
 
-    # ── Streaming reply ─────────────────────────────────────────────────
+    # 鈹€鈹€ Streaming reply 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     def reply_stream(
         self,
@@ -1046,8 +1269,12 @@ class ScholarAgent:
             yield {"type": "error", "content": err}
             return
 
+        attachments = self._normalize_attachments(kwargs.get("attachments"))
         self.memory.add_message("user", message, session_id=session_id)
-        messages = self._build_messages(user_message=message)
+        messages = self._build_messages(
+            user_message=message,
+            attachments=attachments,
+        )
         full_content = ""
 
         # Prepare tool kwargs for model calls
@@ -1172,7 +1399,7 @@ class ScholarAgent:
                         # Continue reasoning loop
                         continue
 
-                    # No structured tool calls — check text format
+                    # No structured tool calls 鈥?check text format
                     logger.debug(
                         "[Stream] Checking text tool calls in: %s",
                         accumulated_content[:1000],
@@ -1430,3 +1657,5 @@ class ScholarAgent:
         for hook in self._hooks:
             if hasattr(hook, "post_reply"):
                 hook.post_reply(message, full_content)
+
+

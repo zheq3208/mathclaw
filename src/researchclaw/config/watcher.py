@@ -100,6 +100,7 @@ class ConfigWatcher:
             "feishu",
             "imessage",
             "qq",
+            "wecom",
             "voice",
         }
         for key in channel_keys:

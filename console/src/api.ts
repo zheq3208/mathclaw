@@ -1,6 +1,7 @@
-import type {
+﻿import type {
   AgentRunningConfig,
   ChannelItem,
+  ChatAttachment,
   ChatMessage,
   CronJobItem,
   EnvItem,
@@ -24,16 +25,121 @@ export async function getHealth(): Promise<{ status: string }> {
 export async function sendChat(
   message: string,
   sessionId?: string,
+  attachments?: ChatAttachment[],
 ): Promise<{ response: string; session_id: string }> {
   const res = await fetch("/api/agent/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, session_id: sessionId }),
+    body: JSON.stringify({
+      message,
+      session_id: sessionId,
+      attachments: serializeChatAttachments(attachments),
+    }),
   });
   if (!res.ok) throw new Error("Chat request failed");
   return res.json();
 }
 
+type ChatAttachmentPayload = {
+  name: string;
+  mime_type: string;
+  size: number;
+  kind: "image" | "pdf";
+  absolute_path: string;
+  relative_path: string;
+  download_url: string;
+};
+
+function serializeChatAttachments(
+  attachments?: ChatAttachment[],
+): ChatAttachmentPayload[] | undefined {
+  if (!attachments || attachments.length === 0) return undefined;
+  return attachments.map((item) => ({
+    name: item.name,
+    mime_type: item.mimeType,
+    size: Number(item.size) || 0,
+    kind: item.kind,
+    absolute_path: item.absolutePath,
+    relative_path: item.relativePath,
+    download_url: item.downloadUrl,
+  }));
+}
+
+function deserializeChatAttachment(item: any): ChatAttachment | null {
+  if (!item || typeof item !== "object") return null;
+  const kind = item.kind === "pdf" ? "pdf" : item.kind === "image" ? "image" : null;
+  if (!kind) return null;
+  const name = String(item.name ?? "").trim();
+  const mimeType = String(item.mime_type ?? "").trim();
+  const absolutePath = String(item.absolute_path ?? "").trim();
+  const relativePath = String(item.relative_path ?? "").trim();
+  const downloadUrl = String(item.download_url ?? "").trim();
+  if (!name || !absolutePath || !relativePath || !downloadUrl) return null;
+  return {
+    id: relativePath,
+    name,
+    mimeType,
+    size: Number(item.size ?? 0) || 0,
+    kind,
+    absolutePath,
+    relativePath,
+    downloadUrl,
+  };
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 0x8000;
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, i + chunkSize);
+    binary += String.fromCharCode(...chunk);
+  }
+  return btoa(binary);
+}
+
+async function toUploadPayload(file: File): Promise<{
+  name: string;
+  mime_type: string;
+  size: number;
+  data_base64: string;
+}> {
+  const buffer = await file.arrayBuffer();
+  return {
+    name: file.name,
+    mime_type: file.type || "application/octet-stream",
+    size: file.size,
+    data_base64: arrayBufferToBase64(buffer),
+  };
+}
+
+export async function uploadChatAttachments(
+  files: File[],
+  sessionId?: string,
+): Promise<ChatAttachment[]> {
+  if (!files.length) return [];
+  const payloadFiles = await Promise.all(files.map((file) => toUploadPayload(file)));
+
+  const res = await fetch("/api/agent/attachments", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      session_id: sessionId,
+      files: payloadFiles,
+    }),
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(text || `Attachment upload failed (HTTP ${res.status})`);
+  }
+
+  const data = await res.json();
+  const items = Array.isArray(data?.files) ? data.files : [];
+  return items
+    .map((item: any) => deserializeChatAttachment(item))
+    .filter((item: ChatAttachment | null): item is ChatAttachment => Boolean(item));
+}
 export async function searchArxiv(
   query: string,
   maxResults = 8,
@@ -511,6 +617,7 @@ export function streamChat(
   message: string,
   sessionId: string | undefined,
   onEvent: (event: StreamEvent) => void,
+  attachments?: ChatAttachment[],
 ): AbortController {
   const controller = new AbortController();
 
@@ -530,7 +637,7 @@ export function streamChat(
           raw,
         )
       ) {
-        return "网络连接失败：请确认后端服务可用并检查浏览器网络/代理设置。";
+        return "Network request failed: please verify backend availability and browser network settings.";
       }
       return raw || "Unknown error";
     };
@@ -541,7 +648,11 @@ export function streamChat(
         const res = await fetch("/api/agent/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message, session_id: sessionId }),
+          body: JSON.stringify({
+            message,
+            session_id: sessionId,
+            attachments: serializeChatAttachments(attachments),
+          }),
           signal: controller.signal,
           cache: "no-store",
         });
@@ -603,13 +714,18 @@ export function streamChat(
       // If stream can't be established in time, fail fast.
       armTimer(
         STREAM_OPEN_TIMEOUT_MS,
-        "流式连接超时：后端响应过慢或网络不稳定。",
+        "Stream connection timeout: backend response is too slow or network is unstable.",
       );
 
       const res = await fetch("/api/agent/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, session_id: sessionId, stream: true }),
+        body: JSON.stringify({
+          message,
+          session_id: sessionId,
+          stream: true,
+          attachments: serializeChatAttachments(attachments),
+        }),
         signal: controller.signal,
         cache: "no-store",
       });
@@ -623,7 +739,7 @@ export function streamChat(
       // Stream established; now monitor inactivity.
       armTimer(
         STREAM_IDLE_TIMEOUT_MS,
-        "流式连接中断：长时间未收到数据，请重试。",
+        "Stream interrupted: no data received for too long, please retry.",
       );
 
       const reader = res.body.getReader();
@@ -635,7 +751,7 @@ export function streamChat(
         if (done) break;
         armTimer(
           STREAM_IDLE_TIMEOUT_MS,
-          "流式连接中断：长时间未收到数据，请重试。",
+          "Stream interrupted: no data received for too long, please retry.",
         );
 
         buffer += decoder.decode(value, { stream: true });
@@ -667,8 +783,8 @@ export function streamChat(
         onEvent({
           type: "error",
           content: sawAnyStreamEvent
-            ? "流式连接已结束，但未收到完成信号。"
-            : "流式连接未返回有效数据。",
+            ? "Stream ended without a completion signal."
+            : "Stream returned no valid data.",
           session_id: sessionId,
         });
       }
@@ -691,3 +807,5 @@ export function streamChat(
 
   return controller;
 }
+
+

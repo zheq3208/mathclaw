@@ -21,6 +21,7 @@ _BUILTIN_SPECS: tuple[tuple[str, str, str], ...] = (
     ("feishu", "researchclaw.app.channels.feishu", "FeishuChannel"),
     ("imessage", "researchclaw.app.channels.imessage", "IMessageChannel"),
     ("qq", "researchclaw.app.channels.qq", "QQChannel"),
+    ("wecom", "researchclaw.app.channels.wecom", "WecomChannel"),
     ("voice", "researchclaw.app.channels.voice", "VoiceChannel"),
 )
 

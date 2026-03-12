@@ -13,11 +13,14 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import mimetypes
 import os
 import re
 import threading
 import time
+from pathlib import Path
 from typing import Any, Dict, List, Optional
+from urllib.parse import urlparse
 
 try:
     import aiohttp
@@ -27,6 +30,8 @@ except ImportError:  # pragma: no cover - optional dependency
 from ..base import (
     BaseChannel,
     ContentType,
+    FileContent,
+    ImageContent,
     OnReplySent,
     OutgoingContentPart,
     ProcessHandler,
@@ -61,6 +66,17 @@ MAX_QUICK_DISCONNECT_COUNT = 3
 DEFAULT_API_BASE = "https://api.sgroup.qq.com"
 TOKEN_URL = "https://bots.qq.com/app/getAppAccessToken"
 _URL_PATTERN = re.compile(r"https?://[^\s]+", re.IGNORECASE)
+_SAFE_FILE_SEGMENT_RE = re.compile(r"[^A-Za-z0-9._-]+")
+_IMAGE_EXTENSIONS = {
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".gif",
+    ".bmp",
+    ".tif",
+    ".tiff",
+}
 
 
 def _sanitize_qq_text(text: str) -> tuple[str, bool]:
@@ -77,6 +93,55 @@ def _sanitize_qq_text(text: str) -> tuple[str, bool]:
 def _get_api_base() -> str:
     """API root address (e.g. sandbox: https://sandbox.api.sgroup.qq.com)"""
     return os.getenv("QQ_API_BASE", DEFAULT_API_BASE).rstrip("/")
+
+
+def _normalize_attachment_url(value: Any) -> str:
+    url = str(value or "").strip()
+    if not url:
+        return ""
+    if url.startswith("//"):
+        return f"https:{url}"
+    if url.startswith("/"):
+        return f"{_get_api_base()}{url}"
+    return url
+
+
+def _guess_attachment_name(attachment: Dict[str, Any], url: str) -> str:
+    for key in ("filename", "name", "file_name", "fileName"):
+        value = str(attachment.get(key, "")).strip()
+        if value:
+            return value
+    path_name = Path(urlparse(url).path).name
+    return path_name or "attachment"
+
+
+def _guess_attachment_mime_type(
+    attachment: Dict[str, Any],
+    name: str,
+) -> str:
+    for key in ("content_type", "contentType", "mime_type", "mimeType"):
+        value = str(attachment.get(key, "")).strip().lower()
+        if "/" in value:
+            return value
+    return (mimetypes.guess_type(name)[0] or "").lower()
+
+
+def _guess_attachment_kind(
+    attachment: Dict[str, Any],
+) -> tuple[str, str, str, str]:
+    url = _normalize_attachment_url(
+        attachment.get("url")
+        or attachment.get("proxy_url")
+        or attachment.get("download_url"),
+    )
+    name = _guess_attachment_name(attachment, url)
+    mime_type = _guess_attachment_mime_type(attachment, name)
+    suffix = Path(name).suffix.lower()
+    if mime_type.startswith("image/") or suffix in _IMAGE_EXTENSIONS:
+        return ("image", name, mime_type, url)
+    if mime_type == "application/pdf" or suffix == ".pdf":
+        return ("pdf", name, mime_type, url)
+    return ("", name, mime_type, url)
 
 
 def _get_channel_url_sync(access_token: str) -> str:
@@ -271,6 +336,10 @@ class QQChannel(BaseChannel):
         self._token_lock = threading.Lock()
 
         self._http: Optional[Any] = None
+        self._media_dir = Path(
+            os.path.expanduser("~/.researchclaw/media/qq"),
+        ).resolve()
+        self._media_dir.mkdir(parents=True, exist_ok=True)
 
     def _get_access_token_sync(self) -> str:
         """Sync get access_token for WebSocket thread. Instance-level cache."""
@@ -344,6 +413,117 @@ class QQChannel(BaseChannel):
         with self._token_lock:
             self._token_cache = None
 
+    def _download_attachment_sync(
+        self,
+        attachment: Dict[str, Any],
+        *,
+        message_id: str,
+        attachment_index: int,
+    ) -> str | None:
+        kind, name, _mime_type, url = _guess_attachment_kind(attachment)
+        if kind not in {"image", "pdf"} or not url:
+            return None
+
+        try:
+            import urllib.request
+
+            safe_stem = _SAFE_FILE_SEGMENT_RE.sub("-", Path(name).stem).strip("-._")
+            if not safe_stem:
+                safe_stem = "attachment"
+            suffix = Path(name).suffix.lower()
+            if kind == "image" and suffix not in _IMAGE_EXTENSIONS:
+                guessed_suffix = (
+                    mimetypes.guess_extension(_mime_type) if _mime_type else None
+                )
+                suffix = guessed_suffix.lower() if guessed_suffix else ".png"
+            if kind == "pdf":
+                suffix = ".pdf"
+            if not suffix:
+                suffix = ".bin"
+
+            target = self._media_dir / (
+                f"{message_id}_{attachment_index}_{safe_stem[:64]}{suffix}"
+            )
+            headers: Dict[str, str] = {}
+            api_base = _get_api_base()
+            if url.startswith(api_base):
+                headers["Authorization"] = (
+                    f"QQBot {self._get_access_token_sync()}"
+                )
+
+            req = urllib.request.Request(url, headers=headers, method="GET")
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                data = resp.read()
+            if not data:
+                return None
+
+            target.write_bytes(data)
+            return str(target)
+        except Exception:
+            logger.exception(
+                "qq attachment download failed: msg_id=%s name=%s url=%s",
+                message_id,
+                name,
+                url,
+            )
+            return None
+
+    def _build_incoming_content_parts(
+        self,
+        *,
+        text: str,
+        attachments: List[Dict[str, Any]],
+        message_id: str,
+    ) -> List[Any]:
+        parts: List[Any] = []
+        clean_text = text.strip()
+        if clean_text:
+            parts.append(
+                TextContent(
+                    type=ContentType.TEXT,
+                    text=clean_text,
+                ),
+            )
+
+        for idx, attachment in enumerate(attachments):
+            if not isinstance(attachment, dict):
+                continue
+
+            kind, name, _mime_type, _url = _guess_attachment_kind(attachment)
+            if kind not in {"image", "pdf"}:
+                continue
+
+            local_path = self._download_attachment_sync(
+                attachment,
+                message_id=message_id,
+                attachment_index=idx,
+            )
+            if not local_path:
+                parts.append(
+                    TextContent(
+                        type=ContentType.TEXT,
+                        text=f"[{kind}: download failed - {name}]",
+                    ),
+                )
+                continue
+
+            if kind == "image":
+                parts.append(
+                    ImageContent(
+                        type=ContentType.IMAGE,
+                        image_url=local_path,
+                    ),
+                )
+            else:
+                parts.append(
+                    FileContent(
+                        type=ContentType.FILE,
+                        file_url=local_path,
+                    ),
+                )
+
+        return parts
+
     @classmethod
     def from_env(
         cls,
@@ -378,6 +558,91 @@ class QQChannel(BaseChannel):
             show_tool_details=show_tool_details,
             filter_tool_messages=filter_tool_messages,
         )
+
+    def resolve_session_id(
+        self,
+        sender_id: str,
+        channel_meta: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """Scope sessions by QQ chat target instead of sender only."""
+        meta = channel_meta or {}
+        message_type = str(meta.get("message_type") or "c2c").strip().lower()
+        group_openid = str(meta.get("group_openid") or "").strip()
+        channel_id = str(meta.get("channel_id") or "").strip()
+        if message_type == "group" and group_openid:
+            return f"{self.channel}:group:{group_openid}"
+        if message_type in {"guild", "dm"} and channel_id:
+            return f"{self.channel}:channel:{channel_id}"
+        if sender_id:
+            return f"{self.channel}:c2c:{sender_id}"
+        return f"{self.channel}:{sender_id}"
+
+    @staticmethod
+    def _to_handle_from_session_id(session_id: str) -> str:
+        s = (session_id or "").strip()
+        parts = s.split(":", 2)
+        if len(parts) == 3 and parts[0] == "qq":
+            kind, ident = parts[1], parts[2]
+            if kind == "group":
+                return f"group:{ident}"
+            if kind == "channel":
+                return f"channel:{ident}"
+            if kind == "c2c":
+                return ident
+        return ""
+
+    def get_to_handle_from_request(self, request: Any) -> str:
+        session_id = (
+            request.get("session_id", "")
+            if isinstance(request, dict)
+            else getattr(request, "session_id", "")
+        ) or ""
+        user_id = (
+            request.get("user_id", "")
+            if isinstance(request, dict)
+            else getattr(request, "user_id", "")
+        ) or ""
+        return self.to_handle_from_target(user_id=user_id, session_id=session_id)
+
+    def get_on_reply_sent_args(
+        self,
+        request: Any,
+        to_handle: str,
+    ) -> tuple[str, str]:
+        user_id = (
+            request.get("user_id", "")
+            if isinstance(request, dict)
+            else getattr(request, "user_id", "")
+        ) or to_handle
+        session_id = (
+            request.get("session_id", "")
+            if isinstance(request, dict)
+            else getattr(request, "session_id", "")
+        ) or f"{self.channel}:{to_handle}"
+        return (user_id, session_id)
+
+    def to_handle_from_target(self, *, user_id: str, session_id: str) -> str:
+        routed = self._to_handle_from_session_id(session_id)
+        if routed:
+            return routed
+        return user_id
+
+    @staticmethod
+    def _set_request_channel_meta(
+        request: Any,
+        meta: Dict[str, Any],
+    ) -> Any:
+        if isinstance(request, dict):
+            request["channel_meta"] = meta
+            return request
+        if hasattr(request, "channel_meta"):
+            request.channel_meta = meta
+            return request
+        try:
+            setattr(request, "channel_meta", meta)
+        except Exception:
+            logger.debug("qq set channel_meta failed", exc_info=True)
+        return request
 
     async def send(
         self,
@@ -458,21 +723,71 @@ class QQChannel(BaseChannel):
         content_parts = payload.get("content_parts") or []
         meta = payload.get("meta") or {}
         session_id = self.resolve_session_id(sender_id, meta)
-        return self.build_agent_request_from_user_content(
+        request = self.build_agent_request_from_user_content(
             channel_id=channel_id,
             sender_id=sender_id,
             session_id=session_id,
             content_parts=content_parts,
             channel_meta=meta,
         )
+        return self._set_request_channel_meta(request, meta)
+
+    @staticmethod
+    def _is_user_text_part(item: Any) -> bool:
+        text = str(getattr(item, "text", "") or "").strip()
+        if not text:
+            return False
+        lowered = text.lower()
+        if lowered.startswith("[image: download failed"):
+            return False
+        if lowered.startswith("[pdf: download failed"):
+            return False
+        return True
+
+    def _content_has_text(self, contents: List[Any]) -> bool:
+        """QQ only triggers a model turn when the user sends actual text.
+
+        Pure image/file messages are buffered and merged into the next
+        text-bearing user message for the same session.
+        """
+        if not contents:
+            return False
+
+        for item in contents:
+            t = getattr(item, "type", None)
+            t_val = (
+                t.value if isinstance(t, ContentType) else str(t) if t else ""
+            ).lower()
+            if t_val == ContentType.TEXT.value and self._is_user_text_part(item):
+                return True
+            if t_val == ContentType.REFUSAL.value:
+                refusal = str(getattr(item, "refusal", "") or "").strip()
+                if refusal:
+                    return True
+        return False
 
     async def consume_one(self, payload: Any) -> None:
         """Process one AgentRequest from manager queue."""
         request = payload
-        if getattr(request, "input", None):
-            session_id = getattr(request, "session_id", "") or ""
+        req_input = (
+            request.get("input")
+            if isinstance(request, dict)
+            else getattr(request, "input", None)
+        )
+        if req_input:
+            first_msg = req_input[0] if isinstance(req_input, list) else req_input
+            session_id = (
+                request.get("session_id", "")
+                if isinstance(request, dict)
+                else getattr(request, "session_id", "")
+            ) or ""
             contents = list(
-                getattr(request.input[0], "content", None) or [],
+                (
+                    first_msg.get("content")
+                    if isinstance(first_msg, dict)
+                    else getattr(first_msg, "content", None)
+                )
+                or [],
             )
             should_process, merged = self._apply_no_text_debounce(
                 session_id,
@@ -481,16 +796,30 @@ class QQChannel(BaseChannel):
             if not should_process:
                 return
             if merged:
-                if hasattr(request.input[0], "model_copy"):
-                    request.input[0] = request.input[0].model_copy(
+                if isinstance(first_msg, dict):
+                    first_msg["content"] = merged
+                elif hasattr(first_msg, "model_copy"):
+                    new_msg = first_msg.model_copy(
                         update={"content": merged},
                     )
+                    if isinstance(req_input, list):
+                        req_input[0] = new_msg
+                    else:
+                        req_input = new_msg
                 else:
-                    request.input[0].content = merged
+                    first_msg.content = merged
         try:
-            send_meta = getattr(request, "channel_meta", None) or {}
+            send_meta = (
+                request.get("channel_meta")
+                if isinstance(request, dict)
+                else getattr(request, "channel_meta", None)
+            ) or {}
             send_meta.setdefault("bot_prefix", self.bot_prefix)
-            to_handle = request.user_id or ""
+            to_handle = (
+                request.get("user_id", "")
+                if isinstance(request, dict)
+                else getattr(request, "user_id", "")
+            ) or ""
             last_response = None
             accumulated_parts: List[OutgoingContentPart] = []
             event_count = 0
@@ -518,8 +847,13 @@ class QQChannel(BaseChannel):
                 elif obj == "response":
                     last_response = event
 
-            err_msg = self._get_response_error_message(last_response)
-            if err_msg:
+            err_obj = (
+                getattr(last_response, "error", None)
+                if last_response is not None
+                else None
+            )
+            if err_obj:
+                err_msg = getattr(err_obj, "message", str(err_obj))
                 err_text = self.bot_prefix + f"Error: {err_msg}"
                 await self.send_content_parts(
                     to_handle,
@@ -546,20 +880,26 @@ class QQChannel(BaseChannel):
                     send_meta,
                 )
             if self._on_reply_sent:
-                self._on_reply_sent(
-                    self.channel,
-                    to_handle,
-                    request.session_id or f"{self.channel}:{to_handle}",
-                )
+                args = self.get_on_reply_sent_args(request, to_handle)
+                self._on_reply_sent(self.channel, *args)
         except Exception as e:
             logger.exception("qq process/reply failed")
             err_msg = str(e).strip() or "An error occurred while processing."
             try:
-                fallback_handle = getattr(request, "user_id", "")
+                fallback_handle = (
+                    request.get("user_id", "")
+                    if isinstance(request, dict)
+                    else getattr(request, "user_id", "")
+                )
                 await self.send_content_parts(
                     fallback_handle,
                     [{"type": "text", "text": f"Error: {err_msg}"}],
-                    getattr(request, "channel_meta", None) or {},
+                    (
+                        request.get("channel_meta")
+                        if isinstance(request, dict)
+                        else getattr(request, "channel_meta", None)
+                    )
+                    or {},
                 )
             except Exception:
                 logger.exception("send error message failed")
@@ -717,6 +1057,13 @@ class QQChannel(BaseChannel):
                             msg_id = (d or {}).get("id", "")
                             # ts = (d or {}).get("timestamp", "")
                             att = (d or {}).get("attachments") or []
+                            content_parts = self._build_incoming_content_parts(
+                                text=text,
+                                attachments=att,
+                                message_id=msg_id or "c2c",
+                            )
+                            if not content_parts:
+                                continue
                             meta = {
                                 "message_type": "c2c",
                                 "message_id": msg_id,
@@ -727,18 +1074,12 @@ class QQChannel(BaseChannel):
                             native = {
                                 "channel_id": "qq",
                                 "sender_id": sender,
-                                "content_parts": [
-                                    TextContent(
-                                        type=ContentType.TEXT,
-                                        text=text,
-                                    ),
-                                ],
+                                "content_parts": content_parts,
                                 "meta": meta,
                             }
                             request = self.build_agent_request_from_native(
                                 native,
                             )
-                            request.channel_meta = meta
                             if self._enqueue is not None:
                                 self._enqueue(request)
                             logger.info(
@@ -767,6 +1108,13 @@ class QQChannel(BaseChannel):
                             msg_id = (d or {}).get("id", "")
                             # ts = (d or {}).get("timestamp", "")
                             att = (d or {}).get("attachments") or []
+                            content_parts = self._build_incoming_content_parts(
+                                text=text,
+                                attachments=att,
+                                message_id=msg_id or "guild",
+                            )
+                            if not content_parts:
+                                continue
                             meta = {
                                 "message_type": "guild",
                                 "message_id": msg_id,
@@ -779,18 +1127,12 @@ class QQChannel(BaseChannel):
                             native = {
                                 "channel_id": "qq",
                                 "sender_id": sender,
-                                "content_parts": [
-                                    TextContent(
-                                        type=ContentType.TEXT,
-                                        text=text,
-                                    ),
-                                ],
+                                "content_parts": content_parts,
                                 "meta": meta,
                             }
                             request = self.build_agent_request_from_native(
                                 native,
                             )
-                            request.channel_meta = meta
                             if self._enqueue is not None:
                                 self._enqueue(request)
                             logger.info(
@@ -819,6 +1161,13 @@ class QQChannel(BaseChannel):
                             guild_id = (d or {}).get("guild_id", "")
                             msg_id = (d or {}).get("id", "")
                             att = (d or {}).get("attachments") or []
+                            content_parts = self._build_incoming_content_parts(
+                                text=text,
+                                attachments=att,
+                                message_id=msg_id or "dm",
+                            )
+                            if not content_parts:
+                                continue
                             meta = {
                                 "message_type": "dm",
                                 "message_id": msg_id,
@@ -831,18 +1180,12 @@ class QQChannel(BaseChannel):
                             native = {
                                 "channel_id": "qq",
                                 "sender_id": sender,
-                                "content_parts": [
-                                    TextContent(
-                                        type=ContentType.TEXT,
-                                        text=text,
-                                    ),
-                                ],
+                                "content_parts": content_parts,
                                 "meta": meta,
                             }
                             request = self.build_agent_request_from_native(
                                 native,
                             )
-                            request.channel_meta = meta
                             if self._enqueue is not None:
                                 self._enqueue(request)
                             logger.info(
@@ -869,6 +1212,13 @@ class QQChannel(BaseChannel):
                             group_openid = (d or {}).get("group_openid", "")
                             msg_id = (d or {}).get("id", "")
                             att = (d or {}).get("attachments") or []
+                            content_parts = self._build_incoming_content_parts(
+                                text=text,
+                                attachments=att,
+                                message_id=msg_id or "group",
+                            )
+                            if not content_parts:
+                                continue
                             meta = {
                                 "message_type": "group",
                                 "message_id": msg_id,
@@ -880,18 +1230,12 @@ class QQChannel(BaseChannel):
                             native = {
                                 "channel_id": "qq",
                                 "sender_id": sender,
-                                "content_parts": [
-                                    TextContent(
-                                        type=ContentType.TEXT,
-                                        text=text,
-                                    ),
-                                ],
+                                "content_parts": content_parts,
                                 "meta": meta,
                             }
                             request = self.build_agent_request_from_native(
                                 native,
                             )
-                            request.channel_meta = meta
                             if self._enqueue is not None:
                                 self._enqueue(request)
                             logger.info(

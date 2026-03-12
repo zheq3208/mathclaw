@@ -8,6 +8,9 @@ class ModelRegistry:
 
     def list_models(self) -> list[dict[str, str]]:
         return [
+            {"name": "gpt-5", "provider": "openai"},
+            {"name": "gpt-5-mini", "provider": "openai"},
+            {"name": "gpt-5-nano", "provider": "openai"},
             {"name": "gpt-4o", "provider": "openai"},
             {"name": "gpt-4o-mini", "provider": "openai"},
             {"name": "o3", "provider": "openai"},

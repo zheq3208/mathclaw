@@ -1,3 +1,16 @@
+﻿export type ChatAttachmentKind = "image" | "pdf";
+
+export type ChatAttachment = {
+  id: string;
+  name: string;
+  mimeType: string;
+  size: number;
+  kind: ChatAttachmentKind;
+  absolutePath: string;
+  relativePath: string;
+  downloadUrl: string;
+};
+
 export type ChatMessage = {
   role: "user" | "assistant" | "tool";
   content: string;
@@ -5,6 +18,8 @@ export type ChatMessage = {
   thinking?: string;
   /** Tool calls made in this turn */
   toolCalls?: ToolCallInfo[];
+  /** Optional uploaded attachments associated with this message */
+  attachments?: ChatAttachment[];
 };
 
 export type ToolCallInfo = {

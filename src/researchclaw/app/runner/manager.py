@@ -1,12 +1,14 @@
-"""AgentRunnerManager – top-level manager for the agent runner lifecycle."""
+﻿"""AgentRunnerManager 鈥?top-level manager for the agent runner lifecycle."""
 
 from __future__ import annotations
 
 import json
 import logging
+import mimetypes
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
+from urllib.parse import unquote, urlparse
 
 from researchclaw.app.runner.runner import AgentRunner
 from researchclaw.app.runner.session import ChatSession, SessionManager
@@ -60,6 +62,43 @@ class AgentRunnerManager:
             return value
         return str(value)
 
+    @staticmethod
+    def _normalize_attachments(
+        attachments: Any,
+    ) -> list[dict[str, Any]]:
+        if not isinstance(attachments, list):
+            return []
+
+        normalized: list[dict[str, Any]] = []
+        for item in attachments:
+            if not isinstance(item, dict):
+                continue
+
+            kind = str(item.get("kind", "")).strip().lower()
+            if kind not in ("image", "pdf"):
+                continue
+
+            name = str(item.get("name", "")).strip()
+            abs_path = str(item.get("absolute_path", "")).strip()
+            rel_path = str(item.get("relative_path", "")).strip()
+            download_url = str(item.get("download_url", "")).strip()
+            if not name or not abs_path or not rel_path:
+                continue
+
+            normalized.append(
+                {
+                    "name": name,
+                    "kind": kind,
+                    "mime_type": str(item.get("mime_type", "")).strip(),
+                    "size": int(item.get("size", 0) or 0),
+                    "absolute_path": abs_path,
+                    "relative_path": rel_path,
+                    "download_url": download_url,
+                },
+            )
+
+        return normalized
+
     def _get_or_create_session(
         self,
         session_id: str | None,
@@ -110,31 +149,6 @@ class AgentRunnerManager:
                 if txt:
                     out.append(txt)
                 continue
-            if t_val == "image":
-                url = self._normalize_text(
-                    self._extract_value(item, "image_url", ""),
-                ).strip()
-                out.append(f"[Image: {url or 'uploaded image'}]")
-                continue
-            if t_val == "video":
-                url = self._normalize_text(
-                    self._extract_value(item, "video_url", ""),
-                ).strip()
-                out.append(f"[Video: {url or 'uploaded video'}]")
-                continue
-            if t_val == "file":
-                file_ref = self._normalize_text(
-                    self._extract_value(
-                        item,
-                        "file_url",
-                        self._extract_value(item, "file_id", ""),
-                    ),
-                ).strip()
-                out.append(f"[File: {file_ref or 'uploaded file'}]")
-                continue
-            if t_val == "audio":
-                out.append("[Audio message]")
-                continue
 
             txt = self._normalize_text(
                 self._extract_value(item, "text", ""),
@@ -143,6 +157,110 @@ class AgentRunnerManager:
                 out.append(txt)
 
         return "\n".join(out).strip()
+
+    @staticmethod
+    def _local_path_from_ref(value: Any) -> Path | None:
+        ref = str(value or "").strip()
+        if not ref:
+            return None
+
+        parsed = urlparse(ref)
+        if parsed.scheme == "file":
+            candidate = Path(unquote(parsed.path))
+        elif parsed.scheme in {"http", "https"}:
+            return None
+        else:
+            candidate = Path(ref)
+
+        try:
+            if candidate.exists() and candidate.is_file():
+                return candidate.resolve()
+        except OSError:
+            return None
+        return None
+
+    @staticmethod
+    def _attachment_kind_for_path(path: Path) -> tuple[str, str]:
+        mime_type = (mimetypes.guess_type(path.name)[0] or "").lower()
+        suffix = path.suffix.lower()
+        if mime_type.startswith("image/"):
+            return ("image", mime_type)
+        if mime_type == "application/pdf" or suffix == ".pdf":
+            return ("pdf", "application/pdf")
+        return ("", mime_type)
+
+    def _attachment_from_content_part(self, item: Any) -> dict[str, Any] | None:
+        t = self._extract_value(item, "type", "")
+        t_val = (
+            t.value if hasattr(t, "value") else str(t) if t else ""
+        ).lower()
+        source_ref = ""
+        kind = ""
+        mime_type = ""
+
+        if t_val == "image":
+            source_ref = self._normalize_text(
+                self._extract_value(item, "image_url", ""),
+            ).strip()
+            kind = "image"
+        elif t_val == "file":
+            source_ref = self._normalize_text(
+                self._extract_value(
+                    item,
+                    "file_url",
+                    self._extract_value(item, "file_id", ""),
+                ),
+            ).strip()
+        else:
+            return None
+
+        path = self._local_path_from_ref(source_ref)
+        if path is None:
+            return None
+
+        if not kind:
+            kind, mime_type = self._attachment_kind_for_path(path)
+            if not kind:
+                return None
+        else:
+            mime_type = (mimetypes.guess_type(path.name)[0] or "").lower()
+
+        try:
+            relative_path = path.relative_to(Path(WORKING_DIR)).as_posix()
+        except ValueError:
+            relative_path = path.name
+
+        return {
+            "name": path.name,
+            "kind": kind,
+            "mime_type": mime_type,
+            "size": int(path.stat().st_size),
+            "absolute_path": str(path),
+            "relative_path": relative_path or path.name,
+            "download_url": "",
+        }
+
+    def _request_to_attachments(self, request: Any) -> list[dict[str, Any]]:
+        inp = self._extract_value(request, "input", []) or []
+        if not inp:
+            return []
+        first_msg = inp[0] if isinstance(inp, list) else inp
+        contents = self._extract_value(first_msg, "content", []) or []
+        if not isinstance(contents, list):
+            contents = [contents]
+
+        attachments: list[dict[str, Any]] = []
+        seen_paths: set[str] = set()
+        for item in contents:
+            attachment = self._attachment_from_content_part(item)
+            if not attachment:
+                continue
+            absolute_path = str(attachment.get("absolute_path", "")).strip()
+            if not absolute_path or absolute_path in seen_paths:
+                continue
+            seen_paths.add(absolute_path)
+            attachments.append(attachment)
+        return attachments
 
     @staticmethod
     def _build_message_event(
@@ -196,7 +314,12 @@ class AgentRunnerManager:
         """Stop the agent runner."""
         await self.runner.stop()
 
-    async def chat(self, message: str, session_id: str | None = None) -> str:
+    async def chat(
+        self,
+        message: str,
+        session_id: str | None = None,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> str:
         """Send a chat message, creating a session if needed."""
         if not self.runner.is_running:
             # Try to start with current config
@@ -208,15 +331,29 @@ class AgentRunnerManager:
                 )
 
         session = self._get_or_create_session(session_id)
-
-        session.add_message("user", message)
-        response = await self.runner.chat(message, session.session_id)
+        normalized_attachments = self._normalize_attachments(attachments)
+        user_metadata = (
+            {"attachments": normalized_attachments}
+            if normalized_attachments
+            else None
+        )
+        session.add_message("user", message, metadata=user_metadata)
+        response = await self.runner.chat(
+            message,
+            session.session_id,
+            attachments=normalized_attachments,
+        )
         session.add_message("assistant", response)
         self.session_manager._save_session(session)
 
         return response
 
-    async def chat_stream(self, message: str, session_id: str | None = None):
+    async def chat_stream(
+        self,
+        message: str,
+        session_id: str | None = None,
+        attachments: list[dict[str, Any]] | None = None,
+    ):
         """Stream a chat response, yielding SSE event dicts."""
         if not self.runner.is_running:
             await self.start()
@@ -232,13 +369,19 @@ class AgentRunnerManager:
                 return
 
         session = self._get_or_create_session(session_id)
-
-        session.add_message("user", message)
+        normalized_attachments = self._normalize_attachments(attachments)
+        user_metadata = (
+            {"attachments": normalized_attachments}
+            if normalized_attachments
+            else None
+        )
+        session.add_message("user", message, metadata=user_metadata)
         full_content = ""
 
         async for event in self.runner.chat_stream(
             message,
             session.session_id,
+            attachments=normalized_attachments,
         ):
             if event.get("type") == "done":
                 full_content = event.get("content", full_content)
@@ -262,6 +405,7 @@ class AgentRunnerManager:
             self._extract_value(request, "channel", DEFAULT_CHANNEL),
         ).strip() or DEFAULT_CHANNEL
         prompt = self._request_to_prompt(request)
+        attachments = self._request_to_attachments(request)
         if not prompt:
             prompt = self._normalize_text(
                 self._extract_value(request, "message", ""),
@@ -287,6 +431,7 @@ class AgentRunnerManager:
             async for raw_event in self.chat_stream(
                 prompt,
                 session_id=session_id,
+                attachments=attachments,
             ):
                 event_type = self._extract_value(raw_event, "type", "")
                 if event_type == "thinking":
@@ -423,3 +568,11 @@ class AgentRunnerManager:
             return json.loads(config_path.read_text(encoding="utf-8"))
         except Exception:
             return {}
+
+
+
+
+
+
+
+

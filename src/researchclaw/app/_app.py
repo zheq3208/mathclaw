@@ -71,6 +71,7 @@ def _build_channel_runtime_config(raw_config: dict[str, Any]) -> Any:
         "feishu",
         "imessage",
         "qq",
+        "wecom",
         "voice",
     }
     for key in channel_keys:

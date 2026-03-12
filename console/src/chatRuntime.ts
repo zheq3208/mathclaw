@@ -1,5 +1,5 @@
-import { streamChat } from "./api";
-import type { ChatMessage, StreamEvent, ToolCallInfo } from "./types";
+﻿import { streamChat } from "./api";
+import type { ChatAttachment, ChatMessage, StreamEvent, ToolCallInfo } from "./types";
 
 const CHAT_STATE_STORAGE_KEY = "researchclaw.chat.state.v1";
 
@@ -50,6 +50,40 @@ function normalizeRole(value: unknown): ChatMessage["role"] {
   return "assistant";
 }
 
+function normalizeAttachmentKind(value: unknown): ChatAttachment["kind"] | null {
+  if (value === "image" || value === "pdf") return value;
+  return null;
+}
+
+function normalizeAttachments(value: unknown): ChatAttachment[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+
+  const items = value
+    .map((raw) => {
+      if (!raw || typeof raw !== "object") return null;
+      const item = raw as Record<string, unknown>;
+      const kind = normalizeAttachmentKind(item.kind);
+      const name = String(item.name ?? "").trim();
+      const relativePath = String(item.relativePath ?? item.relative_path ?? "").trim();
+      const absolutePath = String(item.absolutePath ?? item.absolute_path ?? "").trim();
+      const downloadUrl = String(item.downloadUrl ?? item.download_url ?? "").trim();
+      if (!kind || !name || !relativePath || !absolutePath || !downloadUrl) return null;
+      return {
+        id: String(item.id ?? relativePath),
+        name,
+        mimeType: String(item.mimeType ?? item.mime_type ?? "application/octet-stream"),
+        size: Number(item.size ?? 0) || 0,
+        kind,
+        absolutePath,
+        relativePath,
+        downloadUrl,
+      } satisfies ChatAttachment;
+    })
+    .filter((item): item is ChatAttachment => Boolean(item));
+
+  return items.length > 0 ? items : undefined;
+}
+
 function normalizeMessages(value: unknown): ChatMessage[] {
   if (!Array.isArray(value)) return [];
   return value
@@ -60,7 +94,9 @@ function normalizeMessages(value: unknown): ChatMessage[] {
         && typeof (m as ChatMessage).content === "string",
     )
     .map((m) => {
-      const msg = m as ChatMessage;
+      const msg = m as ChatMessage & {
+        metadata?: { attachments?: unknown };
+      };
       return {
         role: normalizeRole(msg.role),
         content: String(msg.content ?? ""),
@@ -82,6 +118,9 @@ function normalizeMessages(value: unknown): ChatMessage[] {
                   : undefined,
             }))
           : undefined,
+        attachments:
+          normalizeAttachments(msg.attachments)
+          ?? normalizeAttachments(msg.metadata?.attachments),
       };
     });
 }
@@ -211,7 +250,7 @@ export function stopChatStreaming() {
     streamController = null;
   }
   if (!state.chatLoading) return;
-  const finalContent = state.streamContent || "(已停止)";
+  const finalContent = state.streamContent || "(stopped)";
   finalizeStreamWithContent(finalContent);
 }
 
@@ -220,10 +259,22 @@ export function sendChatMessage(
   options?: {
     preferredSessionId?: string;
     onSessionId?: (sessionId: string) => void;
+    payloadMessage?: string;
+    attachments?: ChatAttachment[];
   },
 ): string | null {
-  const text = rawText.trim();
-  if (!text || state.chatLoading) return null;
+  const payloadText = String(options?.payloadMessage ?? rawText).trim();
+  if (!payloadText || state.chatLoading) return null;
+
+  const attachments =
+    options?.attachments && options.attachments.length > 0
+      ? options.attachments
+      : undefined;
+
+  const displayText = String(rawText).trim()
+    || (attachments && attachments.length > 0
+      ? `Attached ${attachments.length} file${attachments.length > 1 ? "s" : ""}.`
+      : payloadText);
 
   const activeSessionId =
     options?.preferredSessionId || state.sessionId || createSessionId();
@@ -232,95 +283,107 @@ export function sendChatMessage(
     ...resetStreamFields(prev),
     sessionId: activeSessionId,
     chatLoading: true,
-    messages: [...prev.messages, { role: "user", content: text }],
+    messages: [
+      ...prev.messages,
+      {
+        role: "user",
+        content: displayText,
+        attachments,
+      },
+    ],
   }));
 
   let accContent = "";
   let accThinking = "";
   let accToolCalls: ToolCallInfo[] = [];
 
-  streamController = streamChat(text, activeSessionId, (event: StreamEvent) => {
-    if (event.session_id) {
-      setState((prev) => ({ ...prev, sessionId: event.session_id }));
-      options?.onSessionId?.(event.session_id);
-    }
+  streamController = streamChat(
+    payloadText,
+    activeSessionId,
+    (event: StreamEvent) => {
+      if (event.session_id) {
+        setState((prev) => ({ ...prev, sessionId: event.session_id }));
+        options?.onSessionId?.(event.session_id);
+      }
 
-    switch (event.type) {
-      case "thinking":
-        accThinking += event.content || "";
-        setState((prev) => ({ ...prev, streamThinking: accThinking }));
-        break;
+      switch (event.type) {
+        case "thinking":
+          accThinking += event.content || "";
+          setState((prev) => ({ ...prev, streamThinking: accThinking }));
+          break;
 
-      case "content":
-        accContent += event.content || "";
-        setState((prev) => ({ ...prev, streamContent: accContent }));
-        break;
+        case "content":
+          accContent += event.content || "";
+          setState((prev) => ({ ...prev, streamContent: accContent }));
+          break;
 
-      case "content_replace":
-        accContent = event.content || "";
-        setState((prev) => ({ ...prev, streamContent: accContent }));
-        break;
+        case "content_replace":
+          accContent = event.content || "";
+          setState((prev) => ({ ...prev, streamContent: accContent }));
+          break;
 
-      case "tool_call":
-        accToolCalls = [
-          ...accToolCalls,
-          {
-            name: event.name || "unknown",
-            arguments: event.arguments,
-            status: "running",
-          },
-        ];
-        setState((prev) => ({
-          ...prev,
-          streamToolCalls: [...accToolCalls],
-        }));
-        break;
+        case "tool_call":
+          accToolCalls = [
+            ...accToolCalls,
+            {
+              name: event.name || "unknown",
+              arguments: event.arguments,
+              status: "running",
+            },
+          ];
+          setState((prev) => ({
+            ...prev,
+            streamToolCalls: [...accToolCalls],
+          }));
+          break;
 
-      case "tool_result": {
-        const idx = accToolCalls.findIndex(
-          (tc) => tc.name === event.name && tc.status === "running",
-        );
-        if (idx !== -1) {
-          accToolCalls[idx] = {
-            ...accToolCalls[idx],
-            result: event.result,
-            status: "done",
-          };
-        } else {
-          accToolCalls.push({
-            name: event.name || "unknown",
-            result: event.result,
-            status: "done",
-          });
+        case "tool_result": {
+          const idx = accToolCalls.findIndex(
+            (tc) => tc.name === event.name && tc.status === "running",
+          );
+          if (idx !== -1) {
+            accToolCalls[idx] = {
+              ...accToolCalls[idx],
+              result: event.result,
+              status: "done",
+            };
+          } else {
+            accToolCalls.push({
+              name: event.name || "unknown",
+              result: event.result,
+              status: "done",
+            });
+          }
+          setState((prev) => ({
+            ...prev,
+            streamToolCalls: [...accToolCalls],
+          }));
+          break;
         }
-        setState((prev) => ({
-          ...prev,
-          streamToolCalls: [...accToolCalls],
-        }));
-        break;
-      }
 
-      case "done": {
-        const finalContent = event.content || accContent;
-        streamController = null;
-        finalizeStreamWithContent(finalContent);
-        break;
-      }
+        case "done": {
+          const finalContent = event.content || accContent;
+          streamController = null;
+          finalizeStreamWithContent(finalContent);
+          break;
+        }
 
-      case "error": {
-        const errText = String(event.content || "unknown error");
-        const mergedContent = accContent.trim()
-          ? `${accContent}\n\n[流式中断] ${errText}`
-          : `错误: ${errText}`;
-        streamController = null;
-        finalizeStreamWithContent(mergedContent);
-        break;
-      }
+        case "error": {
+          const errText = String(event.content || "unknown error");
+          const mergedContent = accContent.trim()
+            ? `${accContent}\n\n[stream interrupted] ${errText}`
+            : `Error: ${errText}`;
+          streamController = null;
+          finalizeStreamWithContent(mergedContent);
+          break;
+        }
 
-      default:
-        break;
-    }
-  });
+        default:
+          break;
+      }
+    },
+    attachments,
+  );
 
   return activeSessionId;
 }

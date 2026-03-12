@@ -1,4 +1,4 @@
-"""Agent runner – wraps ScholarAgent for async web usage."""
+﻿"""Agent runner 鈥?wraps ScholarAgent for async web usage."""
 
 from __future__ import annotations
 
@@ -73,6 +73,12 @@ class AgentRunner:
                 }
                 if config.get("base_url"):
                     llm_cfg["api_url"] = config.get("base_url")
+                if isinstance(config.get("extra"), dict):
+                    llm_cfg["extra"] = config.get("extra")
+                if "supports_vision" in config:
+                    llm_cfg["supports_vision"] = bool(
+                        config.get("supports_vision"),
+                    )
 
                 self.agent = ScholarAgent(
                     llm_cfg=llm_cfg,
@@ -134,6 +140,7 @@ class AgentRunner:
         self,
         message: str,
         session_id: str | None = None,
+        attachments: list[dict[str, Any]] | None = None,
     ) -> str:
         """Send a message to the agent and get a response.
 
@@ -150,7 +157,11 @@ class AgentRunner:
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(
             None,
-            lambda: self.agent.reply(message, session_id=session_id),
+            lambda: self.agent.reply(
+                message,
+                session_id=session_id,
+                attachments=attachments or [],
+            ),
         )
 
         if hasattr(response, "content"):
@@ -161,6 +172,7 @@ class AgentRunner:
         self,
         message: str,
         session_id: str | None = None,
+        attachments: list[dict[str, Any]] | None = None,
     ):
         """Stream a response from the agent, yielding SSE event dicts.
 
@@ -187,6 +199,7 @@ class AgentRunner:
                 for event in self.agent.reply_stream(
                     message,
                     session_id=session_id,
+                    attachments=attachments or [],
                 ):
                     q.put(event)
             except Exception as e:
@@ -216,3 +229,4 @@ class AgentRunner:
         """Restart the agent with a new configuration."""
         await self.stop()
         await self.start(model_config)
+
