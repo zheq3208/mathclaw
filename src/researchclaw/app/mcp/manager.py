@@ -116,7 +116,7 @@ class MCPManager:
                 await self.remove_client(key)
 
         # Add/update enabled clients.
-        for key, cfg in clients_cfg.items():
+        for key, cfg in list(clients_cfg.items()):
             if not bool(cfg.get("enabled", True)):
                 continue
             new_info = self._rebuild_info_for_config(key, cfg)
@@ -142,7 +142,7 @@ class MCPManager:
         self,
         key: str,
         client_config: Dict[str, Any],
-        timeout: float = 60.0,
+        timeout: float = 120.0,
     ) -> None:
         """Connect new client then swap and close old one."""
         cfg = self._normalize_client_config(key, client_config)
@@ -170,7 +170,7 @@ class MCPManager:
         if old_client is not None:
             try:
                 await old_client.close()
-            except Exception:
+            except BaseException:
                 logger.warning("Error closing old MCP client '%s'", key)
 
     async def remove_client(self, key: str) -> None:
@@ -180,7 +180,7 @@ class MCPManager:
         if old_client is not None:
             try:
                 await old_client.close()
-            except Exception:
+            except BaseException:
                 logger.warning("Error closing MCP client '%s'", key)
 
     async def close_all(self) -> None:
@@ -190,7 +190,7 @@ class MCPManager:
         for key, client in snapshot:
             try:
                 await client.close()
-            except Exception:
+            except BaseException:
                 logger.warning("Error closing MCP client '%s'", key)
 
     # ------------------------------------------------------------------

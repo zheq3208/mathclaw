@@ -6,9 +6,12 @@ tools, skills, memory, and hooks.
 
 from __future__ import annotations
 
+import asyncio
 import base64
+import json
 import logging
 import mimetypes
+import re
 from pathlib import Path
 from typing import Any, Literal, Optional
 
@@ -18,6 +21,15 @@ from ..constant import (
     DEFAULT_MAX_INPUT_TOKENS,
     DEFAULT_MAX_ITERS,
     WORKING_DIR,
+)
+from .resource_lookup import (
+    build_resource_cache_path,
+    build_resource_cache_payload,
+    build_resource_query_context,
+    format_resource_lookup_response,
+    parse_playwright_page_title,
+    rank_resource_results,
+    summarize_extract_payload,
 )
 from .skill_compat import (
     SkillDoc,
@@ -102,6 +114,7 @@ class ScholarAgent:
         self._tools: dict[str, Any] = {}
         self._skill_docs: list[SkillDoc] = []
         self._last_skill_debug: dict[str, Any] = {}
+        self._mcp_registered_tools: set[str] = set()
         self._register_builtin_tools()
         self._register_skills()
 
@@ -391,29 +404,296 @@ class ScholarAgent:
 
     # 鈹€鈹€ MCP clients 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
-    def register_mcp_clients(self, mcp_clients: list[Any]) -> None:
-        """Register MCP (Model Context Protocol) clients to the toolkit."""
-        changed = False
-        for client in mcp_clients:
+    def _clear_mcp_registered_tools(self) -> bool:
+        removed = False
+        registered = getattr(self, "_mcp_registered_tools", set())
+        for tool_name in list(registered):
+            if tool_name in self._tools:
+                self._tools.pop(tool_name, None)
+                removed = True
+        registered.clear()
+        return removed
+
+    @staticmethod
+    def _await_tool_result(result: Any) -> Any:
+        import inspect
+        import threading
+
+        if not inspect.isawaitable(result):
+            return result
+
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            return asyncio.run(result)
+
+        output: dict[str, Any] = {}
+        error: dict[str, BaseException] = {}
+
+        def _runner() -> None:
             try:
-                tools = client.get_tools()
-                if not isinstance(tools, dict):
-                    logger.warning(
-                        "MCP client returned non-dict tools: %s",
-                        type(tools).__name__,
+                output["value"] = asyncio.run(result)
+            except BaseException as exc:  # pragma: no cover - defensive
+                error["exc"] = exc
+
+        thread = threading.Thread(target=_runner, daemon=True)
+        thread.start()
+        thread.join()
+
+        if "exc" in error:
+            raise error["exc"]
+        return output.get("value")
+
+    @staticmethod
+    def _bind_tool_to_loop(tool_fn: Any, loop: Any, loop_thread_id: int) -> Any:
+        import functools
+        import inspect
+        import threading
+
+        @functools.wraps(tool_fn)
+        def _wrapped_tool(**tool_args: Any) -> Any:
+            result = tool_fn(**tool_args)
+            if not inspect.isawaitable(result):
+                return result
+            if threading.get_ident() == loop_thread_id:
+                raise RuntimeError(
+                    "Cannot synchronously invoke MCP tool on its owning event loop",
+                )
+            future = asyncio.run_coroutine_threadsafe(result, loop)
+            return future.result(timeout=120)
+
+        for attr in ("json_schema", "description", "name"):
+            if hasattr(tool_fn, attr):
+                setattr(_wrapped_tool, attr, getattr(tool_fn, attr))
+        return _wrapped_tool
+
+    def _invoke_tool(self, tool_name: str, tool_args: dict[str, Any]) -> Any:
+        tool = self._tools[tool_name]
+        result = tool(**tool_args)
+        return self._await_tool_result(result)
+
+    @staticmethod
+    def _tool_response_text(result: Any) -> str:
+        if isinstance(result, str):
+            return result
+
+        content = getattr(result, "content", None)
+        if isinstance(content, list):
+            parts: list[str] = []
+            for block in content:
+                if isinstance(block, dict):
+                    if block.get("type") == "text":
+                        parts.append(str(block.get("text", "")))
+                    else:
+                        parts.append(str(block))
+                else:
+                    parts.append(str(block))
+            return "\n".join(part for part in parts if part).strip()
+
+        return str(result).strip()
+
+    @staticmethod
+    def _tool_response_json(result: Any) -> dict[str, Any]:
+        payload_text = ScholarAgent._tool_response_text(result).strip()
+        if not payload_text:
+            return {}
+        try:
+            return json.loads(payload_text)
+        except Exception:
+            match = re.search(r"(\{.*\})", payload_text, re.DOTALL)
+            if not match:
+                return {}
+            try:
+                return json.loads(match.group(1))
+            except Exception:
+                return {}
+
+    def _persist_resource_lookup_report(
+        self,
+        *,
+        context: Any,
+        results: list[Any],
+        excerpt: str,
+        verified_title: str,
+        session_id: str | None,
+    ) -> str:
+        path = build_resource_cache_path(context.search_query, session_id=session_id)
+        payload = build_resource_cache_payload(
+            context,
+            results,
+            excerpt=excerpt,
+            verified_title=verified_title,
+            session_id=session_id,
+        )
+        path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        return str(path)
+
+    def _maybe_handle_resource_lookup_request(
+        self,
+        message: str,
+        *,
+        session_id: str | None = None,
+        store_response: bool = True,
+    ) -> str | None:
+        context = build_resource_query_context(message)
+        if context is None:
+            return None
+
+        if "tavily_search" not in self._tools:
+            return None
+
+        logger.info(
+            "[Resource Lookup] session=%s query=%s",
+            session_id or "",
+            context.search_query,
+        )
+
+        try:
+            search_result = self._invoke_tool(
+                "tavily_search",
+                {
+                    "query": context.search_query,
+                    "max_results": 8,
+                    "search_depth": "advanced",
+                },
+            )
+        except Exception as exc:
+            logger.exception("[Resource Lookup] tavily_search failed")
+            response = f"我尝试帮你联网查资料，但搜索失败了：{exc}"
+            if store_response:
+                self.memory.add_message(
+                    "assistant",
+                    response,
+                    session_id=session_id,
+                )
+            return response
+
+        search_payload = self._tool_response_json(search_result)
+        raw_results = (
+            search_payload.get("results")
+            if isinstance(search_payload.get("results"), list)
+            else []
+        )
+        ranked_results = rank_resource_results(context, raw_results)
+        if not ranked_results:
+            response = (
+                f"我没有找到足够相关的资源入口。你可以换成更具体的说法，例如："
+                f"`{context.search_query}`"
+            )
+            if store_response:
+                self.memory.add_message(
+                    "assistant",
+                    response,
+                    session_id=session_id,
+                )
+            return response
+
+        excerpt = ""
+        if "tavily_extract" in self._tools:
+            try:
+                extract_result = self._invoke_tool(
+                    "tavily_extract",
+                    {
+                        "urls": [ranked_results[0].url],
+                        "extract_depth": "advanced",
+                    },
+                )
+                excerpt = summarize_extract_payload(
+                    self._tool_response_text(extract_result),
+                )
+            except Exception:
+                logger.debug(
+                    "[Resource Lookup] tavily_extract failed",
+                    exc_info=True,
+                )
+
+        verified_title = ""
+        if not excerpt and "browser_navigate" in self._tools:
+            try:
+                navigate_result = self._invoke_tool(
+                    "browser_navigate",
+                    {"url": ranked_results[0].url},
+                )
+                verified_title = parse_playwright_page_title(
+                    self._tool_response_text(navigate_result),
+                )
+            except Exception:
+                logger.debug(
+                    "[Resource Lookup] browser_navigate failed",
+                    exc_info=True,
+                )
+
+        try:
+            cache_path = self._persist_resource_lookup_report(
+                context=context,
+                results=ranked_results[:5],
+                excerpt=excerpt,
+                verified_title=verified_title,
+                session_id=session_id,
+            )
+            logger.info("[Resource Lookup] cached report at %s", cache_path)
+        except Exception:
+            logger.debug(
+                "[Resource Lookup] failed to persist report",
+                exc_info=True,
+            )
+
+        response = format_resource_lookup_response(
+            context,
+            ranked_results,
+            excerpt=excerpt,
+            verified_title=verified_title,
+        )
+        if store_response:
+            self.memory.add_message(
+                "assistant",
+                response,
+                session_id=session_id,
+            )
+        return response
+
+    async def register_mcp_clients(self, mcp_clients: list[Any]) -> None:
+        """Register MCP (Model Context Protocol) clients to the toolkit."""
+        import threading
+
+        changed = self._clear_mcp_registered_tools()
+        owner_loop = asyncio.get_running_loop()
+        owner_thread_id = threading.get_ident()
+
+        for client in mcp_clients:
+            client_name = getattr(client, "name", "client")
+            try:
+                tools = await client.list_tools()
+                registered_count = 0
+                for tool in tools or []:
+                    tool_name = str(getattr(tool, "name", "") or "").strip()
+                    if not tool_name:
+                        continue
+                    tool_fn = await client.get_callable_function(tool_name)
+                    tool_fn = self._bind_tool_to_loop(
+                        tool_fn,
+                        owner_loop,
+                        owner_thread_id,
                     )
-                    continue
-                for tool_name, tool_fn in tools.items():
-                    self._register_tool(
+                    registered_name = self._register_tool(
                         tool_name,
                         tool_fn,
-                        source=f"mcp:{getattr(client, 'name', 'client')}",
+                        source=f"mcp:{client_name}",
                     )
-                    changed = True
-                logger.info("Registered MCP client with %d tools", len(tools))
+                    if self._tools.get(registered_name) is tool_fn:
+                        self._mcp_registered_tools.add(registered_name)
+                        registered_count += 1
+                        changed = True
+                logger.info(
+                    "Registered MCP client '%s' with %d tools",
+                    client_name,
+                    registered_count,
+                )
             except Exception:
-                logger.exception("Failed to register MCP client")
-                # Best-effort recovery for stateful clients.
+                logger.exception("Failed to register MCP client '%s'", client_name)
                 try:
                     reconnect = getattr(client, "reconnect", None) or getattr(
                         client,
@@ -421,26 +701,40 @@ class ScholarAgent:
                         None,
                     )
                     if callable(reconnect):
-                        reconnect()
-                        retry_tools = client.get_tools()
-                        if isinstance(retry_tools, dict):
-                            for tool_name, tool_fn in retry_tools.items():
-                                self._register_tool(
-                                    tool_name,
-                                    tool_fn,
-                                    source=f"mcp:{getattr(client, 'name', 'client')}:recovered",
-                                )
-                                changed = True
-                            logger.info(
-                                "Recovered MCP client and registered %d tools",
-                                len(retry_tools),
+                        reconnect_result = reconnect()
+                        if reconnect_result is not None:
+                            self._await_tool_result(reconnect_result)
+                        retry_tools = await client.list_tools()
+                        recovered_count = 0
+                        for tool in retry_tools or []:
+                            tool_name = str(getattr(tool, "name", "") or "").strip()
+                            if not tool_name:
+                                continue
+                            tool_fn = await client.get_callable_function(tool_name)
+                            tool_fn = self._bind_tool_to_loop(
+                                tool_fn,
+                                owner_loop,
+                                owner_thread_id,
                             )
+                            registered_name = self._register_tool(
+                                tool_name,
+                                tool_fn,
+                                source=f"mcp:{client_name}:recovered",
+                            )
+                            if self._tools.get(registered_name) is tool_fn:
+                                self._mcp_registered_tools.add(registered_name)
+                                recovered_count += 1
+                                changed = True
+                        logger.info(
+                            "Recovered MCP client '%s' and registered %d tools",
+                            client_name,
+                            recovered_count,
+                        )
                 except Exception:
                     logger.debug("MCP client recovery failed", exc_info=True)
+
         if changed:
             self._tool_schemas = self._build_tool_schemas()
-
-    # 鈹€鈹€ Reply 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     @staticmethod
     def _normalize_attachments(
@@ -704,6 +998,14 @@ class ScholarAgent:
         # Add message to memory
         self.memory.add_message("user", message, session_id=session_id)
 
+        resource_response = self._maybe_handle_resource_lookup_request(
+            message,
+            session_id=session_id,
+            store_response=True,
+        )
+        if resource_response is not None:
+            return resource_response
+
         # Build messages for the model
         messages = self._build_messages(
             user_message=message,
@@ -801,7 +1103,7 @@ class ScholarAgent:
                                     if isinstance(tool_args_raw, str)
                                     else tool_args_raw
                                 )
-                                result = self._tools[tool_name](**tool_args)
+                                result = self._invoke_tool(tool_name, tool_args)
                                 result_str = str(result)
                                 logger.info(
                                     "[Tool Result] %s | result=%s",
@@ -869,7 +1171,7 @@ class ScholarAgent:
 
                         if t_name in self._tools:
                             try:
-                                result = self._tools[t_name](**t_args)
+                                result = self._invoke_tool(t_name, t_args)
                                 result_str = str(result)
                                 logger.info(
                                     "[Text Tool Result] %s | result=%s",
@@ -1007,9 +1309,22 @@ class ScholarAgent:
 
         for name, func in self._tools.items():
             try:
+                if isinstance(getattr(func, "json_schema", None), dict):
+                    desc = str(getattr(func, "description", "") or name)
+                    schemas.append(
+                        {
+                            "type": "function",
+                            "function": {
+                                "name": name,
+                                "description": desc[:1024],
+                                "parameters": func.json_schema,
+                            },
+                        },
+                    )
+                    continue
+
                 sig = inspect.signature(func)
                 doc = inspect.getdoc(func) or ""
-                # First line of docstring as description
                 desc = doc.split("\n", maxsplit=1)[0].strip() if doc else name
 
                 properties: dict[str, Any] = {}
@@ -1017,10 +1332,8 @@ class ScholarAgent:
 
                 for pname, param in sig.parameters.items():
                     annotation = param.annotation
-                    # Resolve Optional types
                     origin = getattr(annotation, "__origin__", None)
                     if origin is not None:
-                        # e.g. Optional[str] -> str
                         args = getattr(annotation, "__args__", ())
                         if type(None) in args:
                             annotation = next(
@@ -1033,7 +1346,6 @@ class ScholarAgent:
                     json_type = _TYPE_MAP.get(annotation, "string")
                     prop: dict[str, Any] = {"type": json_type}
 
-                    # Add default value as description hint
                     if param.default is not inspect.Parameter.empty:
                         if param.default is not None:
                             prop["default"] = param.default
@@ -1260,6 +1572,25 @@ class ScholarAgent:
 
         attachments = self._normalize_attachments(kwargs.get("attachments"))
         self.memory.add_message("user", message, session_id=session_id)
+
+        resource_response = self._maybe_handle_resource_lookup_request(
+            message,
+            session_id=session_id,
+            store_response=False,
+        )
+        if resource_response is not None:
+            self.memory.add_message(
+                "assistant",
+                resource_response,
+                session_id=session_id,
+            )
+            yield {"type": "content", "content": resource_response}
+            yield {"type": "done", "content": resource_response}
+            for hook in self._hooks:
+                if hasattr(hook, "post_reply"):
+                    hook.post_reply(message, resource_response)
+            return
+
         messages = self._build_messages(
             user_message=message,
             attachments=attachments,
@@ -1352,9 +1683,7 @@ class ScholarAgent:
                                         if isinstance(raw_args, str)
                                         else raw_args
                                     )
-                                    result = self._tools[tool_name](
-                                        **tool_args,
-                                    )
+                                    result = self._invoke_tool(tool_name, tool_args)
                                     result_str = str(result)
                                     logger.info(
                                         "[Stream Tool Result] %s | result=%s",
@@ -1452,7 +1781,7 @@ class ScholarAgent:
 
                             if t_name in self._tools:
                                 try:
-                                    result = self._tools[t_name](**t_args)
+                                    result = self._invoke_tool(t_name, t_args)
                                     result_str = str(result)
                                     logger.info(
                                         "[Stream Text Tool Result] %s | result=%s",
@@ -1568,9 +1897,7 @@ class ScholarAgent:
                                     if isinstance(tool_args_raw, str)
                                     else tool_args_raw
                                 )
-                                result = self._tools[tool_name](
-                                    **tool_args,
-                                )
+                                result = self._invoke_tool(tool_name, tool_args)
                                 result_str = str(result)
                                 logger.info(
                                     "[Stream Fallback Tool Result] %s | result=%s",

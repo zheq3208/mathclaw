@@ -51,6 +51,10 @@ class SkillInfo(BaseModel):
     scripts: Dict[str, Any] = Field(default_factory=dict)  # nested tree
     requires: Dict[str, Any] = Field(default_factory=dict)
     triggers: List[str] = Field(default_factory=list)
+    categories: List[str] = Field(default_factory=list)
+    generated: bool = False
+    deletable: bool = False
+    created_by: str = ""
 
 
 # ── Frontmatter parsing ───────────────────────────────────────────
@@ -122,6 +126,17 @@ def _normalize_trigger_values(value: Any) -> List[str]:
         seen.add(key)
         deduped.append(v)
     return deduped
+
+
+def _coerce_bool(value: Any) -> bool:
+    """Parse relaxed boolean metadata values from frontmatter."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return False
 
 
 # ── Directory tree helpers ─────────────────────────────────────────
@@ -551,8 +566,9 @@ def delete_skill(name: str) -> bool:
 
     Does NOT delete builtin skills. Also removes from active if present.
     """
-    custom = Path(CUSTOMIZED_SKILLS_DIR) / name
-    active = Path(ACTIVE_SKILLS_DIR) / name
+    canonical_name = _resolve_skill_directory_name(name) or name
+    custom = Path(CUSTOMIZED_SKILLS_DIR) / canonical_name
+    active = Path(ACTIVE_SKILLS_DIR) / canonical_name
 
     deleted = False
     if custom.exists():
@@ -624,6 +640,10 @@ def _read_skill_info(skill_dir: Path, source: str = "builtin") -> SkillInfo:
     content = ""
     requires: Dict[str, Any] = {}
     triggers: List[str] = []
+    categories: List[str] = []
+    generated = False
+    deletable = False
+    created_by = ""
 
     # Try SKILL.md first (primary metadata source)
     skill_md = skill_dir / "SKILL.md"
@@ -644,6 +664,20 @@ def _read_skill_info(skill_dir: Path, source: str = "builtin") -> SkillInfo:
         trigger_values.extend(_normalize_trigger_values(meta.get("keywords")))
         trigger_values.extend(_normalize_trigger_values(meta.get("aliases")))
         triggers = _normalize_trigger_values(trigger_values)
+        category_values: list[str] = []
+        category_values.extend(_normalize_trigger_values(meta.get("categories")))
+        category_values.extend(_normalize_trigger_values(meta.get("category")))
+        metadata = meta.get("metadata") if isinstance(meta.get("metadata"), dict) else {}
+        category_values.extend(_normalize_trigger_values(metadata.get("categories")))
+        categories = _normalize_trigger_values(category_values)
+        generated = _coerce_bool(meta.get("generated", metadata.get("generated")))
+        deletable = _coerce_bool(meta.get("deletable", metadata.get("deletable")))
+        created_by = str(
+            meta.get("created_by")
+            or metadata.get("created_by")
+            or metadata.get("generator")
+            or ""
+        ).strip()
         # Override name from frontmatter if present
         if meta.get("name"):
             name = meta["name"]
@@ -686,4 +720,8 @@ def _read_skill_info(skill_dir: Path, source: str = "builtin") -> SkillInfo:
         scripts=scripts,
         requires=requires,
         triggers=triggers,
+        categories=categories,
+        generated=generated,
+        deletable=deletable,
+        created_by=created_by,
     )

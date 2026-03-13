@@ -112,14 +112,11 @@ class AgentRunner:
             return
         try:
             clients = await self._mcp_manager.get_clients()
-            if not clients:
-                return
-
             fingerprint = self._build_mcp_fingerprint(clients)
             if not force and fingerprint == self._last_mcp_fingerprint:
                 return
 
-            self.agent.register_mcp_clients(clients)
+            await self.agent.register_mcp_clients(clients)
             self._last_mcp_fingerprint = fingerprint
             logger.info("Attached %d MCP client(s) to agent", len(clients))
         except Exception:

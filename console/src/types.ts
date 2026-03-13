@@ -127,6 +127,19 @@ export type SkillItem = {
   path?: string;
   enabled?: boolean;
   description?: string;
+  source?: string;
+  generated?: boolean;
+  deletable?: boolean;
+  created_by?: string;
+  categories?: string[];
+};
+
+export type SkillDraft = {
+  slug: string;
+  title: string;
+  description: string;
+  markdown: string;
+  categories: string[];
 };
 
 export type McpClientItem = {

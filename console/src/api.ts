@@ -10,6 +10,7 @@
   ProviderItem,
   PushMessage,
   SessionItem,
+  SkillDraft,
   SkillItem,
   StreamEvent,
   WorkspaceFileContent,
@@ -517,6 +518,74 @@ export async function disableSkill(skillName: string): Promise<void> {
     body: JSON.stringify({ skill_name: skillName }),
   });
   if (!res.ok) throw new Error("Disable skill failed");
+}
+
+async function readApiError(
+  res: Response,
+  fallback: string,
+): Promise<Error> {
+  try {
+    const data = await res.json();
+    const detail = data?.detail || data?.error;
+    if (typeof detail === "string" && detail.trim()) {
+      return new Error(detail);
+    }
+  } catch {}
+  return new Error(fallback);
+}
+
+export async function previewMarkdownSkills(
+  requirements: string,
+  preferredCount = 2,
+): Promise<SkillDraft[]> {
+  const res = await fetch("/api/skills/preview", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      requirements,
+      preferred_count: preferredCount,
+    }),
+  });
+  if (!res.ok) throw await readApiError(res, "Preview skills failed");
+  const data = await res.json();
+  return Array.isArray(data.drafts) ? data.drafts : [];
+}
+
+export async function createGeneratedSkills(
+  drafts: SkillDraft[],
+): Promise<SkillItem[]> {
+  const res = await fetch("/api/skills/create", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ drafts }),
+  });
+  if (!res.ok) throw await readApiError(res, "Create skills failed");
+  const data = await res.json();
+  return Array.isArray(data.skills) ? data.skills : [];
+}
+
+export async function generateMarkdownSkills(
+  requirements: string,
+  preferredCount = 2,
+): Promise<SkillItem[]> {
+  const res = await fetch("/api/skills/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      requirements,
+      preferred_count: preferredCount,
+    }),
+  });
+  if (!res.ok) throw await readApiError(res, "Generate skills failed");
+  const data = await res.json();
+  return Array.isArray(data.skills) ? data.skills : [];
+}
+
+export async function deleteSkill(skillName: string): Promise<void> {
+  const res = await fetch(`/api/skills/${encodeURIComponent(skillName)}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw await readApiError(res, "Delete skill failed");
 }
 
 export async function getAgentRunningConfig(): Promise<AgentRunningConfig> {
