@@ -133,8 +133,7 @@ class WecomChannel(BaseChannel):
             content_parts=content_parts,
             channel_meta=meta,
         )
-        setattr(request, "channel_meta", meta)
-        return request
+        return self._set_request_channel_meta(request, meta)
 
     def to_handle_from_target(self, *, user_id: str, session_id: str) -> str:
         parts = (session_id or "").split(":", 2)
@@ -173,6 +172,82 @@ class WecomChannel(BaseChannel):
             else getattr(request, "session_id", "")
         ) or f"{self.channel}:{to_handle}"
         return (user_id, session_id)
+
+    @staticmethod
+    def _set_request_channel_meta(
+        request: Any,
+        meta: Dict[str, Any],
+    ) -> Any:
+        if isinstance(request, dict):
+            request["channel_meta"] = meta
+            return request
+        if hasattr(request, "channel_meta"):
+            request.channel_meta = meta
+            return request
+        try:
+            setattr(request, "channel_meta", meta)
+        except Exception:
+            logger.debug("wecom set channel_meta failed", exc_info=True)
+        return request
+
+    @staticmethod
+    def _is_user_text_part(item: Any) -> bool:
+        text = str(getattr(item, "text", "") or "").strip()
+        if not text:
+            return False
+        lowered = text.lower()
+        if lowered in {
+            "[image]",
+            "[voice]",
+            "[file]",
+            "[mixed]",
+        }:
+            return False
+        if lowered.startswith("[image: download failed"):
+            return False
+        if lowered.startswith("[file:"):
+            return False
+        return True
+
+    def _content_has_text(self, contents: List[Any]) -> bool:
+        """Only real user text triggers a model turn for WeCom.
+
+        Pure image/file inputs are buffered until the next text-bearing turn,
+        so the model only sees attachments together with the user's question.
+        """
+        if not contents:
+            return False
+
+        for item in contents:
+            t = getattr(item, "type", None)
+            t_val = (
+                t.value if isinstance(t, ContentType) else str(t) if t else ""
+            ).lower()
+            if t_val == ContentType.TEXT.value and self._is_user_text_part(item):
+                return True
+            if t_val == ContentType.REFUSAL.value:
+                refusal = str(getattr(item, "refusal", "") or "").strip()
+                if refusal:
+                    return True
+        return False
+
+    def merge_native_items(self, items: List[Any]) -> Any:
+        if not items:
+            return None
+        first = items[0] if isinstance(items[0], dict) else {}
+        merged_parts: List[Any] = []
+        for item in items:
+            payload = item if isinstance(item, dict) else {}
+            merged_parts.extend(payload.get("content_parts") or [])
+        last = items[-1] if isinstance(items[-1], dict) else {}
+        return {
+            "channel_id": first.get("channel_id") or self.channel,
+            "sender_id": last.get("sender_id", first.get("sender_id", "")),
+            "user_id": last.get("user_id", first.get("user_id", "")),
+            "session_id": last.get("session_id", first.get("session_id", "")),
+            "content_parts": merged_parts,
+            "meta": dict(last.get("meta") or {}),
+        }
 
     async def _before_consume_process(self, request: Any) -> None:
         meta = getattr(request, "channel_meta", None) or {}
@@ -232,22 +307,35 @@ class WecomChannel(BaseChannel):
         frame = route.get("frame")
         if frame is None and chat_id:
             frame = await self._load_chat_frame(chat_id)
-        if frame is None:
-            logger.warning(
-                "wecom send skipped: no chat frame for to_handle=%s. "
-                "The user must send a fresh inbound message after restart, "
-                "or caller must pass meta['wecom_frame'].",
-                to_handle,
-            )
-            return
 
-        stream_id = self._make_stream_id()
         try:
-            await self._client.reply_stream(
-                frame,
-                stream_id,
-                text.strip(),
-                finish=True,
+            if frame is not None:
+                stream_id = self._make_stream_id()
+                await self._client.reply_stream(
+                    frame,
+                    stream_id,
+                    text.strip(),
+                    finish=True,
+                )
+                return
+
+            send_message = getattr(self._client, "send_message", None)
+            if callable(send_message) and chat_id:
+                result = send_message(
+                    chat_id,
+                    {
+                        "msgtype": "markdown",
+                        "markdown": {"content": text.strip()},
+                    },
+                )
+                if inspect.isawaitable(result):
+                    await result
+                return
+
+            logger.warning(
+                "wecom send skipped: no frame or proactive chat target for "
+                "to_handle=%s.",
+                to_handle,
             )
         except Exception:
             logger.exception("wecom send failed")
@@ -392,10 +480,8 @@ class WecomChannel(BaseChannel):
             "content_parts": content_parts,
             "meta": meta,
         }
-        request = self.build_agent_request_from_native(native)
-        setattr(request, "channel_meta", meta)
         if self._enqueue is not None:
-            self._enqueue(request)
+            self._enqueue(native)
 
     async def _build_content_parts(
         self,
@@ -460,6 +546,37 @@ class WecomChannel(BaseChannel):
                     ).strip()
                     if text:
                         text_bits.append(text)
+                elif item_type == "image":
+                    url_or_path = await self._download_media_from_payload(
+                        item.get("image") or {},
+                        "image",
+                    )
+                    if url_or_path:
+                        parts.append(
+                            ImageContent(
+                                type=ContentType.IMAGE,
+                                image_url=url_or_path,
+                            ),
+                        )
+                    else:
+                        text_bits.append("[image: download failed]")
+                elif item_type == "file":
+                    file_info = item.get("file") or {}
+                    url_or_path = await self._download_media_from_payload(
+                        file_info,
+                        "file",
+                        filename=file_info.get("name"),
+                    )
+                    if url_or_path:
+                        parts.append(
+                            FileContent(
+                                type=ContentType.FILE,
+                                file_url=url_or_path,
+                            ),
+                        )
+                    else:
+                        name = file_info.get("name") or "unknown"
+                        text_bits.append(f"[file: {name}]")
                 else:
                     text_bits.append(
                         _MSG_TYPE_LABELS.get(item_type, f"[{item_type}]"),

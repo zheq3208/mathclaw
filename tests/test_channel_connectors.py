@@ -18,9 +18,13 @@ async def _noop_process(request):
 class _FakeWecomClient:
     def __init__(self):
         self.calls = []
+        self.sent = []
 
     async def reply_stream(self, frame, stream_id, content, finish=True):
         self.calls.append((frame, stream_id, content, finish))
+
+    async def send_message(self, chatid, body):
+        self.sent.append((chatid, body))
 
 
 def test_runtime_config_recognizes_top_level_wecom():
@@ -266,6 +270,178 @@ def test_manager_stream_query_forwards_local_image_parts_as_attachments(tmp_path
     assert attachments[0]["name"] == "paper.png"
 
 
+def test_wecom_dict_request_keeps_channel_meta():
+    channel = WecomChannel(
+        process=_noop_process,
+        enabled=False,
+        bot_id="",
+        secret="",
+    )
+
+    request = channel.build_agent_request_from_native(
+        {
+            "channel_id": "wecom",
+            "sender_id": "user-1",
+            "content_parts": [TextContent(text="hello")],
+            "meta": {
+                "wecom_chat_id": "chat-1",
+                "wecom_chat_type": "single",
+            },
+        },
+    )
+
+    assert isinstance(request, dict)
+    assert request["channel_meta"]["wecom_chat_id"] == "chat-1"
+
+
+def test_wecom_buffers_image_only_until_next_text_message(tmp_path):
+    seen_requests = []
+
+    async def _capture_process(request):
+        seen_requests.append(request)
+        yield SimpleNamespace(
+            object="response",
+            status="completed",
+            type="response",
+            error=None,
+        )
+
+    channel = WecomChannel(
+        process=_capture_process,
+        enabled=False,
+        bot_id="",
+        secret="",
+    )
+
+    image_path = (tmp_path / "wecom-question-1.png").resolve()
+    image_path.write_bytes(b"fake-image-1")
+    image_payload = {
+        "channel_id": "wecom",
+        "sender_id": "user-1",
+        "session_id": "wecom:single:chat-1",
+        "content_parts": [ImageContent(image_url=str(image_path))],
+        "meta": {
+            "wecom_chat_id": "chat-1",
+            "wecom_chat_type": "single",
+        },
+    }
+    asyncio.run(channel.consume_one(image_payload))
+
+    assert seen_requests == []
+    pending = channel._pending_content_by_session["wecom:single:chat-1"]
+    assert len(pending) == 1
+    assert isinstance(pending[0], ImageContent)
+
+    text_payload = {
+        "channel_id": "wecom",
+        "sender_id": "user-1",
+        "session_id": "wecom:single:chat-1",
+        "content_parts": [TextContent(text="describe both images")],
+        "meta": {
+            "wecom_chat_id": "chat-1",
+            "wecom_chat_type": "single",
+        },
+    }
+    asyncio.run(channel.consume_one(text_payload))
+
+    assert len(seen_requests) == 1
+    merged_input = seen_requests[0]["input"][0]["content"]
+    assert isinstance(merged_input[0], ImageContent)
+    assert merged_input[0].image_url == str(image_path)
+    assert isinstance(merged_input[1], TextContent)
+    assert merged_input[1].text == "describe both images"
+    assert "wecom:single:chat-1" not in channel._pending_content_by_session
+
+
+def test_wecom_mixed_message_keeps_multiple_images(tmp_path):
+    channel = WecomChannel(
+        process=_noop_process,
+        enabled=False,
+        bot_id="",
+        secret="",
+    )
+
+    image_one = (tmp_path / "mixed-1.png").resolve()
+    image_two = (tmp_path / "mixed-2.png").resolve()
+    image_one.write_bytes(b"img-1")
+    image_two.write_bytes(b"img-2")
+
+    async def _fake_download(payload, media_type, *, filename=None):
+        url = str((payload or {}).get("url") or "")
+        if url.endswith("1"):
+            return str(image_one)
+        if url.endswith("2"):
+            return str(image_two)
+        return None
+
+    channel._download_media_from_payload = _fake_download  # type: ignore[method-assign]
+
+    parts = asyncio.run(
+        channel._build_content_parts(
+            {
+                "mixed": {
+                    "item": [
+                        {
+                            "type": "image",
+                            "image": {"url": "image-1", "aeskey": "k1"},
+                        },
+                        {
+                            "type": "text",
+                            "text": {"content": "describe the figures"},
+                        },
+                        {
+                            "type": "image",
+                            "image": {"url": "image-2", "aeskey": "k2"},
+                        },
+                    ]
+                }
+            },
+            "mixed",
+        )
+    )
+
+    assert isinstance(parts[0], TextContent)
+    assert parts[0].text == "describe the figures"
+    image_parts = [part for part in parts if isinstance(part, ImageContent)]
+    assert [part.image_url for part in image_parts] == [
+        str(image_one),
+        str(image_two),
+    ]
+
+
+def test_wecom_process_message_enqueues_native_payload():
+    captured = []
+
+    async def _fake_build_content_parts(body, msg_type):
+        return [TextContent(text="hello")]
+
+    channel = WecomChannel(
+        process=_noop_process,
+        enabled=False,
+        bot_id="",
+        secret="",
+    )
+    channel._build_content_parts = _fake_build_content_parts  # type: ignore[method-assign]
+    channel._enqueue = captured.append
+
+    frame = {
+        "body": {
+            "msgid": "msg-1",
+            "chattype": "single",
+            "chatid": "chat-1",
+            "from": {"userid": "user-1"},
+        }
+    }
+
+    asyncio.run(channel._process_message(frame, "text"))
+
+    assert len(captured) == 1
+    payload = captured[0]
+    assert payload["session_id"] == "wecom:single:chat-1"
+    assert payload["meta"]["wecom_chat_id"] == "chat-1"
+    assert isinstance(payload["content_parts"][0], TextContent)
+
+
 def test_wecom_send_uses_cached_frame_by_chat():
     async def _run() -> None:
         channel = WecomChannel(
@@ -282,6 +458,32 @@ def test_wecom_send_uses_cached_frame_by_chat():
         await channel.send("wecom:chat:chat-1", "hello")
 
         assert channel._client.calls == [(frame, "stream-001", "hello", True)]
+
+    asyncio.run(_run())
+
+
+def test_wecom_send_falls_back_to_proactive_send_message():
+    async def _run() -> None:
+        channel = WecomChannel(
+            process=_noop_process,
+            enabled=True,
+            bot_id="bot",
+            secret="secret",
+        )
+        channel._client = _FakeWecomClient()
+
+        await channel.send("wecom:chat:chat-2", "hello proactive")
+
+        assert channel._client.calls == []
+        assert channel._client.sent == [
+            (
+                "chat-2",
+                {
+                    "msgtype": "markdown",
+                    "markdown": {"content": "hello proactive"},
+                },
+            )
+        ]
 
     asyncio.run(_run())
 

@@ -16,6 +16,7 @@ _SECRET_FIELDS = {
     "bot_token",
     "client_secret",
     "app_secret",
+    "secret",
     "http_proxy_auth",
     "api_key",
     "twilio_auth_token",
@@ -29,6 +30,7 @@ _ALL_CHANNEL_NAMES = {
     "feishu": "Feishu",
     "imessage": "iMessage",
     "qq": "QQ",
+    "wecom": "WeCom",
     "voice": "Voice",
 }
 
@@ -241,6 +243,38 @@ def _configure_telegram(current: dict) -> dict:
     return current
 
 
+def _configure_wecom(current: dict) -> dict:
+    click.echo("\n=== Configure WeCom Channel ===")
+    current["enabled"] = prompt_confirm(
+        "Enable WeCom?",
+        default=current.get("enabled", False),
+    )
+    if not current["enabled"]:
+        return current
+    current["bot_prefix"] = click.prompt(
+        "Bot prefix",
+        default=current.get("bot_prefix", ""),
+        type=str,
+    )
+    current["bot_id"] = click.prompt(
+        "WeCom Bot ID",
+        default=current.get("bot_id", ""),
+        type=str,
+    )
+    current["secret"] = click.prompt(
+        "WeCom Bot Secret",
+        default=current.get("secret", ""),
+        hide_input=True,
+        type=str,
+    )
+    current["welcome_message"] = click.prompt(
+        "Welcome message (optional)",
+        default=current.get("welcome_message", ""),
+        type=str,
+    )
+    return current
+
+
 def _configure_voice(current: dict) -> dict:
     click.echo("\n=== Configure Voice Channel (Twilio) ===")
     current["enabled"] = prompt_confirm(
@@ -299,6 +333,7 @@ _CHANNEL_CONFIGURATORS = {
     "feishu": ("Feishu", _configure_feishu),
     "imessage": ("iMessage", lambda c: _configure_generic("iMessage", c)),
     "qq": ("QQ", lambda c: _configure_generic("QQ", c)),
+    "wecom": ("WeCom", _configure_wecom),
     "voice": ("Voice", _configure_voice),
 }
 
