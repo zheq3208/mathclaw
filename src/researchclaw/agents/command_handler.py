@@ -1,7 +1,7 @@
 """System command handler for ScholarAgent.
 
 Processes ``/``-prefixed commands such as ``/new``, ``/compact``, ``/clear``,
-``/history``, ``/papers``, ``/refs``.
+``/history``, ``/skills``, ``/help``.
 """
 
 from __future__ import annotations
@@ -26,8 +26,7 @@ class CommandHandler:
     /clear             Clear all history and summaries
     /history           Show conversation statistics
     /compact_str       Show current compact summary
-    /papers            List recently discussed papers
-    /refs              Show current reference library summary
+    /skills            Show active skills and selection debug
     /help              Show available commands
     """
 
@@ -40,8 +39,6 @@ class CommandHandler:
             "/clear": self._cmd_clear,
             "/history": self._cmd_history,
             "/compact_str": self._cmd_compact_str,
-            "/papers": self._cmd_papers,
-            "/refs": self._cmd_refs,
             "/skills": self._cmd_skills,
             "/help": self._cmd_help,
         }
@@ -125,9 +122,9 @@ class CommandHandler:
         """Start a new conversation."""
         self.agent.memory.new_session()
         return (
-            "🔬 Started a new research session.\n\n"
+            "Started a new session.\n\n"
             "Previous conversation has been archived. "
-            "How can I help with your research today?"
+            "What would you like to work on next?"
         )
 
     def _cmd_compact(self, args: str) -> str:
@@ -156,8 +153,7 @@ class CommandHandler:
             f"- Session messages: {stats['message_count']}\n"
             f"- Total sessions: {stats['session_count']}\n"
             f"- Has compact summary: {'Yes' if stats['has_summary'] else 'No'}\n"
-            f"- Research notes: {stats.get('note_count', 0)}\n"
-            f"- Papers discussed: {stats.get('paper_count', 0)}"
+            f"- Saved notes: {stats.get('note_count', 0)}"
         )
 
     def _cmd_compact_str(self, args: str) -> str:
@@ -166,53 +162,6 @@ class CommandHandler:
         if not summary:
             return "No compact summary available yet."
         return f"📋 **Current compact summary:**\n\n{summary}"
-
-    def _cmd_papers(self, args: str) -> str:
-        """List recently discussed papers."""
-        papers = self.agent.memory.get_discussed_papers()
-        if not papers:
-            return "No papers have been discussed in this session yet."
-
-        lines = ["📄 **Recently discussed papers:**\n"]
-        for i, paper in enumerate(papers, 1):
-            title = paper.get("title", "Untitled")
-            authors = ", ".join(paper.get("authors", [])[:3])
-            year = paper.get("year", "")
-            lines.append(f"{i}. **{title}** ({authors}, {year})")
-
-        return "\n".join(lines)
-
-    def _cmd_refs(self, args: str) -> str:
-        """Show reference library summary."""
-        try:
-            from ..constant import REFERENCES_DIR
-            from pathlib import Path
-
-            refs_dir = Path(REFERENCES_DIR)
-            bib_files = (
-                list(refs_dir.glob("*.bib")) if refs_dir.exists() else []
-            )
-
-            if not bib_files:
-                return (
-                    "📚 No reference library found.\n\n"
-                    "Use `bibtex_add_entry` or search for papers to start building "
-                    "your library."
-                )
-
-            total_entries = 0
-            for bib_file in bib_files:
-                content = bib_file.read_text(encoding="utf-8")
-                total_entries += content.count("@")
-
-            return (
-                f"📚 **Reference Library**\n\n"
-                f"- BibTeX files: {len(bib_files)}\n"
-                f"- Total entries: ~{total_entries}\n"
-                f"- Location: `{refs_dir}`"
-            )
-        except Exception:
-            return "⚠️ Could not read reference library."
 
     def _cmd_skills(self, args: str) -> str:
         """Show active skills and optional selection debug."""
@@ -288,12 +237,10 @@ class CommandHandler:
             "🔬 **Available Commands**\n\n"
             "| Command | Description |\n"
             "|---------|-------------|\n"
-            "| `/new` | Start a new research session |\n"
+            "| `/new` | Start a new session |\n"
             "| `/compact` | Compress conversation memory |\n"
             "| `/clear` | Clear all history |\n"
             "| `/history` | Show conversation statistics |\n"
-            "| `/papers` | List recently discussed papers |\n"
-            "| `/refs` | Show reference library summary |\n"
             "| `/skills` | List active skills |\n"
             "| `/skills debug [query]` | Show skill routing debug info |\n"
             "| `/compact_str` | Show current memory summary |\n"

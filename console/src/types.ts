@@ -124,6 +124,7 @@ export type EnvItem = {
 
 export type SkillItem = {
   name?: string;
+  path?: string;
   enabled?: boolean;
   description?: string;
 };

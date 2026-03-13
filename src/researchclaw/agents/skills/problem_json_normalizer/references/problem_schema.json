@@ -1,0 +1,9 @@
+{
+  "problem_text": "string",
+  "formula_expressions": ["string"],
+  "givens": ["string"],
+  "target": "string",
+  "question_type": "algebra|geometry|function|statistics|number_theory|other",
+  "ocr_confidence": "number|null",
+  "source_regions": [{"page": 1, "bbox": [0, 0, 0, 0], "note": "string"}]
+}

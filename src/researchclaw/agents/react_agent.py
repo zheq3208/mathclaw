@@ -135,13 +135,7 @@ class ScholarAgent:
     # 鈹€鈹€ Tool registration 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
 
     def _register_builtin_tools(self) -> None:
-        """Register all built-in research tools."""
-        from .tools.arxiv_search import arxiv_search
-        from .tools.bibtex_manager import (
-            bibtex_add_entry,
-            bibtex_export,
-            bibtex_search,
-        )
+        """Register all built-in runtime tools."""
         from .tools.browser_control import browse_url, browser_use
         from .tools.data_analysis import (
             data_describe,
@@ -167,7 +161,6 @@ class ScholarAgent:
         from .tools.latex_helper import latex_compile_check, latex_template
         from .tools.memory_search import memory_search
         from .tools.paper_reader import read_paper
-        from .tools.semantic_scholar import semantic_scholar_search
         from .tools.send_file import send_file
         from .tools.copaw_compat import (
             execute_shell_command,
@@ -177,13 +170,8 @@ class ScholarAgent:
         from .tools.shell import run_shell
 
         builtin = {
-            # Research tools
-            "arxiv_search": arxiv_search,
-            "semantic_scholar_search": semantic_scholar_search,
+            # Document and formatting tools
             "read_paper": read_paper,
-            "bibtex_search": bibtex_search,
-            "bibtex_add_entry": bibtex_add_entry,
-            "bibtex_export": bibtex_export,
             "latex_template": latex_template,
             "latex_compile_check": latex_compile_check,
             # Data analysis
@@ -452,7 +440,8 @@ class ScholarAgent:
         if changed:
             self._tool_schemas = self._build_tool_schemas()
 
-    # 鈹€鈹€ Reply 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+    # 鈹€鈹€ Reply 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
+
     @staticmethod
     def _normalize_attachments(
         attachments: Any,

@@ -28,6 +28,16 @@ def _resolve_base_url(base_url: str) -> str:
     return f"http://{host}:{port}"
 
 
+def _candidate_base_urls(base_url: str) -> list[str]:
+    primary = _resolve_base_url(base_url)
+    candidates = [primary]
+    if not (base_url or "").strip():
+        for fallback in ("http://127.0.0.1:6006", "http://127.0.0.1:8088"):
+            if fallback not in candidates:
+                candidates.append(fallback)
+    return candidates
+
+
 def _http_request(
     method: str,
     path: str,
@@ -35,31 +45,36 @@ def _http_request(
     base_url: str = "",
     payload: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    url_base = _resolve_base_url(base_url)
-    try:
-        with httpx.Client(base_url=url_base, timeout=30.0) as cli:
-            res = cli.request(method=method.upper(), url=path, json=payload)
-    except Exception as e:
-        return {"ok": False, "error": f"Request failed: {e}"}
+    last_error: dict[str, Any] | None = None
+    for url_base in _candidate_base_urls(base_url):
+        try:
+            with httpx.Client(base_url=url_base, timeout=30.0) as cli:
+                res = cli.request(method=method.upper(), url=path, json=payload)
+        except Exception as e:
+            last_error = {"ok": False, "error": f"Request failed: {e}", "base_url": url_base}
+            continue
 
-    try:
-        data = res.json()
-    except Exception:
-        data = {"raw": res.text}
+        try:
+            data = res.json()
+        except Exception:
+            data = {"raw": res.text}
 
-    if res.status_code >= 400:
-        detail = (
-            data.get("detail")
-            if isinstance(data, dict)
-            else str(data)
-        )
-        return {
-            "ok": False,
-            "status_code": res.status_code,
-            "error": f"HTTP {res.status_code}: {detail}",
-            "data": data,
-        }
-    return {"ok": True, "status_code": res.status_code, "data": data}
+        if res.status_code >= 400:
+            detail = (
+                data.get("detail")
+                if isinstance(data, dict)
+                else str(data)
+            )
+            return {
+                "ok": False,
+                "status_code": res.status_code,
+                "error": f"HTTP {res.status_code}: {detail}",
+                "data": data,
+                "base_url": url_base,
+            }
+        return {"ok": True, "status_code": res.status_code, "data": data, "base_url": url_base}
+
+    return last_error or {"ok": False, "error": "Request failed: no reachable base URL"}
 
 
 def cron_list_jobs(base_url: str = "") -> dict[str, Any]:

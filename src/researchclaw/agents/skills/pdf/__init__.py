@@ -1,8 +1,8 @@
-"""PDF skill – advanced PDF processing and text extraction."""
+"""PDF skill – math-oriented PDF intake."""
 
 
 def register():
-    """Register PDF tools."""
-    from ...tools.paper_reader import read_paper
+    """Register math PDF tools."""
+    from ...tools.math_input import read_pdf_document
 
-    return {"read_paper": read_paper}
+    return {"read_pdf_document": read_pdf_document}

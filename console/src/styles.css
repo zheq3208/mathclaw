@@ -655,6 +655,37 @@ textarea::placeholder {
   transform: translateX(20px);
 }
 
+.skill-name {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.skill-state-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 10px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.skill-state-pill.is-on {
+  background: var(--success-bg);
+  color: #15803d;
+}
+.skill-state-pill.is-off {
+  background: var(--slate-100);
+  color: var(--slate-600);
+}
+.skills-toggle input:checked + .toggle-track {
+  background: var(--success-bg);
+}
+.skills-toggle input:checked + .toggle-track::after {
+  box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.18), var(--shadow-xs);
+}
+
 /* ---------- Badge ---------- */
 .badge {
   display: inline-flex;

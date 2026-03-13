@@ -243,7 +243,10 @@ def list_available_skills() -> List[SkillInfo]:
             if d.is_dir() and not d.name.startswith((".", "_"))
         }
         for name in skills:
-            skills[name].enabled = name in active_names
+            canonical_name = Path(skills[name].path).name or name
+            skills[name].enabled = (
+                name in active_names or canonical_name in active_names
+            )
 
     return sorted(skills.values(), key=lambda s: s.name)
 
@@ -258,6 +261,32 @@ def list_active_skills() -> List[str]:
         for d in active_dir.iterdir()
         if d.is_dir() and not d.name.startswith((".", "_"))
     )
+
+
+def _resolve_skill_directory_name(name: str) -> Optional[str]:
+    """Resolve a skill's directory name from either its folder or SKILL.md name."""
+    target = (name or "").strip()
+    if not target:
+        return None
+
+    candidates = [
+        Path(CUSTOMIZED_SKILLS_DIR),
+        _BUILTIN_SKILLS_DIR,
+        Path(ACTIVE_SKILLS_DIR),
+    ]
+    for base_dir in candidates:
+        if not base_dir.is_dir():
+            continue
+        direct = base_dir / target
+        if direct.is_dir():
+            return target
+        for skill_dir in base_dir.iterdir():
+            if not skill_dir.is_dir() or skill_dir.name.startswith((".", "_")):
+                continue
+            info = _read_skill_info(skill_dir, source="builtin")
+            if info.name == target:
+                return skill_dir.name
+    return None
 
 
 def sync_skills_to_working_dir(
@@ -492,13 +521,14 @@ def ensure_skills_initialized() -> None:
 
 def enable_skill(name: str) -> bool:
     """Enable a skill by copying it to the active directory."""
+    canonical_name = _resolve_skill_directory_name(name) or name
     sources = [
-        Path(CUSTOMIZED_SKILLS_DIR) / name,
-        _BUILTIN_SKILLS_DIR / name,
+        Path(CUSTOMIZED_SKILLS_DIR) / canonical_name,
+        _BUILTIN_SKILLS_DIR / canonical_name,
     ]
     for source in sources:
         if source.is_dir():
-            dest = Path(ACTIVE_SKILLS_DIR) / name
+            dest = Path(ACTIVE_SKILLS_DIR) / canonical_name
             if dest.exists():
                 shutil.rmtree(dest)
             shutil.copytree(source, dest)
@@ -508,7 +538,8 @@ def enable_skill(name: str) -> bool:
 
 def disable_skill(name: str) -> bool:
     """Disable a skill by removing it from the active directory."""
-    dest = Path(ACTIVE_SKILLS_DIR) / name
+    canonical_name = _resolve_skill_directory_name(name) or name
+    dest = Path(ACTIVE_SKILLS_DIR) / canonical_name
     if dest.exists():
         shutil.rmtree(dest)
         return True

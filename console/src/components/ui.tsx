@@ -58,13 +58,16 @@ export function Toggle({
   checked,
   onChange,
   disabled = false,
+  className = "",
 }: {
   checked: boolean;
   onChange: (checked: boolean) => void;
   disabled?: boolean;
+  className?: string;
 }) {
+  const classes = ["toggle", className].filter(Boolean).join(" ");
   return (
-    <label className="toggle">
+    <label className={classes}>
       <input
         type="checkbox"
         checked={checked}

@@ -264,9 +264,11 @@ def _rank_skills(
         for token in matched:
             df = max(1, doc_freq.get(token, 1))
             weight += 1.0 / float(df)
+        if skill.executable:
+            weight += 0.35
         weighted.append((weight, skill, set(matched), "keywords"))
 
-    weighted.sort(key=lambda x: x[0], reverse=True)
+    weighted.sort(key=lambda x: (x[0], 1 if x[1].executable else 0), reverse=True)
     if not weighted:
         return []
 
@@ -341,7 +343,10 @@ def build_skill_context_prompt(
         "These skills come from active SKILL.md files (CoPaw/OpenClaw style).",
     )
     lines.append(
-        "Use them as operational playbooks; then call concrete tools to execute.",
+        "Use them as operational playbooks; prefer executable math skills first, then call concrete tools to execute.",
+    )
+    lines.append(
+        "When a selected skill exposes tools, use those tools before generic utilities like read_file or browser_use.",
     )
     lines.append("")
     lines.append("Available skills:")

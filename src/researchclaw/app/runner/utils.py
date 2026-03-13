@@ -53,9 +53,18 @@ def build_env_context(
             "  2. When using write_file to write files, if worried about "
             "overwriting existing content, use read_file first to check, "
             "then use edit_file for partial updates or appending.\n"
-            "  3. For research tasks, prefer using arxiv_search and "
-            "semantic_scholar tools over general web search.\n"
-            "  4. When citing papers, always include proper BibTeX entries.",
+            "  3. For math tasks, first normalize the input with tools such as "
+            "extract_math_document, inspect_math_media, or normalize_problem_json.\n"
+            "  4. Before trusting a math answer, use exact-check tools such as "
+            "sympy_solve_equation, sympy_check_equivalence, or verify_math_solution.\n"
+            "  5. In tutoring mode, prefer guided tools such as "
+            "plan_guided_explanation, generate_socratic_turn, and choose_hint_level.\n"
+            "  6. After solving, map weak points and update long-term learning state with "
+            "diagnose_math_weakness, extract_math_knowledge, and update_math_mastery.\n"
+            "  7. Before ending a teaching turn, prefer using generate_micro_quiz and "
+            "grade_micro_quiz to check whether the student can solve 2-3 short items independently.\n"
+            "  8. When the user wants spaced review, use schedule_review_reminder, "
+            "list_review_reminders, or cancel_review_reminder instead of only suggesting reminders.",
         )
 
     return (

@@ -1,0 +1,8 @@
+{
+  "knowledge_point": "string",
+  "before_score": 0.0,
+  "after_score": 0.0,
+  "evidence": ["solved", "hinted", "failed", "micro_quiz_passed", "micro_quiz_failed"],
+  "next_review_at": "ISO8601 string",
+  "retain_in_wrong_book": true
+}
