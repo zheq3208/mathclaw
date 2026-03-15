@@ -1,0 +1,30 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "Solver A",
+      "verdict": "pass",
+      "strengths": [
+        "Clear step-by-step algebraic solution",
+        "Correct solution"
+      ],
+      "issues": [],
+      "first_conflicting_step": ""
+    },
+    {
+      "solver_role": "Solver B",
+      "verdict": "pass",
+      "strengths": [
+        "Addresses the ambiguity in the problem statement",
+        "Includes verification step for robustness",
+        "Correct solution"
+      ],
+      "issues": [],
+      "first_conflicting_step": ""
+    }
+  ],
+  "consensus_answer": "2",
+  "consensus_expression": "2",
+  "conflict_summary": [],
+  "recommended_winner": "Solver B",
+  "revision_needed": false
+}

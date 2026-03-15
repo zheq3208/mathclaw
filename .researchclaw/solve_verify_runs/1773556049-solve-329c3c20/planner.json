@@ -1,0 +1,18 @@
+{
+  "problem_summary": "用户请求批改试卷，但未提供具体题目内容及答案",
+  "givens": [],
+  "target": "批改我的试卷",
+  "question_type": "其他题型",
+  "candidate_methods": [],
+  "exact_check_targets": {
+    "equation": "无",
+    "expressions": [],
+    "answer_format": "无"
+  },
+  "risks": [
+    "题目信息缺失，无法确定具体问题",
+    "依赖试卷图像或版面信息未提供"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": true
+}

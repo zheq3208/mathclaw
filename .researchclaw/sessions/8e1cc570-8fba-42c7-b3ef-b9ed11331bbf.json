@@ -1,0 +1,18 @@
+{
+  "session_id": "8e1cc570-8fba-42c7-b3ef-b9ed11331bbf",
+  "title": "New Research Chat",
+  "created_at": 1773081042.8254724,
+  "updated_at": 1773081052.7319486,
+  "messages": [
+    {
+      "role": "user",
+      "content": "你是谁",
+      "timestamp": 1773081042.8256223
+    },
+    {
+      "role": "assistant",
+      "content": "你好！我是 ResearchClaw，一个专注于研究工作的 AI 助手。我的核心原则是 **结果导向**，帮助推进研究任务并产出具体成果。\n\n我看到你的工作空间还有一些配置文件需要完善（SOUL.md、AGENTS.md、HEARTBEAT.md）。这些文件定义了我在这个工作空间中的行为方式、记忆机制和定期检查任务。\n\n让我先帮你完善这些基础配置文件，然后我们就可以开始正常的研究工作了。你想先完善哪个文件？\n\n1. **SOUL.md** - 定义我的核心原则和工作风格\n2. **AGENTS.md** - 定义我的行为准则和工具使用规范  \n3. **HEARTBEAT.md** - 定义定期检查的任务列表\n4. **PROFILE.md** - 你的个人研究档案（这个已经有了基础框架）\n\n建议按照 SOUL.md → AGENTS.md → HEARTBEAT.md 的顺序来完成。需要我帮你逐个完善这些文件吗？",
+      "timestamp": 1773081052.7319434
+    }
+  ]
+}

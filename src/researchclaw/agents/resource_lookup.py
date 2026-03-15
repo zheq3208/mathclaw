@@ -8,7 +8,7 @@ import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlunparse
 
 from ..constant import WORKING_DIR
 
@@ -163,6 +163,28 @@ _GENERIC_COLLECTION_TERMS = (
 )
 
 
+_LOCATION_TERMS = (
+    "\u5317\u4eac\u5e02", "\u5929\u6d25\u5e02", "\u4e0a\u6d77\u5e02", "\u91cd\u5e86\u5e02",
+    "\u6cb3\u5317\u7701", "\u5c71\u897f\u7701", "\u8fbd\u5b81\u7701", "\u5409\u6797\u7701", "\u9ed1\u9f99\u6c5f\u7701",
+    "\u6c5f\u82cf\u7701", "\u6d59\u6c5f\u7701", "\u5b89\u5fbd\u7701", "\u798f\u5efa\u7701", "\u6c5f\u897f\u7701",
+    "\u5c71\u4e1c\u7701", "\u6cb3\u5357\u7701", "\u6e56\u5317\u7701", "\u6e56\u5357\u7701", "\u5e7f\u4e1c\u7701",
+    "\u6d77\u5357\u7701", "\u56db\u5ddd\u7701", "\u8d35\u5dde\u7701", "\u4e91\u5357\u7701", "\u9655\u897f\u7701",
+    "\u7518\u8083\u7701", "\u9752\u6d77\u7701", "\u53f0\u6e7e\u7701", "\u5e7f\u897f\u58ee\u65cf\u81ea\u6cbb\u533a",
+    "\u5185\u8499\u53e4\u81ea\u6cbb\u533a", "\u897f\u85cf\u81ea\u6cbb\u533a", "\u5b81\u590f\u56de\u65cf\u81ea\u6cbb\u533a",
+    "\u65b0\u7586\u7ef4\u543e\u5c14\u81ea\u6cbb\u533a",
+    "\u5317\u4eac", "\u5929\u6d25", "\u4e0a\u6d77", "\u91cd\u5e86", "\u6cb3\u5317", "\u5c71\u897f", "\u8fbd\u5b81", "\u5409\u6797", "\u9ed1\u9f99\u6c5f",
+    "\u6c5f\u82cf", "\u6d59\u6c5f", "\u5b89\u5fbd", "\u798f\u5efa", "\u6c5f\u897f", "\u5c71\u4e1c", "\u6cb3\u5357", "\u6e56\u5317",
+    "\u6e56\u5357", "\u5e7f\u4e1c", "\u5e7f\u897f", "\u6d77\u5357", "\u56db\u5ddd", "\u8d35\u5dde", "\u4e91\u5357", "\u9655\u897f",
+    "\u7518\u8083", "\u9752\u6d77", "\u5185\u8499\u53e4", "\u897f\u85cf", "\u5b81\u590f", "\u65b0\u7586",
+    "\u5e7f\u5dde\u5e02", "\u6df1\u5733\u5e02", "\u676d\u5dde\u5e02", "\u5357\u4eac\u5e02", "\u6b66\u6c49\u5e02",
+)
+
+
+def _extract_location_terms(text: str) -> tuple[str, ...]:
+    found = [term for term in _LOCATION_TERMS if term in text]
+    return tuple(sorted(set(found), key=len, reverse=True))
+
+
 @dataclass(slots=True)
 class ResourceQueryContext:
     raw_text: str
@@ -183,6 +205,41 @@ class RankedResourceResult:
     score: int
     source_host: str
     matched_terms: tuple[str, ...]
+
+
+def _canonicalize_url(url: str) -> str:
+    parsed = urlparse(url.strip())
+    scheme = (parsed.scheme or "https").lower()
+    netloc = parsed.netloc.lower()
+    path = parsed.path.rstrip("/") or "/"
+    return urlunparse((scheme, netloc, path, "", "", ""))
+
+
+def _select_diverse_results(
+    results: list[RankedResourceResult],
+    *,
+    limit: int = 3,
+    max_per_host: int = 1,
+) -> list[RankedResourceResult]:
+    selected: list[RankedResourceResult] = []
+    host_counts: dict[str, int] = {}
+
+    for item in results:
+        host = item.source_host.lower()
+        if host_counts.get(host, 0) >= max_per_host:
+            continue
+        selected.append(item)
+        host_counts[host] = host_counts.get(host, 0) + 1
+        if len(selected) >= limit:
+            return selected
+
+    for item in results:
+        if item in selected:
+            continue
+        selected.append(item)
+        if len(selected) >= limit:
+            break
+    return selected
 
 
 def _normalize_text(text: str) -> str:
@@ -222,8 +279,6 @@ def build_resource_query_context(text: str) -> ResourceQueryContext | None:
     has_year = _YEAR_RE.search(normalized) is not None
 
     if not resource_types:
-        return None
-    if not has_math and not has_exam_context:
         return None
     if not has_search_intent and not (has_exam_context or has_year or topic_terms):
         return None
@@ -276,16 +331,20 @@ def rank_resource_results(
 ) -> list[RankedResourceResult]:
     ranked: list[RankedResourceResult] = []
     seen: set[str] = set()
+    query_locations = _extract_location_terms(context.normalized_text)
 
     for item in raw_results:
         title = str(item.get("title") or "").strip()
         url = str(item.get("url") or "").strip()
         snippet = str(item.get("content") or item.get("raw_content") or "").strip()
-        if not title or not url or url in seen:
+        if not title or not url:
             continue
-        seen.add(url)
+        canonical_url = _canonicalize_url(url)
+        if canonical_url in seen:
+            continue
+        seen.add(canonical_url)
 
-        haystack = "\n".join((title, snippet, url)).lower()
+        haystack = "\n".join((title, snippet, canonical_url)).lower()
         title_lower = title.lower()
         url_lower = url.lower()
         score = 0
@@ -297,6 +356,26 @@ def rank_resource_results(
                 matches.append(context.year)
             elif _YEAR_RE.search(haystack):
                 score -= 8
+
+        if query_locations:
+            location_title_hits = [
+                term for term in query_locations if term in title_lower or term in url_lower
+            ]
+            location_body_hits = [
+                term for term in query_locations
+                if term in haystack and term not in location_title_hits
+            ]
+            result_title_locations = _extract_location_terms(title_lower)
+            if location_title_hits:
+                score += 24 + 8 * (len(location_title_hits) - 1)
+                matches.extend(location_title_hits)
+            elif location_body_hits:
+                score += 4
+                matches.extend(location_body_hits)
+            else:
+                score -= 12
+            if result_title_locations and not set(result_title_locations).intersection(query_locations):
+                score -= 16
 
         if "\u6570\u5b66" in haystack or "math" in haystack:
             score += 16
@@ -400,10 +479,10 @@ def rank_resource_results(
         ranked.append(
             RankedResourceResult(
                 title=title,
-                url=url,
+                url=canonical_url,
                 snippet=snippet,
                 score=score,
-                source_host=urlparse(url).netloc or "unknown",
+                source_host=urlparse(canonical_url).netloc or "unknown",
                 matched_terms=tuple(sorted(set(matches))),
             ),
         )
@@ -510,7 +589,9 @@ def format_resource_lookup_response(
     if excerpt:
         lines.append(f"\u9996\u6761\u7ed3\u679c\u6458\u8981\uff1a{excerpt}")
 
-    for idx, item in enumerate(results[:3], 1):
+    display_results = _select_diverse_results(results, limit=3, max_per_host=1)
+
+    for idx, item in enumerate(display_results, 1):
         lines.append(f"{idx}. {item.title}")
         lines.append(f"\u6765\u6e90\uff1a{item.source_host}")
         lines.append(f"\u94fe\u63a5\uff1a{item.url}")

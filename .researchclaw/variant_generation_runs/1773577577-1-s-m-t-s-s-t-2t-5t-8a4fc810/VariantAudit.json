@@ -1,0 +1,50 @@
+{
+  "problem_text": "1. 某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t³-5t²，则当t=3s时该质点的瞬时速度为\nA. 9 m/s\nB. 24 m/s\nC. 48 m/s\nD. 54 m/s\n\n2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有\nA. 36 种\nB. 48 种\nC. 60 种\nD. 72 种\n\n3. 已知函数f(x)=eˣ-alnx在区间(0,1)上单调递减，则a的最小值为\nA. e²\nB. e\nC. 1/e\nD. -1/e²\n\n4. 若Cₘ²⁴=Cₘ₊₂²⁴，则C₃²⁴+C₄²⁴+⋯+Cₘ²⁴的值为\nA. 83\nB. 119\nC. 164\nD. 219",
+  "original_prompt": "??????",
+  "raw": {
+    "value": 0.0
+  },
+  "payload": {
+    "status": "ok",
+    "all_correct": false,
+    "basis": "????",
+    "knowledge_points": [],
+    "variant_markdown": "1. ???????\n???? f(x)=e^x-a\\ln x ??? (0,2) ??????? a ??????\n?????????????????????? 0 ????\n\n2. ???????\n???? f(x)=x^2-a\\,x ??? (0,1) ??????? a ??????\n?????? f'(x)=2x-a???????????\n\n3. ?????????\n???? f(x)=e^x-a\\ln x ??? (1,3) ??????? a ?????\n?????????? x e^x ??? (1,3) ??????",
+    "variants": [
+      {
+        "variant_type": "???????",
+        "problem_text": "???? f(x)=e^x-a\\ln x ??? (0,2) ??????? a ??????",
+        "brief_answer": "??????????????????? 0 ????"
+      },
+      {
+        "variant_type": "???????",
+        "problem_text": "???? f(x)=x^2-a\\,x ??? (0,1) ??????? a ??????",
+        "brief_answer": "??? f'(x)=2x-a???????????"
+      },
+      {
+        "variant_type": "?????????",
+        "problem_text": "???? f(x)=e^x-a\\ln x ??? (1,3) ??????? a ?????",
+        "brief_answer": "??????? x e^x ??? (1,3) ??????"
+      }
+    ]
+  },
+  "case": {
+    "problem_text": "1. 某质点沿直线运动,位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t³-5t²,则当t=3s时该质点的瞬时速度为\nA. 9 m/s\nB. 24 m/s\nC. 48 m/s\nD. 54 m/s\n\n2. 已知航天员选拔时要接受特殊环境的耐受性测试,主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项.若这五项测试每天进行一项,连续5天完成,且超重耐力和失重飞行不能安排在相邻两天测试,则选拔测试的安排方案有\nA. 36 种\nB. 48 种\nC. 60 种\nD. 72 种\n\n3. 已知函数f(x)=eˣ-alnx在区间(0,1)上单调递减,则a的最小值为\nA. e²\nB. e\nC. 1/e\nD. -1/e²\n\n4. 若Cₘ²⁴=Cₘ₊₂²⁴,则C₃²⁴+C₄²⁴+⋯+Cₘ²⁴的值为\nA. 83\nB. 119\nC. 164\nD. 219",
+    "variant_request": "??????",
+    "target_skill": "",
+    "requested_count": 3,
+    "grade_hint": "",
+    "weakness_report": "",
+    "supporting_images": "/root/autodl-tmp/123456.png",
+    "student_id": "",
+    "original_prompt": "??????",
+    "solve_summary": "## 咸阳市实验中学2023~2024学年度第二学期第一次月考\n### 高二数学试题\n\n#### 一、选择题\n\n1. **题目**：某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t³-5t²，则当t=3s时该质点的瞬时速度为\n   **选项**：A.9 m/s  B.24 m/s  C.48 m/s  D.54 m/s\n   **解答**：对S(t)求导得v(t)=S'(t)=6t²-10t，代入t=3得v(3)=6×9-10×3=24(m/s)，选B。\n\n2. **题目**：已知航天员选拔时要接受特殊环境的耐受性测试...则选拔测试的安排方案有\n   **选项**：A.36种  B.48种  C.60种  D.72种\n   **解答**：总排列5!=120，相邻情况4!×2=48，故不相邻方案120-48=72，选D。\n\n3. **题目**：已知函数f(x)=eˣ-alnx在区间(0,1)上单调递减，则a的最小值为\n   **选项**：A.e²  B.e  C.1/e  D.-1/e²\n   **解答**：f'(x)=eˣ - a/x ≤0 → a ≥x eˣ。g(x)=x eˣ在(0,1)递增，max g(1)=e，故a最小值e，选B。\n\n4. **题目**：若Cₘ²⁴=Cₘ₊₂²⁴，则C₃²⁴+C₄²⁴+⋯+C²⁴的值为\n   **选项**：A.83  B.119  C.164  D.219\n   **解答**：由C(m,24)=C(m+2,24)得m=11。利用对称性，和为119，选B。",
+    "memory_payload": {
+      "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+      "students": {},
+      "student_ids": [],
+      "updated_at": ""
+    },
+    "memory_summary": ""
+  }
+}

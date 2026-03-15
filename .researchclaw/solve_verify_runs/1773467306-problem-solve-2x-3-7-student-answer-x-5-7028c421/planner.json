@@ -1,0 +1,27 @@
+{
+  "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+  "givens": [
+    "2x + 3 = 7",
+    "Student answer: x=5"
+  ],
+  "target": "The value of x that satisfies the equation",
+  "question_type": "equation",
+  "candidate_methods": [
+    "algebraic manipulation (isolate x)",
+    "substitution to verify solution"
+  ],
+  "exact_check_targets": {
+    "equation": "2x + 3 = 7",
+    "expressions": [
+      "2*5+3",
+      "7"
+    ],
+    "answer_format": "x = [number]"
+  },
+  "risks": [
+    "OCR misreading of constants (e.g., 7 as 17)",
+    "Notation: student answer might omit variable or use different variable"
+  ],
+  "preferred_variable": "x",
+  "requires_visual_reasoning": false
+}

@@ -1,0 +1,28 @@
+{
+  "problem_summary": "Calculate instantaneous velocity at t=3s for displacement function S(t)=2t³-5t².",
+  "givens": [
+    "S(t) = 2t³ - 5t²",
+    "t = 3 s"
+  ],
+  "target": "Instantaneous velocity at t=3s in m/s",
+  "question_type": "calculus",
+  "candidate_methods": [
+    "Differentiate displacement function to find velocity",
+    "Substitute t=3 into velocity function"
+  ],
+  "exact_check_targets": {
+    "equation": "S'(t) = 6t² - 10t",
+    "expressions": [
+      "6*(3)^2 - 10*3"
+    ],
+    "answer_format": "Numerical value with unit m/s"
+  },
+  "risks": [
+    "Possible typo in displacement function (e.g., incorrect exponents or coefficients)",
+    "Misclassification as geometry instead of calculus leading to incorrect method",
+    "OCR errors in problem statement (e.g., misread '2t^3' as '2t^2')",
+    "Unit inconsistency (though units are consistent here)"
+  ],
+  "preferred_variable": "t",
+  "requires_visual_reasoning": false
+}

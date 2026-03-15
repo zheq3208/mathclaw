@@ -1,0 +1,32 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "solver_a",
+      "verdict": "conflict",
+      "strengths": [],
+      "issues": [
+        "No solution provided",
+        "Missing key steps"
+      ],
+      "first_conflicting_step": "No steps provided; expected solutions [2, 3] not found"
+    },
+    {
+      "solver_role": "solver_b",
+      "verdict": "conflict",
+      "strengths": [],
+      "issues": [
+        "No solution provided",
+        "Missing key steps"
+      ],
+      "first_conflicting_step": "No steps provided; expected solutions [2, 3] not found"
+    }
+  ],
+  "consensus_answer": "2, 3",
+  "consensus_expression": "x = 2 or x = 3",
+  "conflict_summary": [
+    "Both candidates failed to provide any solution steps or final answer",
+    "Expected solutions: 2 and 3, but both candidates returned empty answer"
+  ],
+  "recommended_winner": "none",
+  "revision_needed": true
+}

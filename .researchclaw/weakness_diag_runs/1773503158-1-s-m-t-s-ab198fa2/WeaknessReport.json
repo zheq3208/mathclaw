@@ -1,0 +1,158 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. $ 6 \\, \\text{m/s} $ \nB. $ 21 \\, \\text{m/s} $ \nC. $ 48 \\, \\text{m/s} $ \nD. $ 54 \\, \\text{m/s} $",
+  "case_brief": {
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. $ 6 \\, \\text{m/s} $ \nB. $ 21 \\, \\text{m/s} $ \nC. $ 48 \\, \\text{m/s} $ \nD. $ 54 \\, \\text{m/s} $",
+    "student_state": "student answer and process need diagnosis",
+    "question_type": "geometry",
+    "chapter": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "target": "",
+    "observed_signals": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "diagnosis_focus": [
+      "incomplete process",
+      "prerequisite gap"
+    ],
+    "evidence_gaps": [
+      "Need more student steps."
+    ],
+    "needs_solution_bootstrap": false,
+    "difficulty_band": "hard",
+    "reference_answer": ""
+  },
+  "process": {
+    "primary_error_stage": "reasoning",
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "Student attempt does not show explicit intermediate steps."
+    ],
+    "evidence_items": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning",
+      "diagram_or_theorem_gap"
+    ],
+    "confidence": 0.82
+  },
+  "learning": {
+    "primary_weakness": "incomplete_reasoning",
+    "secondary_weaknesses": [
+      "diagram_or_theorem_gap"
+    ],
+    "knowledge_points": [
+      "geometry"
+    ],
+    "prerequisite_gaps": [
+      "arithmetic_operations",
+      "angle_basics",
+      "length_and_area"
+    ],
+    "recommended_practice_focus": [
+      "geometry"
+    ],
+    "teacher_watchouts": [
+      "Ask the student to restate the target and show the first algebraic step."
+    ],
+    "confidence": 0.78
+  },
+  "arbiter": {
+    "status": "diagnosed",
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. $ 6 \\, \\text{m/s} $ \nB. $ 21 \\, \\text{m/s} $ \nC. $ 48 \\, \\text{m/s} $ \nD. $ 54 \\, \\text{m/s} $",
+    "primary_weakness": "incomplete_reasoning",
+    "secondary_weaknesses": [
+      "diagram_or_theorem_gap"
+    ],
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "Student attempt does not show explicit intermediate steps."
+    ],
+    "evidence_items": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "chapter": "geometry",
+    "question_type": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "prerequisite_gaps": [
+      "arithmetic_operations",
+      "angle_basics",
+      "length_and_area"
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning",
+      "diagram_or_theorem_gap"
+    ],
+    "recommended_practice_focus": [
+      "geometry"
+    ],
+    "teacher_feedback_markdown": "# Weakness Diagnosis\n\n- Primary weakness: incomplete_reasoning\n- Wrong answer: no\n- Process incomplete: yes\n- Missing steps:\n  - Student attempt does not show explicit intermediate steps.\n- Practice focus:\n  - geometry",
+    "mastery_update_suggestion": {
+      "result": "partial",
+      "knowledge_points": [
+        "geometry"
+      ],
+      "note": "incomplete_reasoning"
+    },
+    "confidence": 0.82
+  },
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-14T15:46:34.722813Z",
+    "event": {
+      "timestamp": "2026-03-14T15:46:34.722813Z",
+      "conversation_id": "debug-exam-pipeline-3",
+      "source": "weakness_diag",
+      "result": "partial",
+      "primary_weakness": "incomplete_reasoning",
+      "secondary_weaknesses": [
+        "diagram_or_theorem_gap"
+      ],
+      "knowledge_points": [
+        "geometry"
+      ],
+      "prerequisite_gaps": [
+        "arithmetic_operations",
+        "angle_basics",
+        "length_and_area"
+      ],
+      "practice_focus": [
+        "geometry"
+      ],
+      "note": "incomplete_reasoning",
+      "evidence": [
+        "Student process is incomplete for diagnostic checking."
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  }
+}

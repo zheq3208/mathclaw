@@ -1,0 +1,23 @@
+{
+  "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544101545`\n\n第 I 卷(选择题 共 58 分)",
+  "student_state": "student answer and process need diagnosis",
+  "question_type": "equation",
+  "chapter": "equations_and_inequalities",
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "target": "",
+  "observed_signals": [
+    "Student process is incomplete for diagnostic checking."
+  ],
+  "diagnosis_focus": [
+    "incomplete process",
+    "prerequisite gap"
+  ],
+  "evidence_gaps": [
+    "Need more student steps."
+  ],
+  "needs_solution_bootstrap": false,
+  "difficulty_band": "medium",
+  "reference_answer": ""
+}

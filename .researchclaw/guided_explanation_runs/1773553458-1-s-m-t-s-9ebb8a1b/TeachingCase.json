@@ -1,0 +1,26 @@
+{
+  "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+  "question_type": "geometry",
+  "chapter": "geometry",
+  "knowledge_points": [
+    "geometry"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "angle_basics",
+    "length_and_area"
+  ],
+  "likely_error_causes": [],
+  "primary_weakness": "",
+  "student_attempt_summary": "请用引导式讲解模式处理这道试卷题。不要立即给出最终答案，讲解时要同时参考历史薄弱点记忆和当前求解验证证据。",
+  "latest_student_reply": "",
+  "learning_goal": "请用引导式讲解模式处理这道试卷题。不要立即给出最终答案，讲解时要同时参考历史薄弱点记忆和当前求解验证证据。",
+  "hint_level": 1,
+  "requested_full_solution": false,
+  "attempts_without_progress": 0,
+  "reference_answer": "",
+  "verification_available": true,
+  "requires_visual_reasoning": true,
+  "method_tags": [],
+  "conversation_excerpt": "??????\n\n历史学习记忆：\n历史薄弱点：解题过程不完整?Calculus concept: derivative as instantaneous velocity?reading_or_prompt_misread\n当前高风险知识点：一元一次方程?几何?derivatives\n当前训练重点：几何?中间步骤书写?导数计算"
+}

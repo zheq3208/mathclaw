@@ -1,0 +1,13 @@
+{
+  "pipeline": "MessToClean-Q3VL",
+  "source": "/root/autodl-tmp/mathclaw/.researchclaw/uploads/chat/smoke-chinese-e839058f/43678b58f26a/9a117b3a60a3-123456.png",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773555140-9a117b3a60a3-123456-3f22202a",
+  "stage1_box_evidence_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773555140-9a117b3a60a3-123456-3f22202a/stage1_box_evidence.json",
+  "stage1_raw_calls_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773555140-9a117b3a60a3-123456-3f22202a/stage1_raw_calls.json",
+  "stage2_layout_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773555140-9a117b3a60a3-123456-3f22202a/stage2_layout.json",
+  "Structured_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773555140-9a117b3a60a3-123456-3f22202a/Structured.md",
+  "FullAuditLog_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773555140-9a117b3a60a3-123456-3f22202a/FullAuditLog.json",
+  "page_count": 1,
+  "question_count": 4,
+  "question_count_processed": 4
+}

@@ -1,0 +1,12 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "先仔细读题，找出题目要求的目标量和关键已知条件。特别注意位移公式 $S(t)$ 的表达式和需要求解的物理量。",
+  "student_checkpoint_question": "这道题最终要求你求什么，已知条件里最关键的是哪一条？",
+  "expected_student_action": "明确题目要求的物理量（瞬时速度）和核心已知条件（位移与时间的关系式）",
+  "if_student_stuck_then": "若两次尝试后仍无法识别关键条件，将提示提升至 hint_level=2",
+  "revealed_step": "",
+  "progress_signal": "学生能准确复述目标量和关键条件",
+  "stop_condition": "学生正确指出目标量为 t=3s 时的瞬时速度，且识别出 S(t) 表达式",
+  "confidence": 0.72,
+  "patched_for_answer_leak": false
+}

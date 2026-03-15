@@ -1,0 +1,18 @@
+{
+  "session_id": "model-switch-check-2",
+  "title": "New Research Chat",
+  "created_at": 1773421565.4385798,
+  "updated_at": 1773421583.8525734,
+  "messages": [
+    {
+      "role": "user",
+      "content": "请只回复：百炼切换成功",
+      "timestamp": 1773421565.4388294
+    },
+    {
+      "role": "assistant",
+      "content": "百炼切换成功",
+      "timestamp": 1773421583.8525703
+    }
+  ]
+}

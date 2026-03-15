@@ -1,0 +1,51 @@
+{
+  "pipeline": "MessToClean-Q3VL",
+  "stage": "stage3",
+  "source": "/root/.researchclaw/media/unknown_file_1773544101545",
+  "records": [
+    {
+      "question_id": "q_001",
+      "page_index": 0,
+      "read_index": 1,
+      "question_box": [
+        104,
+        492,
+        819,
+        568
+      ],
+      "bound_figure_ids": [],
+      "crop_info": {
+        "question_image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773544106-unknown-file-1773544101545-2cc5a47d/question_crops/page-001/q_001.png",
+        "figure_image_paths": []
+      },
+      "generator": {
+        "formula_candidates": [],
+        "markdown": "第 I 卷（选择题 共 58 分）",
+        "notes": [],
+        "question_id": "q_001",
+        "uncertain_tokens": []
+      },
+      "verifier": {
+        "confidence": 0.95,
+        "issues": [
+          "Extra line with incorrect parentheses: '第 I 卷 (选择题 共 58 分)' uses half-width parentheses instead of full-width"
+        ],
+        "patch_needed": true,
+        "patched_markdown": "第 I 卷（选择题 共 58 分）",
+        "question_id": "q_001",
+        "verdict": "conflict"
+      },
+      "patcher": {
+        "applied_changes": [
+          "Replaced half-width parentheses '(' and ')' with full-width '（' and '）' in the header line."
+        ],
+        "patched_markdown": "第 I 卷（选择题 共 58 分）",
+        "question_id": "q_001",
+        "remaining_uncertainties": []
+      },
+      "final_markdown": "第 I 卷（选择题 共 58 分）"
+    }
+  ],
+  "question_count_processed": 1,
+  "question_count_total": 4
+}

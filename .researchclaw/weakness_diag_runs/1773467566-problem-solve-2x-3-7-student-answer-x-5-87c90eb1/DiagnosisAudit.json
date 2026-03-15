@@ -1,0 +1,28 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1",
+  "model": "qwen3-vl-plus",
+  "status": "review",
+  "primary_weakness": "incomplete_reasoning",
+  "CaseBrief_json_path": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1/case_brief.json",
+  "LocalChecks_json_path": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1/local_checks.json",
+  "Process_json_path": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1/process.json",
+  "Learning_json_path": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1/learning.json",
+  "TeacherFeedback_md_path": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1/WeaknessReport.json",
+  "bootstrap_result": {
+    "pipeline": "SolveVerify-Q3VL",
+    "run_dir": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610",
+    "model": "qwen3-vl-plus",
+    "candidate_count": 2,
+    "winner": "solver_a",
+    "status": "review",
+    "planner_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/planner.json",
+    "candidates_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/candidates.json",
+    "critic_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/critic.json",
+    "Solved_md_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/Solved.md",
+    "VerificationReport_json_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/VerificationReport.json",
+    "SolutionAudit_json_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/SolutionAudit.json"
+  },
+  "BootstrapVerification_json_path": "/root/.researchclaw/weakness_diag_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-87c90eb1/bootstrap_verification.json"
+}

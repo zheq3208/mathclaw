@@ -1,0 +1,1 @@
+The student’s answer (x=5) is incorrect; the correct solution is x=2. The response lacks any visible algebraic steps, making it impossible to pinpoint where the error occurred. Ask the student to restate the target and show the first algebraic step (e.g., subtracting 3 from both sides). Focus on reinforcing inverse operations and symbolic manipulation in linear equations.

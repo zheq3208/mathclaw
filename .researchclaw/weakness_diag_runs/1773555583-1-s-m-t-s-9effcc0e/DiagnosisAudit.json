@@ -1,0 +1,78 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e",
+  "model": "qwen3-vl-plus",
+  "status": "review",
+  "primary_weakness": "导数的物理意义理解（瞬时速度与位移导数的关系）",
+  "CaseBrief_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e/case_brief.json",
+  "LocalChecks_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e/local_checks.json",
+  "Process_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e/process.json",
+  "Learning_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e/learning.json",
+  "TeacherFeedback_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e/WeaknessReport.json",
+  "GlobalLearningMemory_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-15T06:20:41.501949Z",
+    "event": {
+      "timestamp": "2026-03-15T06:20:41.501949Z",
+      "conversation_id": "smoke-chinese-e839058f",
+      "source": "weakness_diag",
+      "result": "incorrect",
+      "primary_weakness": "导数的物理意义理解（瞬时速度与位移导数的关系）",
+      "secondary_weaknesses": [
+        "sign_error",
+        "calculation_or_careless_error",
+        "incomplete_reasoning",
+        "reading_or_prompt_misread"
+      ],
+      "knowledge_points": [
+        "导数的物理意义"
+      ],
+      "prerequisite_gaps": [
+        "导数的定义",
+        "基本求导公式"
+      ],
+      "practice_focus": [
+        "理解瞬时速度是位移函数的导数",
+        "练习位移函数求导计算"
+      ],
+      "note": "需强化导数在物理中的应用理解",
+      "evidence": [
+        "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation",
+        "diagram_or_theorem_gap",
+        "reading_or_prompt_misread",
+        "sign_error",
+        "calculation_or_careless_error",
+        "导数的物理意义理解（瞬时速度与位移导数的关系）"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation",
+        "linear_equation",
+        "导数的物理意义",
+        "导数的计算与应用"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  },
+  "BootstrapVerification_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773555583-1-s-m-t-s-9effcc0e/bootstrap_verification.json"
+}

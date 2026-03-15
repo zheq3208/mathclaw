@@ -241,11 +241,14 @@ async def lifespan(app: FastAPI):
                 channel_manager=getattr(app.state, "channel_manager", None),
             )
 
+        # Heartbeat scheduling is handled by the config-driven APScheduler
+        # path inside CronManager. Keep the legacy fixed-interval job disabled
+        # to avoid accidental duplicate or unsolicited channel pushes.
         cron.register(
             "heartbeat",
             heartbeat_job,
             interval_seconds=max(1, HEARTBEAT_INTERVAL_MINUTES) * 60,
-            enabled=HEARTBEAT_ENABLED,
+            enabled=False,
         )
         cron.register(
             "paper_digest",
@@ -355,6 +358,7 @@ _router_defs: list[tuple[str, str, list[str]]] = [
         ["LocalModels"],
     ),
     ("researchclaw.app.routers.mcp", "/api/mcp", ["MCP"]),
+    ("researchclaw.app.routers.memory", "/api/memory", ["Memory"]),
     (
         "researchclaw.app.routers.ollama_models",
         "/api",

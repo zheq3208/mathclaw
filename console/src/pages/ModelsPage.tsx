@@ -34,6 +34,13 @@ const PROVIDER_TYPES = [
   "other",
 ];
 
+const MODEL_NAME_LABELS: Record<string, string> = {
+  "qwen3.5-plus-2026-02-15": "Qwen 3.5 Plus",
+  "qwen/qwen3-vl-8b-instruct": "Qwen 3 VL",
+  "openai/gpt-5": "GPT-5",
+  "deepseek-chat": "DeepSeek Chat",
+};
+
 const EMPTY_FORM: ProviderItem = {
   name: "",
   provider_type: "openai",
@@ -46,6 +53,12 @@ type EditForm = Pick<
   ProviderItem,
   "provider_type" | "model_name" | "api_key" | "base_url"
 >;
+
+function formatModelName(modelName?: string): string {
+  const raw = (modelName || "").trim();
+  if (!raw) return "";
+  return MODEL_NAME_LABELS[raw] || raw;
+}
 
 export default function ModelsPage() {
   const { t } = useI18n();
@@ -396,8 +409,10 @@ export default function ModelsPage() {
                           <Badge variant="info">{p.provider_type}</Badge>
                         </span>
                         {p.model_name && (
-                          <span style={{ marginLeft: 6 }}>
-                            <Badge variant="neutral">{p.model_name}</Badge>
+                          <span style={{ marginLeft: 6 }} title={p.model_name}>
+                            <Badge variant="neutral">
+                              {formatModelName(p.model_name)}
+                            </Badge>
                           </span>
                         )}
                         {p.enabled && (

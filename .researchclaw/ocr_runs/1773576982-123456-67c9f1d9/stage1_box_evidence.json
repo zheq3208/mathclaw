@@ -1,0 +1,102 @@
+{
+  "source": "/root/autodl-tmp/123456.png",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773576982-123456-67c9f1d9",
+  "page_index": 0,
+  "page_width": 800,
+  "page_height": 1067,
+  "image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773576982-123456-67c9f1d9/pages/page-001.png",
+  "boxes": [
+    {
+      "id": "q1",
+      "type": "question",
+      "bbox": [
+        55,
+        300,
+        550,
+        370
+      ],
+      "summary": "题号1. 题干及选项"
+    },
+    {
+      "id": "q2",
+      "type": "question",
+      "bbox": [
+        55,
+        380,
+        550,
+        450
+      ],
+      "summary": "题号2. 题干及选项"
+    },
+    {
+      "id": "q3",
+      "type": "question",
+      "bbox": [
+        55,
+        460,
+        550,
+        530
+      ],
+      "summary": "题号3. 题干及选项"
+    },
+    {
+      "id": "q4",
+      "type": "question",
+      "bbox": [
+        55,
+        540,
+        550,
+        610
+      ],
+      "summary": "题号4. 题干及选项"
+    }
+  ],
+  "raw_payload": {
+    "boxes": [
+      {
+        "bbox": [
+          55,
+          300,
+          550,
+          370
+        ],
+        "id": "q1",
+        "summary": "题号1. 题干及选项",
+        "type": "question"
+      },
+      {
+        "bbox": [
+          55,
+          380,
+          550,
+          450
+        ],
+        "id": "q2",
+        "summary": "题号2. 题干及选项",
+        "type": "question"
+      },
+      {
+        "bbox": [
+          55,
+          460,
+          550,
+          530
+        ],
+        "id": "q3",
+        "summary": "题号3. 题干及选项",
+        "type": "question"
+      },
+      {
+        "bbox": [
+          55,
+          540,
+          550,
+          610
+        ],
+        "id": "q4",
+        "summary": "题号4. 题干及选项",
+        "type": "question"
+      }
+    ]
+  }
+}

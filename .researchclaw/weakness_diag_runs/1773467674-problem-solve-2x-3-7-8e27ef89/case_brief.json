@@ -1,0 +1,29 @@
+{
+  "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+  "student_state": "Student guessed x=5 without showing any steps for isolating the variable.",
+  "question_type": "Algebraic equation solving",
+  "chapter": "Solving Linear Equations",
+  "knowledge_points": [
+    "Isolating the variable using inverse operations",
+    "Balancing equations",
+    "Solving two-step linear equations"
+  ],
+  "target": "Correctly solving a two-step linear equation by isolating the variable",
+  "observed_signals": [
+    "Student provided an incorrect final answer (x=5 instead of x=2)",
+    "Student did not show any work or steps",
+    "Student admitted to guessing without process"
+  ],
+  "diagnosis_focus": [
+    "Lack of process in solving equations",
+    "Possible misunderstanding of inverse operations",
+    "Symbolic manipulation gap"
+  ],
+  "evidence_gaps": [
+    "No evidence of student's thought process beyond the final guess",
+    "Verification tools failed due to input format issues, but manual verification confirms the correct answer"
+  ],
+  "needs_solution_bootstrap": true,
+  "difficulty_band": "easy",
+  "reference_answer": "2"
+}

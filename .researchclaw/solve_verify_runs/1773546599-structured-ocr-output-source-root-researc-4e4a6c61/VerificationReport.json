@@ -1,0 +1,140 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773546505803`\n\n第 I 卷(选择题 共 58 分)\n\n一、选择题:本题共 8 小题,每小题 5 分,共 40 分.在每小题给出的四个选项中,只有一项是符合题",
+  "planner": {
+    "problem_summary": "This is a multiple choice question from a Chinese exam (first volume, 40 points total for 8 questions). The question is of type 'equation', meaning it involves solving an equation. The task is to select the correct option from four given choices.",
+    "givens": [
+      "The problem is part of a multiple choice section (8 questions, 40 points total).",
+      "Each question has four options (A, B, C, D).",
+      "Only one option is correct per question.",
+      "The question type is equation (as per local_question_type)."
+    ],
+    "target": "Select the correct option (A, B, C, or D) that solves the equation.",
+    "question_type": "equation",
+    "candidate_methods": [
+      "Algebraic solution of the equation",
+      "Substitution of each option into the equation to verify",
+      "Using standard equation-solving techniques (e.g., factoring, quadratic formula, etc.)"
+    ],
+    "exact_check_targets": {
+      "equation": "The equation provided in the actual problem (not present in the given OCR output)",
+      "expressions": [
+        "Option A",
+        "Option B",
+        "Option C",
+        "Option D"
+      ],
+      "answer_format": "A single letter (A, B, C, or D)"
+    },
+    "risks": [
+      "The actual problem (equation and options) is missing from the OCR output; only the exam header is provided.",
+      "The source file is not accessible (local path: /root/.researchclaw/media/unknown_file_1773546505803).",
+      "OCR may have misread mathematical symbols in the equation or options if they were present in the original image.",
+      "The problem is in Chinese, which might lead to misinterpretation of the problem statement or mathematical notation."
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "error": "Sympify of expression 'could not parse 'The equation provided in the actual problem (not present in the given OCR output)'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+      "equation": "The equation provided in the actual problem (not present in the given OCR output)",
+      "variable": "x"
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "Solver A",
+        "final_answer": "N/A",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "N/A"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "N/A",
+          "normalized_formula": "N/A",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "Solver B",
+        "final_answer": "N/A",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "N/A"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "N/A",
+          "normalized_formula": "N/A",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "Solver A",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      },
+      {
+        "solver_role": "Solver B",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "Sympify of expression 'could not parse 'The equation provided in the actual problem (not present in the given OCR output)'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+    ],
+    "recommended_winner": "Solver A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "N/A",
+    "final_expression": "N/A",
+    "concise_solution_markdown": "The problem statement—including the equation and multiple-choice options—is missing from the provided OCR output. Without this information, no solution can be derived or verified.",
+    "verification_summary": [
+      "OCR output contains only exam header; no equation or options present.",
+      "Planner brief confirms the equation and options are missing.",
+      "Tool checks failed due to inability to parse non-existent equation.",
+      "Both solvers correctly identified data unavailability."
+    ],
+    "unresolved_risks": [
+      "Actual problem content is inaccessible (file path not reachable).",
+      "Potential OCR errors in original image cannot be assessed without source.",
+      "No ground truth available for validation."
+    ],
+    "recommended_follow_up": "Retrieve the original image or file at '/root/.researchclaw/media/unknown_file_1773546505803' to extract the full question and options."
+  }
+}

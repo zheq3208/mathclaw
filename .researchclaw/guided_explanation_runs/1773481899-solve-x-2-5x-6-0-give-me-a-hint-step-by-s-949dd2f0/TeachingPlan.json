@@ -1,0 +1,24 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "teacher_focus": "the degree of the equation and the fact that it is set to zero",
+  "immediate_goal": "recognize that this is a quadratic equation",
+  "diagnostic_focus": [
+    "whether the student recognizes the equation as quadratic"
+  ],
+  "misconceptions_to_probe": [
+    "confusing quadratic with linear equations"
+  ],
+  "must_avoid": [
+    "giving the factoring steps",
+    "mentioning the quadratic formula"
+  ],
+  "allowed_reveal": "that the equation is quadratic (has an x^2 term) and we are to find the values of x that make it zero",
+  "first_question": "What is the highest power of x in this equation?",
+  "checkpoint_rubric": [
+    "The student states that the highest power of x is 2"
+  ],
+  "escalation_rule": "If the student does not identify the highest power as 2, then provide a hint about the term x^2",
+  "allow_full_solution": false,
+  "confidence": 0.9
+}

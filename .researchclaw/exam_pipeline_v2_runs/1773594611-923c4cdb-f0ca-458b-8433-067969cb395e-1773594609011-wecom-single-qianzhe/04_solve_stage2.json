@@ -1,0 +1,56 @@
+{
+  "all_correct": false,
+  "overall_comment": "学生4题中前3题正确，第4题错误；第4题因组合方程解得n=2，正确和为3，但选项无此值，结合试卷图像与常规考题，实际题干可能为C₂ⁿ = C₃^{2n−2}或印刷错误，按标准解法应为n=8时∑C₈ᵏ=255−1=254仍不符，最可能正确题设为C₂ⁿ = C₂^{n+6}等导致n=8且答案为219，但依给定题干严格计算学生选D错误。",
+  "knowledge_points": [
+    "导数应用求瞬时速度",
+    "排列组合中的捆绑法与排除法",
+    "函数单调性与导数不等式恒成立",
+    "组合数性质与恒等式求和"
+  ],
+  "current_weaknesses": [
+    "组合恒等式题干理解与方程求解准确性",
+    "对非常规组合方程的多解情形判断不足"
+  ],
+  "problems": [
+    {
+      "question_id": "q1",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B (24 m/s)",
+      "why": "S(t)=2t³−5t²，v(t)=S'(t)=6t²−10t，v(3)=6×9−30=24，选项B对应24",
+      "solution": "对位移函数求导得速度函数，代入t=3计算",
+      "knowledge_point": "导数的物理意义（瞬时速度）",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q2",
+      "judgement": "正确",
+      "student_answer": "D",
+      "correct_answer": "D (72种)",
+      "why": "总排列5!=120；超重耐力与失重飞行相邻时捆绑为2!×4!=48；合法方案=120−48=72，选项D为72",
+      "solution": "用总排列减去限制条件（相邻）的排列数，捆绑法处理相邻",
+      "knowledge_point": "排列组合中的间接计数与捆绑法",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q3",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B (e)",
+      "why": "f'(x)=e^x−a/x≤0在(0,1)恒成立 ⇒ a≥x e^x；g(x)=x e^x在(0,1)递增，上确界为e，故a_min=e",
+      "solution": "由单调递减得导数≤0，转化为参数不等式恒成立，求函数最大值",
+      "knowledge_point": "函数单调性与导数关系、参数最值问题",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q4",
+      "judgement": "错误",
+      "student_answer": "D",
+      "correct_answer": "题干C₂ⁿ=C₂^{2n−2}仅整数解n=2，此时∑_{k=1}^2 C₂ᵏ=3；但选项无3，结合试卷选项D=219，推测题干有误；若强制匹配，常见正确题设为C₂ⁿ=C₃^{2n−2}解得n=8，则∑C₈ᵏ=2⁸−1=255≠219；更可能原题为C₂ⁿ=C₂^{n+6}等，但依给定题干，正确答案非D",
+      "why": "严格解方程n(n−1)=(2n−2)(2n−3)得n=1或2，n=2时和为3，与D=219矛盾；学生选D错误",
+      "solution": "列组合数表达式→解方程→验证整数解→求二项式和2ⁿ−1",
+      "knowledge_point": "组合数相等的条件、二项式系数求和",
+      "is_wrong": true
+    }
+  ]
+}

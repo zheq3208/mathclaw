@@ -1,0 +1,14 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773546599-structured-ocr-output-source-root-researc-4e4a6c61",
+  "model": "qwen3-vl-plus",
+  "candidate_count": 2,
+  "winner": "Solver A",
+  "status": "review",
+  "planner_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773546599-structured-ocr-output-source-root-researc-4e4a6c61/planner.json",
+  "candidates_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773546599-structured-ocr-output-source-root-researc-4e4a6c61/candidates.json",
+  "critic_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773546599-structured-ocr-output-source-root-researc-4e4a6c61/critic.json",
+  "Solved_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773546599-structured-ocr-output-source-root-researc-4e4a6c61/Solved.md",
+  "VerificationReport_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773546599-structured-ocr-output-source-root-researc-4e4a6c61/VerificationReport.json",
+  "SolutionAudit_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773546599-structured-ocr-output-source-root-researc-4e4a6c61/SolutionAudit.json"
+}

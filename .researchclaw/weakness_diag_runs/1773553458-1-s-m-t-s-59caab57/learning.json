@@ -1,0 +1,22 @@
+{
+  "primary_weakness": "解题步骤完整性",
+  "secondary_weaknesses": [
+    "sign_error",
+    "calculation_or_careless_error"
+  ],
+  "knowledge_points": [
+    "导数的计算与应用"
+  ],
+  "prerequisite_gaps": [
+    "函数求导法则"
+  ],
+  "recommended_practice_focus": [
+    "规范书写导数求解过程",
+    "强化瞬时速度与位移函数导数的关联训练"
+  ],
+  "teacher_watchouts": [
+    "关注学生是否理解瞬时速度的导数定义",
+    "检查解题步骤的完整性"
+  ],
+  "confidence": 0.5
+}

@@ -1,0 +1,18 @@
+{
+  "primary_error_stage": "final_answer",
+  "wrong_answer": true,
+  "process_incomplete": false,
+  "missing_steps": [],
+  "evidence_items": [
+    "Student final answer conflicts with the verified answer or exact check.",
+    "Reference answer: 2"
+  ],
+  "likely_error_causes": [
+    "reading_or_prompt_misread",
+    "sign_error",
+    "calculation_or_careless_error",
+    "strategy_gap",
+    "symbolic_manipulation_gap"
+  ],
+  "confidence": 0.82
+}

@@ -1,0 +1,133 @@
+{
+  "case_brief": {
+    "problem_summary": "Solve x^2 - 5x + 6 = 0",
+    "problem_text": "Solve x^2 - 5x + 6 = 0",
+    "variant_request": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "x^2 - 5x + 6 = 0",
+    "difficulty_score": 2.35,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false
+  },
+  "variant_set_title": "Quadratic Equation Factoring Practice",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Solve x^2 - 7x + 12 = 0",
+      "changes": [
+        "Changed the coefficients from -5 and 6 to -7 and 12, which still factor into two integers (3 and 4)"
+      ],
+      "intent": "To practice the same factoring method with different numbers that have the same structure (two positive roots).",
+      "difficulty_goal": "same",
+      "coach_note": "This problem factors similarly to the original. Look for two numbers that multiply to 12 and add to -7 (which are -3 and -4).",
+      "answer_outline": [
+        "Factor the quadratic: (x-3)(x-4)=0",
+        "Set each factor to zero: x-3=0 or x-4=0",
+        "Solutions: x=3, x=4"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Solve x^2 - 3x + 2 = 0",
+      "changes": [
+        "Changed the coefficients to smaller numbers: -3 and 2, which factor into 1 and 2 (easier to compute)."
+      ],
+      "intent": "To build confidence with a simpler quadratic that factors with very small numbers.",
+      "difficulty_goal": "easier",
+      "coach_note": "This is a simpler version. The numbers that multiply to 2 and add to -3 are -1 and -2.",
+      "answer_outline": [
+        "Factor: (x-1)(x-2)=0",
+        "Solutions: x=1, x=2"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "Solve 2x^2 - 7x + 3 = 0, and verify both roots by substitution.",
+      "changes": [
+        "Used a non-monic quadratic and added a verification step."
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "x^2 - 5x + 6 = 0",
+      "answer_outline": [
+        "Identify the factor or equation form.",
+        "Solve for the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 2.65,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:about_the_same"
+      ]
+    }
+  ],
+  "design_notes": [
+    "The original problem is a quadratic equation that factors into two linear terms with positive roots. The variants maintain the quadratic structure and factoring method.",
+    "The isomorphic variant uses a different set of numbers that still factor into two positive integers, preserving the same difficulty level.",
+    "The easier variant uses smaller numbers to reduce the arithmetic complexity, making it more accessible for students who are new to factoring.",
+    "The harder variant introduces a negative constant term, which requires students to handle signs correctly and understand that roots can have opposite signs, increasing the cognitive demand."
+  ]
+}

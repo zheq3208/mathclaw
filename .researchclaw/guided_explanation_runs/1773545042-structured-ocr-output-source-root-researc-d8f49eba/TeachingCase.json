@@ -1,0 +1,26 @@
+{
+  "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544779027`\n\n第 I 卷(选择题 共 58 分)",
+  "question_type": "equation",
+  "chapter": "equations_and_inequalities",
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "integer_operations",
+    "symbolic_manipulation"
+  ],
+  "likely_error_causes": [],
+  "primary_weakness": "",
+  "student_attempt_summary": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately. The explanation should account for the historical weakness memory snapshot and current verification evidence.",
+  "latest_student_reply": "",
+  "learning_goal": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately. The explanation should account for the historical weakness memory snapshot and current verification evid...",
+  "hint_level": 1,
+  "requested_full_solution": false,
+  "attempts_without_progress": 0,
+  "reference_answer": "",
+  "verification_available": true,
+  "requires_visual_reasoning": false,
+  "method_tags": [],
+  "conversation_excerpt": "批改我的试卷\n\nHistorical memory snapshot:\nHistorical weaknesses: incomplete_reasoning; Calculus concept: derivative as instantaneous velocity; Arithmetic verification in derivative evaluation\nHigh-risk knowledge points: linear equation; kinematics; derivatives\nCurrent practice focus: showing all intermediate steps when solving linear equations; Demonstrate each algebraic manipulation step explicitly; geometry"
+}

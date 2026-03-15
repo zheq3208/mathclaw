@@ -1,0 +1,130 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "?????? 2x + 3 = 7?????? x=5?",
+  "planner": {
+    "problem_summary": "Verify if x=5 is the solution to the equation 2x+3=7.",
+    "givens": [
+      "2x + 3 = 7",
+      "x = 5"
+    ],
+    "target": "Determine whether x=5 satisfies the equation 2x+3=7.",
+    "question_type": "equation",
+    "candidate_methods": [
+      "Substitute x=5 into the equation and check equality",
+      "Solve the equation for x and compare with 5"
+    ],
+    "exact_check_targets": {
+      "equation": "2x + 3 = 7",
+      "expressions": [
+        "2x+3",
+        "7"
+      ],
+      "answer_format": "boolean (true if x=5 is the solution, false otherwise)"
+    },
+    "risks": [
+      "OCR artifacts: the problem text contains question marks (??????) which may indicate missing or corrupted text, potentially obscuring additional context or conditions.",
+      "Notation risk: the equation uses standard algebraic notation, but the presence of question marks might hide critical information (e.g., domain restrictions or multiple equations)."
+    ],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "2*x + 3 = 7",
+      "variable": "x",
+      "solutions": [
+        "2"
+      ]
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "x=2",
+        "verification": {
+          "status": "pass",
+          "equation": "2*x + 3 = 7",
+          "variable": "x",
+          "expected_solutions": [
+            "2"
+          ],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "x=2",
+          "normalized_formula": "x=2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "solver_b",
+        "final_answer": "x=2",
+        "verification": {
+          "status": "pass",
+          "equation": "2*x + 3 = 7",
+          "variable": "x",
+          "expected_solutions": [
+            "2"
+          ],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "x=2",
+          "normalized_formula": "x=2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "pass",
+        "strengths": [
+          "matches exact verification"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      },
+      {
+        "solver_role": "solver_b",
+        "verdict": "pass",
+        "strengths": [
+          "matches exact verification"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      }
+    ],
+    "consensus_answer": "x=2",
+    "consensus_expression": "x=2",
+    "conflict_summary": [],
+    "recommended_winner": "solver_a",
+    "revision_needed": false
+  },
+  "arbiter": {
+    "status": "pass",
+    "final_answer": "false",
+    "final_expression": "x=5 is not a solution to 2x+3=7",
+    "concise_solution_markdown": "Substituting $ x = 5 $ into $ 2x + 3 $ gives $ 2(5) + 3 = 13 \\neq 7 $. The correct solution is $ x = 2 $, so $ x = 5 $ is **not** a solution.",
+    "verification_summary": [
+      "The equation $ 2x + 3 = 7 $ solves to $ x = 2 $.",
+      "Substituting $ x = 5 $ yields $ 2(5) + 3 = 13 \\neq 7 $, confirming $ x = 5 $ is not a solution.",
+      "Both solver candidates correctly identified $ x = 2 $ as the solution, though the question asks whether $ x = 5 $ is a solution (a boolean query)."
+    ],
+    "unresolved_risks": [
+      "The original problem text contains OCR artifacts ('??????'), but no additional constraints or equations were revealed in verification; thus, risk is low but non-zero."
+    ],
+    "recommended_follow_up": "Clarify if the problem intended to ask for the solution of the equation or only to verify x=5; ensure input formatting avoids OCR corruption."
+  }
+}

@@ -1,0 +1,37 @@
+[
+  {
+    "value": 0.0,
+    "solver_role": "solver_a",
+    "method": "unspecified",
+    "reasoning_outline": [],
+    "key_steps": [],
+    "final_answer": "",
+    "final_expression": "",
+    "assumptions": [],
+    "confidence": 0.0
+  },
+  {
+    "solver_role": "Solver B",
+    "method": "Problem statement missing",
+    "reasoning_outline": [
+      "The OCR output only contains the exam section header '第 I 卷(选择题 共 58 分)'",
+      "No actual problem statement or mathematical content was captured in the OCR output",
+      "Without a problem statement, no solution methodology can be applied",
+      "Verification methods (backward checking, option elimination, etc.) are inapplicable due to missing problem"
+    ],
+    "key_steps": [
+      "Verified OCR output contains only section header with no problem content",
+      "Confirmed absence of equations, variables, or problem context in input",
+      "Determined that candidate methods (algebraic manipulation, substitution, etc.) cannot be executed",
+      "Concluded that no answer can be derived from incomplete input"
+    ],
+    "final_answer": "N/A",
+    "final_expression": "N/A",
+    "assumptions": [
+      "The source file may contain the full problem but was not properly captured by OCR",
+      "The problem statement is required for any meaningful solution attempt",
+      "No hidden problem context can be inferred from the provided header alone"
+    ],
+    "confidence": 0.0
+  }
+]

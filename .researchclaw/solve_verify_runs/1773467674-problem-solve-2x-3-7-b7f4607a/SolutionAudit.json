@@ -1,0 +1,13 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "run_dir": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a",
+  "model": "qwen3-vl-plus",
+  "candidate_count": 2,
+  "winner": "solver_a",
+  "status": "review",
+  "planner_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/planner.json",
+  "candidates_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/candidates.json",
+  "critic_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/critic.json",
+  "Solved_md_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/Solved.md",
+  "VerificationReport_json_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/VerificationReport.json"
+}

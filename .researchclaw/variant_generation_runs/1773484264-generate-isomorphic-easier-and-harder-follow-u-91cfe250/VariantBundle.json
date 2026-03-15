@@ -1,0 +1,97 @@
+{
+  "case_brief": {
+    "problem_summary": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+    "problem_text": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+    "variant_request": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+    "requested_count": 2,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "x^2 - 5x + 6 = 0",
+    "difficulty_score": 2.75,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false
+  },
+  "variant_set_title": "Quadratic Equation Factoring Practice",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Solve the equation: x^2 - 7x + 12 = 0.",
+      "changes": [
+        "Replaced the linear coefficient -5 with -7 and constant term 6 with 12 while maintaining monic quadratic form and integer roots"
+      ],
+      "intent": "To practice identical factoring method with different numerical values",
+      "difficulty_goal": "same",
+      "coach_note": "Focus on finding two numbers that multiply to 12 and add to -7",
+      "answer_outline": [
+        "Factor as (x-3)(x-4)=0",
+        "Set each factor to zero",
+        "Solutions: x=3, x=4"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.75,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Solve the equation: x^2 - 3x + 2 = 0.",
+      "changes": [
+        "Used smaller coefficients (-3 and 2) with simpler integer roots (1 and 2)"
+      ],
+      "intent": "To build confidence with minimal calculation steps",
+      "difficulty_goal": "easier",
+      "coach_note": "Emphasize that roots are consecutive small integers",
+      "answer_outline": [
+        "Factor as (x-1)(x-2)=0",
+        "Set each factor to zero",
+        "Solutions: x=1, x=2"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.75,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    }
+  ],
+  "design_notes": [
+    "Isomorphic variant preserves exact problem structure (monic quadratic) with different numbers",
+    "Easier variant uses smallest possible positive integer roots to reduce cognitive load",
+    "Harder variant introduces non-monic quadratic while maintaining factorability to extend core skill"
+  ]
+}

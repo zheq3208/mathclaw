@@ -1,0 +1,16 @@
+{
+  "primary_error_stage": "execution",
+  "wrong_answer": false,
+  "process_incomplete": true,
+  "missing_steps": [
+    "未展示导数计算及代入求值的中间步骤"
+  ],
+  "evidence_items": [
+    "学生作答未提供解题中间步骤，仅给出选项"
+  ],
+  "likely_error_causes": [
+    "解题过程不完整",
+    "推理步骤缺失"
+  ],
+  "confidence": 0.5
+}

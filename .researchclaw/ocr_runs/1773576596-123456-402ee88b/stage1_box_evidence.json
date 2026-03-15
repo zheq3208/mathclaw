@@ -1,0 +1,146 @@
+{
+  "source": "/root/autodl-tmp/123456.png",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773576596-123456-402ee88b",
+  "page_index": 0,
+  "page_width": 800,
+  "page_height": 1067,
+  "image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773576596-123456-402ee88b/pages/page-001.png",
+  "boxes": [
+    {
+      "id": "section_title",
+      "type": "section",
+      "bbox": [
+        300,
+        350,
+        600,
+        370
+      ],
+      "summary": "第I卷（选择题 共58分）"
+    },
+    {
+      "id": "instruction",
+      "type": "instruction",
+      "bbox": [
+        200,
+        400,
+        800,
+        420
+      ],
+      "summary": "选择题说明"
+    },
+    {
+      "id": "q1",
+      "type": "question",
+      "bbox": [
+        100,
+        450,
+        800,
+        520
+      ],
+      "summary": "题号1及题干选项"
+    },
+    {
+      "id": "q2",
+      "type": "question",
+      "bbox": [
+        100,
+        530,
+        800,
+        600
+      ],
+      "summary": "题号2及题干选项"
+    },
+    {
+      "id": "q3",
+      "type": "question",
+      "bbox": [
+        100,
+        610,
+        800,
+        680
+      ],
+      "summary": "题号3及题干选项"
+    },
+    {
+      "id": "q4",
+      "type": "question",
+      "bbox": [
+        100,
+        690,
+        800,
+        760
+      ],
+      "summary": "题号4及题干选项"
+    }
+  ],
+  "raw_payload": {
+    "boxes": [
+      {
+        "bbox": [
+          300,
+          350,
+          600,
+          370
+        ],
+        "id": "section_title",
+        "summary": "第I卷（选择题 共58分）",
+        "type": "section"
+      },
+      {
+        "bbox": [
+          200,
+          400,
+          800,
+          420
+        ],
+        "id": "instruction",
+        "summary": "选择题说明",
+        "type": "instruction"
+      },
+      {
+        "bbox": [
+          100,
+          450,
+          850,
+          520
+        ],
+        "id": "q1",
+        "summary": "题号1及题干选项",
+        "type": "question"
+      },
+      {
+        "bbox": [
+          100,
+          530,
+          850,
+          600
+        ],
+        "id": "q2",
+        "summary": "题号2及题干选项",
+        "type": "question"
+      },
+      {
+        "bbox": [
+          100,
+          610,
+          850,
+          680
+        ],
+        "id": "q3",
+        "summary": "题号3及题干选项",
+        "type": "question"
+      },
+      {
+        "bbox": [
+          100,
+          690,
+          850,
+          760
+        ],
+        "id": "q4",
+        "summary": "题号4及题干选项",
+        "type": "question"
+      }
+    ]
+  }
+}

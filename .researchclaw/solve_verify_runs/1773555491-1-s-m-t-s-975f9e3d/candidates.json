@@ -1,0 +1,24 @@
+[
+  {
+    "value": 0.0,
+    "solver_role": "solver_a",
+    "method": "???",
+    "reasoning_outline": [],
+    "key_steps": [],
+    "final_answer": "",
+    "final_expression": "",
+    "assumptions": [],
+    "confidence": 0.0
+  },
+  {
+    "value": 0.0,
+    "solver_role": "solver_b",
+    "method": "???",
+    "reasoning_outline": [],
+    "key_steps": [],
+    "final_answer": "",
+    "final_expression": "",
+    "assumptions": [],
+    "confidence": 0.0
+  }
+]

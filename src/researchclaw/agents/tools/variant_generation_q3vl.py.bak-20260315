@@ -1,0 +1,917 @@
+"""Variant-generation agent system for math workflows using Qwen3-VL-Plus."""
+
+from __future__ import annotations
+
+import json
+import re
+import time
+import uuid
+from pathlib import Path
+from typing import Any
+
+from ...constant import WORKING_DIR
+from .math_learning import get_global_learning_memory, map_problem_to_curriculum
+from .math_utils import (
+    build_method_tags,
+    dedupe_list,
+    difficulty_band,
+    estimate_difficulty_score,
+    infer_question_type,
+    map_problem_structure,
+    normalize_problem_text,
+    replace_numbers_for_variant,
+)
+from .solve_verify_q3vl import _call_qwen_json, _load_solver_config, _resolve_supporting_images
+
+_DEFAULT_VARIANT_MODEL = "qwen3-vl-plus"
+
+_VARIANT_ITEM_SCHEMA = {
+    "variant_type": "isomorphic|easier|harder",
+    "problem_text": "str",
+    "changes": ["str"],
+    "intent": "str",
+    "difficulty_goal": "same|easier|harder",
+    "coach_note": "str",
+    "answer_outline": ["str"],
+}
+
+_DRAFT_SCHEMA = {
+    "variant_set_title": "str",
+    "variants": [_VARIANT_ITEM_SCHEMA],
+    "design_notes": ["str"],
+}
+
+_DRAFT_PROMPT = """
+你是数学学习系统中的“变式题设计器”。
+请围绕原题生成后续练习题，帮助学生迁移与巩固。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- 固定生成三道题：同构题、降难题、升难题。
+- 优先保留核心知识点和解法框架，只有在难度变化需要时才调整。
+- 不要直接给完整详解，只给简要参考步骤。
+- 每道题都要是学生可以直接作答的完整中文题目。
+""".strip()
+
+
+def _resolve_source_path(source: str) -> Path:
+    path = Path(str(source or "")).expanduser()
+    if path.is_absolute():
+        return path
+    return Path(WORKING_DIR) / path
+
+
+def _variant_runs_dir() -> Path:
+    path = Path(WORKING_DIR) / "variant_generation_runs"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _slugify(text: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", str(text or "").strip()).strip("-")
+    return slug.lower() or "variant"
+
+
+def _new_run_dir(seed_text: str) -> Path:
+    stem = _slugify(seed_text[:48])
+    run_dir = _variant_runs_dir() / f"{int(time.time())}-{stem}-{uuid.uuid4().hex[:8]}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+
+def _write_json(path: Path, payload: Any) -> str:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return str(path)
+
+
+def _coerce_list(value: Any) -> list[str]:
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if isinstance(value, str) and value.strip():
+        return [value.strip()]
+    return []
+
+
+def _trim_text(text: str, limit: int = 320) -> str:
+    value = str(text or "").strip()
+    if len(value) <= limit:
+        return value
+    return value[: limit - 3].rstrip() + "..."
+
+
+def _load_json_input(value: Any) -> dict[str, Any]:
+    if isinstance(value, dict):
+        return value
+    if not value:
+        return {}
+    text = str(value).strip()
+    if not text:
+        return {}
+    path = _resolve_source_path(text)
+    if path.exists() and path.is_file():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    try:
+        payload = json.loads(text)
+    except Exception:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def _normalize_variant_type(value: str) -> str:
+    lowered = str(value or "").strip().lower()
+    if lowered in {"same", "same-structure", "same_structure", "isomorphic", "parallel"}:
+        return "isomorphic"
+    if lowered in {"easy", "easier", "simpler"}:
+        return "easier"
+    if lowered in {"hard", "harder", "challenge"}:
+        return "harder"
+    return lowered or "isomorphic"
+
+
+def _request_prefers_count(request_text: str, default_count: int) -> int:
+    text = normalize_problem_text(request_text)
+    lowered = text.lower()
+    english_match = re.search(r"\b([1-3])\s*(?:variants?|problems?|questions?)\b", lowered)
+    if english_match:
+        return max(1, min(int(english_match.group(1)), 3))
+    chinese_match = re.search(r"([123])\s*(?:\u9053|\u9898|\u4e2a)", text)
+    if chinese_match:
+        return max(1, min(int(chinese_match.group(1)), 3))
+    if (
+        all(token in lowered for token in ("isomorphic", "easier", "harder"))
+        or all(token in text for token in ("\u540c\u6784", "\u66f4\u7b80\u5355", "\u66f4\u96be"))
+    ):
+        return 3
+    if (
+        all(token in lowered for token in ("easier", "harder"))
+        or all(token in text for token in ("\u66f4\u7b80\u5355", "\u66f4\u96be"))
+    ):
+        return 2
+    if any(token in lowered for token in ("three", "3 variants", "three variants", "\u4e09\u9053", "\u4e09\u9898", "\u4e09\u4e2a")):
+        return 3
+    if any(token in lowered for token in ("two", "2 variants", "two variants", "\u4e24\u9053", "\u4e24\u9898", "\u4e24\u4e2a")):
+        return 2
+    if any(token in lowered for token in ("one", "1 variant", "one variant", "\u4e00\u9053", "\u4e00\u9898", "\u4e00\u4e2a")):
+        return 1
+    return max(1, min(int(default_count), 3))
+
+
+def _extract_target_skill(request_text: str, fallback: str) -> str:
+    normalized = normalize_problem_text(request_text)
+    patterns = [
+        r"(?:\u9488\u5bf9|\u56f4\u7ed5|\u805a\u7126)([^?.!?\n]*)",
+        r"(?:for|focus on) ([^.\n!?]+)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, normalized, re.IGNORECASE)
+        if match:
+            candidate = match.group(1).strip(" :?")
+            if not candidate:
+                continue
+            if any(token in candidate for token in ('=', '^', '+', '-', '*', '/')):
+                continue
+            return _trim_text(candidate, 80)
+    return str(fallback or "").strip()
+
+
+def _match_memory_name(options: dict[str, Any], target: str) -> str:
+    raw = str(target or '').strip()
+    if not raw:
+        return ''
+    if raw in options:
+        return raw
+    normalized = normalize_problem_text(raw).lower()
+    for candidate in options:
+        candidate_norm = normalize_problem_text(candidate).lower()
+        if normalized == candidate_norm:
+            return candidate
+        if normalized and (normalized in candidate_norm or candidate_norm in normalized):
+            return candidate
+    return ''
+
+
+def _infer_memory_variant_question_type(knowledge_point: str, weaknesses: list[str]) -> str:
+    text = normalize_problem_text(' '.join([knowledge_point] + list(weaknesses))).lower()
+    if any(token in text for token in ('方程', 'equation', '代数', 'algebra', '二次', '一次')):
+        return 'equation'
+    if any(token in text for token in ('函数', 'function', '斜率', 'slope', '图像')):
+        return 'function'
+    if any(token in text for token in ('几何', 'triangle', '角', '图形', 'geometry')):
+        return 'geometry'
+    if any(token in text for token in ('统计', 'average', 'mean', 'median', '概率', 'statistics')):
+        return 'statistics'
+    if any(token in text for token in ('公因数', '倍数', 'number theory', '整除', '质因数')):
+        return 'number_theory'
+    return 'equation'
+
+
+def _seed_variant_source_problem(knowledge_point: str, question_type: str, weaknesses: list[str]) -> str:
+    focus = knowledge_point.strip() or '\u901a\u7528\u89e3\u9898\u80fd\u529b'
+    weakness_hint = f'\uff08\u91cd\u70b9\u5bf9\u5e94\uff1a{"\u3001".join(weaknesses[:2])}\uff09' if weaknesses else ''
+    if question_type == 'function':
+        return f'\u7ec3\u4e60\u76ee\u6807\uff1a{focus}\u3002\u5df2\u77e5 y = 2x + 1\uff0c\u5f53 x = 3 \u65f6\u6c42 y\uff0c\u518d\u6839\u636e y = 9 \u53cd\u6c42 x{weakness_hint}'
+    if question_type == 'geometry':
+        return f'\u7ec3\u4e60\u76ee\u6807\uff1a{focus}\u3002\u5728\u4e00\u4e2a\u4e09\u89d2\u5f62\u4e2d\uff0c\u4e24\u4e2a\u89d2\u5206\u522b\u662f 50\u00b0 \u548c 60\u00b0\uff0c\u6c42\u7b2c\u4e09\u4e2a\u89d2\uff0c\u5e76\u8bf4\u660e\u7406\u7531{weakness_hint}'
+    if question_type == 'statistics':
+        return f'\u7ec3\u4e60\u76ee\u6807\uff1a{focus}\u3002\u5bf9\u4e8e\u6570\u636e 2\u30014\u30016\uff0c\u6c42\u5b83\u7684\u5e73\u5747\u6570\u3001\u4e2d\u4f4d\u6570\u548c\u6781\u5dee{weakness_hint}'
+    if question_type == 'number_theory':
+        return f'\u7ec3\u4e60\u76ee\u6807\uff1a{focus}\u3002\u6c42 12 \u548c 18 \u7684\u6700\u5927\u516c\u56e0\u6570\u4e0e\u6700\u5c0f\u516c\u500d\u6570{weakness_hint}'
+    return f'\u7ec3\u4e60\u76ee\u6807\uff1a{focus}\u3002\u89e3\u65b9\u7a0b 2x + 3 = 11\uff0c\u5e76\u5199\u51fa\u6bcf\u4e00\u6b65\u4ee3\u6570\u53d8\u5f62{weakness_hint}'
+
+
+def _resolve_variant_memory_target(
+    *,
+    student_id: str,
+    problem_text: str,
+    target_skill: str,
+) -> dict[str, Any]:
+    current_structure = map_problem_structure(problem_text)
+    current_question_type = str(current_structure.get('question_type') or 'other')
+    current_kps = dedupe_list([str(item).strip() for item in current_structure.get('knowledge_points', []) if str(item).strip()])
+    resolved_student_id = str(student_id or '').strip() or '__global__'
+    memory_payload = get_global_learning_memory(resolved_student_id)
+    student_memory = memory_payload.get('memory', {}) if isinstance(memory_payload, dict) else {}
+    if not isinstance(student_memory, dict):
+        student_memory = {}
+    knowledge_map = student_memory.get('knowledge_points', {}) if isinstance(student_memory.get('knowledge_points'), dict) else {}
+    weakness_map = student_memory.get('weaknesses', {}) if isinstance(student_memory.get('weaknesses'), dict) else {}
+
+    explicit_match = _match_memory_name(knowledge_map, target_skill)
+    if explicit_match:
+        kp_record = knowledge_map.get(explicit_match, {}) if isinstance(knowledge_map.get(explicit_match), dict) else {}
+        weaknesses = [str(item).strip() for item in kp_record.get('weakness_links', []) if str(item).strip()][:3]
+        question_type = _infer_memory_variant_question_type(explicit_match, weaknesses)
+        return {
+            'variant_source': 'global_memory',
+            'knowledge_point': explicit_match,
+            'target_skill': explicit_match,
+            'question_type': question_type,
+            'problem_text': _seed_variant_source_problem(explicit_match, question_type, weaknesses),
+            'weaknesses': weaknesses,
+            'active_knowledge_point_count': len(knowledge_map),
+        }
+
+    for kp in current_kps:
+        matched = _match_memory_name(knowledge_map, kp)
+        if matched:
+            kp_record = knowledge_map.get(matched, {}) if isinstance(knowledge_map.get(matched), dict) else {}
+            weaknesses = [str(item).strip() for item in kp_record.get('weakness_links', []) if str(item).strip()][:3]
+            return {
+                'variant_source': 'current_problem',
+                'knowledge_point': matched,
+                'target_skill': target_skill.strip() or matched,
+                'question_type': current_question_type,
+                'problem_text': normalize_problem_text(problem_text),
+                'weaknesses': weaknesses,
+                'active_knowledge_point_count': len(knowledge_map),
+            }
+
+    if knowledge_map:
+        ranked = sorted(
+            knowledge_map.items(),
+            key=lambda item: (
+                -float(item[1].get('risk_score', 0.0)),
+                -int(item[1].get('history_count', 0)),
+                item[0],
+            ),
+        )
+        kp_name, kp_record = ranked[0]
+        weaknesses = [str(item).strip() for item in kp_record.get('weakness_links', []) if str(item).strip()][:3]
+        question_type = _infer_memory_variant_question_type(kp_name, weaknesses)
+        return {
+            'variant_source': 'global_memory',
+            'knowledge_point': kp_name,
+            'target_skill': target_skill.strip() or kp_name,
+            'question_type': question_type,
+            'problem_text': _seed_variant_source_problem(kp_name, question_type, weaknesses),
+            'weaknesses': weaknesses,
+            'active_knowledge_point_count': len(knowledge_map),
+        }
+
+    if weakness_map:
+        ranked = sorted(
+            weakness_map.items(),
+            key=lambda item: (
+                -float(item[1].get('severity', 0.0)),
+                -int(item[1].get('count', 0)),
+                item[0],
+            ),
+        )
+        weakness_name, weakness_record = ranked[0]
+        linked_kps = [str(item).strip() for item in weakness_record.get('knowledge_points', []) if str(item).strip()]
+        kp_name = linked_kps[0] if linked_kps else target_skill.strip() or '\u901a\u7528\u89e3\u9898\u80fd\u529b'
+        question_type = _infer_memory_variant_question_type(kp_name, [weakness_name])
+        return {
+            'variant_source': 'global_memory',
+            'knowledge_point': kp_name,
+            'target_skill': target_skill.strip() or kp_name,
+            'question_type': question_type,
+            'problem_text': _seed_variant_source_problem(kp_name, question_type, [weakness_name]),
+            'weaknesses': [weakness_name],
+            'active_knowledge_point_count': len(knowledge_map),
+        }
+
+    return {
+        'variant_source': 'current_problem',
+        'knowledge_point': current_kps[0] if current_kps else '',
+        'target_skill': target_skill.strip(),
+        'question_type': current_question_type,
+        'problem_text': normalize_problem_text(problem_text),
+        'weaknesses': [],
+        'active_knowledge_point_count': len(knowledge_map),
+    }
+
+
+def _harder_suffix(question_type: str) -> str:
+    return {
+        "geometry": " Add one extra geometric constraint that changes the reasoning burden.",
+        "function": " Add one extra graph or parameter condition.",
+        "statistics": " Add one interpretation or comparison requirement.",
+    }.get(question_type, " Add one extra condition or transfer step.")
+
+
+def _contains_cjk(text: str) -> bool:
+    return bool(re.search(r"[\u4e00-\u9fff]", str(text or "")))
+
+
+def _detect_primary_variable(text: str) -> str:
+    match = re.search(r"([a-zA-Z])(?:\^|\*\*|\s*=)", str(text or ""))
+    if match:
+        return match.group(1)
+    letters = re.findall(r"[a-zA-Z]", str(text or ""))
+    return letters[0] if letters else "x"
+
+
+def _equation_sentence(equation: str, *, chinese: bool, harder: bool = False) -> str:
+    if chinese:
+        suffix = "\uff0c\u5e76\u68c0\u67e5\u6bcf\u4e2a\u6839\u662f\u5426\u6ee1\u8db3\u539f\u65b9\u7a0b" if harder else ""
+        return f"\u89e3\u65b9\u7a0b {equation}{suffix}"
+    suffix = ", and verify both roots by substitution." if harder else ""
+    return f"Solve {equation}{suffix}"
+
+
+def _equation_fallback_item(problem_text: str, variant_type: str, target_skill: str) -> dict[str, Any]:
+    chinese = _contains_cjk(problem_text)
+    var = _detect_primary_variable(problem_text)
+    normalized = normalize_problem_text(problem_text)
+    is_quadratic = bool(re.search(rf"{re.escape(var)}\s*(?:\^\s*2|\*\*\s*2)", normalized))
+    if is_quadratic:
+        if variant_type == "isomorphic":
+            equation = f"{var}^2 - 7{var} + 12 = 0"
+            changes = ["Changed the coefficients but kept a clean factorization frame."]
+            coach_note = target_skill or "Practice the same factoring pattern with different roots."
+        elif variant_type == "easier":
+            equation = f"({var} - 2)({var} - 3) = 0"
+            changes = ["Rewrote the quadratic directly in factorized form to lower the setup burden."]
+            coach_note = target_skill or "Warm up by reading the roots directly from the factors."
+        else:
+            equation = f"2{var}^2 - 7{var} + 3 = 0"
+            changes = ["Used a non-monic quadratic and added a verification step."]
+            coach_note = target_skill or "Keep the factoring idea, then check each root by substitution."
+        return {
+            "variant_type": variant_type,
+            "problem_text": _equation_sentence(equation, chinese=chinese, harder=variant_type == 'harder'),
+            "changes": changes,
+            "intent": {
+                "isomorphic": "same_concept_same_solution_frame",
+                "easier": "reduced_prerequisite_load",
+                "harder": "deeper_transfer_or_extra_constraint",
+            }[variant_type],
+            "difficulty_goal": "same" if variant_type == "isomorphic" else variant_type,
+            "coach_note": coach_note,
+            "answer_outline": [
+                "Identify the factor or equation form.",
+                "Solve for the variable.",
+                "Check the result if asked.",
+            ],
+        }
+
+    equation_templates = {
+        "isomorphic": f"3{var} - 8 = 13",
+        "easier": f"{var} + 7 = 12",
+        "harder": f"2({var} - 3) + 5 = 17",
+    }
+    return {
+        "variant_type": variant_type,
+        "problem_text": _equation_sentence(
+            equation_templates[variant_type],
+            chinese=chinese,
+            harder=variant_type == "harder",
+        ),
+        "changes": ["Adjusted the equation form while preserving inverse-operation practice."],
+        "intent": {
+            "isomorphic": "same_concept_same_solution_frame",
+            "easier": "reduced_prerequisite_load",
+            "harder": "deeper_transfer_or_extra_constraint",
+        }[variant_type],
+        "difficulty_goal": "same" if variant_type == "isomorphic" else variant_type,
+        "coach_note": target_skill or "Keep the same equation-solving habit.",
+        "answer_outline": [
+            "Simplify the equation.",
+            "Isolate the variable.",
+            "Check the result if asked.",
+        ],
+    }
+
+
+def _fallback_variant_item(problem_text: str, variant_type: str, question_type: str, target_skill: str) -> dict[str, Any]:
+    normalized_problem = normalize_problem_text(problem_text)
+    if question_type == "equation" or "=" in normalized_problem:
+        return _equation_fallback_item(normalized_problem, variant_type, target_skill)
+
+    updated_text, raw_changes = replace_numbers_for_variant(normalized_problem, variant_type)
+    if variant_type == "harder":
+        updated_text = updated_text + _harder_suffix(question_type)
+    change_lines = [f"Changed {item['from']} to {item['to']}" for item in raw_changes]
+    intent = {
+        "isomorphic": "same_concept_same_solution_frame",
+        "easier": "reduced_prerequisite_load",
+        "harder": "deeper_transfer_or_extra_constraint",
+    }[variant_type]
+    return {
+        "variant_type": variant_type,
+        "problem_text": updated_text,
+        "changes": change_lines or ["Adjusted the numeric surface while preserving the core topic."],
+        "intent": intent,
+        "difficulty_goal": "same" if variant_type == "isomorphic" else variant_type,
+        "coach_note": target_skill or "Use this variant to practice the same core skill.",
+        "answer_outline": [
+            "Identify the target.",
+            "Set up the key relation.",
+            "Complete the calculation or proof.",
+        ],
+    }
+
+
+def _local_difficulty_report(problem_text: str, reference_problem_text: str) -> dict[str, Any]:
+    score = estimate_difficulty_score(problem_text)
+    report = {
+        "score": score,
+        "band": difficulty_band(score),
+        "question_type": infer_question_type(problem_text),
+    }
+    if reference_problem_text.strip():
+        ref_score = estimate_difficulty_score(reference_problem_text)
+        if abs(score - ref_score) < 0.4:
+            relation = "about_the_same"
+        elif score > ref_score:
+            relation = "harder"
+        else:
+            relation = "easier"
+        report["reference"] = {
+            "score": ref_score,
+            "band": difficulty_band(ref_score),
+            "relation": relation,
+        }
+    return report
+
+
+def _difficulty_relation_ok(variant_type: str, relation: str) -> bool:
+    if variant_type == "isomorphic":
+        return relation in {"about_the_same", "easier", "harder"}
+    if variant_type == "easier":
+        return relation == "easier"
+    if variant_type == "harder":
+        return relation == "harder"
+    return True
+
+
+def _is_isomorphic_close(base_score: float, variant_score: float) -> bool:
+    return abs(float(base_score) - float(variant_score)) <= 0.8
+
+
+def _variant_signal_text(candidate: dict[str, Any]) -> str:
+    parts = _coerce_list(candidate.get("changes"))
+    parts.extend(
+        [
+            str(candidate.get("intent") or "").strip(),
+            str(candidate.get("difficulty_goal") or "").strip(),
+            str(candidate.get("coach_note") or "").strip(),
+            str(candidate.get("problem_text") or "").strip(),
+        ]
+    )
+    return " ".join(part for part in parts if part).lower()
+
+
+def _looks_plausibly_easier(
+    candidate: dict[str, Any],
+    *,
+    original_problem: str,
+    original_score: float,
+    report: dict[str, Any],
+) -> bool:
+    signal = _variant_signal_text(candidate)
+    candidate_score = float(report.get("score") or original_score)
+    simplifying_tokens = (
+        "smaller",
+        "simpler",
+        "reduced",
+        "reduce",
+        "warm up",
+        "perfect square",
+        "single step",
+        "more direct",
+        "fewer",
+    )
+    if any(token in signal for token in simplifying_tokens):
+        return True
+    return candidate_score <= original_score + 0.2 and len(str(candidate.get("problem_text") or "")) <= len(original_problem) * 1.2
+
+
+def _looks_plausibly_harder(
+    candidate: dict[str, Any],
+    *,
+    original_problem: str,
+    original_score: float,
+    report: dict[str, Any],
+) -> bool:
+    signal = _variant_signal_text(candidate)
+    candidate_score = float(report.get("score") or original_score)
+    harder_tokens = (
+        "justify",
+        "verify",
+        "explain",
+        "prove",
+        "show that",
+        "extra",
+        "parameter",
+        "constraint",
+        "compare",
+        "non-monic",
+    )
+    if any(token in signal for token in harder_tokens):
+        return True
+    return candidate_score >= original_score - 0.05 and len(str(candidate.get("problem_text") or "")) >= len(original_problem) * 1.1
+
+
+def _build_case_brief(
+    *,
+    problem_text: str,
+    variant_request: str,
+    target_skill: str,
+    requested_count: int,
+    grade_hint: str,
+    weakness_report: str,
+    supporting_images: str,
+    student_id: str,
+) -> dict[str, Any]:
+    normalized_problem = normalize_problem_text(problem_text)
+    request_text = normalize_problem_text(variant_request)
+    weakness_payload = _load_json_input(weakness_report)
+    weakness_arbiter = (
+        weakness_payload.get("arbiter")
+        if isinstance(weakness_payload.get("arbiter"), dict)
+        else weakness_payload
+        if isinstance(weakness_payload, dict)
+        else {}
+    )
+    memory_target = _resolve_variant_memory_target(
+        student_id=str(student_id or "").strip(),
+        problem_text=normalized_problem,
+        target_skill=target_skill or str(weakness_arbiter.get("primary_weakness") or ""),
+    )
+    resolved_problem_text = str(memory_target.get("problem_text") or normalized_problem)
+    curriculum = map_problem_to_curriculum(resolved_problem_text, grade_hint)
+    structure = map_problem_structure(resolved_problem_text)
+    resolved_target_skill = _extract_target_skill(
+        request_text,
+        target_skill
+        or str(weakness_arbiter.get("primary_weakness") or "")
+        or str(memory_target.get("target_skill") or ""),
+    )
+    return {
+        "problem_summary": _trim_text(resolved_problem_text, 260),
+        "problem_text": resolved_problem_text,
+        "source_problem_text": normalized_problem,
+        "variant_request": request_text,
+        "requested_count": _request_prefers_count(request_text, requested_count),
+        "question_type": str(memory_target.get("question_type") or curriculum.get("question_type") or structure.get("question_type") or "other").strip(),
+        "chapter": str(curriculum.get("chapter") or "").strip(),
+        "knowledge_points": dedupe_list(_coerce_list(curriculum.get("knowledge_points"))) or dedupe_list([str(memory_target.get("knowledge_point") or "").strip()]),
+        "prerequisite_gaps": dedupe_list(_coerce_list(weakness_arbiter.get("prerequisite_gaps"))),
+        "target_skill": resolved_target_skill,
+        "difficulty_score": float(curriculum.get("difficulty_score") or structure.get("difficulty_score") or estimate_difficulty_score(resolved_problem_text)),
+        "difficulty_band": str(curriculum.get("difficulty_band") or structure.get("difficulty_band") or difficulty_band(estimate_difficulty_score(resolved_problem_text))),
+        "method_tags": build_method_tags(resolved_problem_text),
+        "requires_visual_reasoning": bool(_resolve_supporting_images(supporting_images)) or str(curriculum.get("question_type") or "") == "geometry",
+        "memory_context": {
+            "student_id": str(student_id or "").strip() or "__global__",
+            "variant_source": str(memory_target.get("variant_source") or "current_problem"),
+            "targeted_knowledge_point": str(memory_target.get("knowledge_point") or "").strip(),
+            "targeted_weaknesses": list(memory_target.get("weaknesses") or [])[:3],
+            "active_knowledge_point_count": int(memory_target.get("active_knowledge_point_count") or 0),
+        },
+    }
+
+
+def _build_draft_prompt(case_brief: dict[str, Any]) -> str:
+    return "\n".join(
+        [
+            "case_brief:",
+            json.dumps(case_brief, ensure_ascii=False),
+            "",
+            f"请严格返回一个 JSON 对象，字段结构必须匹配：{_DRAFT_SCHEMA}",
+        ]
+    )
+
+
+def build_variant_generation_case(
+    problem_text: str,
+    variant_request: str = "",
+    target_skill: str = "",
+    requested_count: int = 3,
+    grade_hint: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+    student_id: str = "",
+) -> dict[str, Any]:
+    return _build_case_brief(
+        problem_text=problem_text,
+        variant_request=variant_request,
+        target_skill=target_skill,
+        requested_count=requested_count,
+        grade_hint=grade_hint,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+        student_id=student_id,
+    )
+
+
+def draft_problem_variants(
+    problem_text: str,
+    variant_request: str = "",
+    target_skill: str = "",
+    requested_count: int = 3,
+    grade_hint: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+    student_id: str = "",
+) -> dict[str, Any]:
+    cfg = _load_solver_config()
+    case_brief = build_variant_generation_case(
+        problem_text=problem_text,
+        variant_request=variant_request,
+        target_skill=target_skill,
+        requested_count=requested_count,
+        grade_hint=grade_hint,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+        student_id=student_id,
+    )
+    draft_bundle = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_DRAFT_PROMPT,
+        user_prompt=_build_draft_prompt(case_brief),
+        enable_thinking=cfg.get("planner_enable_thinking", True),
+        supporting_images=_resolve_supporting_images(supporting_images),
+    )
+    return {"case_brief": case_brief, "draft_bundle": draft_bundle}
+
+
+def _prepare_candidate_items(draft_bundle: dict[str, Any]) -> list[dict[str, Any]]:
+    items = draft_bundle.get("variants") if isinstance(draft_bundle, dict) else []
+    if not isinstance(items, list):
+        return []
+    prepared: list[dict[str, Any]] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        candidate = dict(item)
+        candidate["variant_type"] = _normalize_variant_type(candidate.get("variant_type", ""))
+        prepared.append(candidate)
+    return prepared
+
+
+def verify_problem_variants(
+    problem_text: str,
+    variant_request: str = "",
+    target_skill: str = "",
+    requested_count: int = 3,
+    grade_hint: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+    student_id: str = "",
+) -> dict[str, Any]:
+    drafted = draft_problem_variants(
+        problem_text=problem_text,
+        variant_request=variant_request,
+        target_skill=target_skill,
+        requested_count=requested_count,
+        grade_hint=grade_hint,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+        student_id=student_id,
+    )
+    case_brief = drafted["case_brief"]
+    candidate_items = _prepare_candidate_items(drafted.get("draft_bundle", {}))
+    requested_types = ["isomorphic", "easier", "harder"][: max(1, min(int(case_brief.get("requested_count") or 3), 3))]
+    question_type = str(case_brief.get("question_type") or "other")
+    target_skill_value = str(case_brief.get("target_skill") or "").strip()
+    original_problem = str(case_brief.get("problem_text") or problem_text)
+    original_score = float(case_brief.get("difficulty_score") or estimate_difficulty_score(original_problem))
+
+    used_texts: set[str] = {_trim_text(original_problem, 1000).lower()}
+    verified_variants: list[dict[str, Any]] = []
+    validation: list[dict[str, Any]] = []
+
+    for variant_type in requested_types:
+        candidate = next((item for item in candidate_items if item.get("variant_type") == variant_type), {})
+        candidate_text = normalize_problem_text(str(candidate.get("problem_text") or ""))
+        use_fallback = not candidate_text
+        candidate_reason = []
+        if candidate_text:
+            report = _local_difficulty_report(candidate_text, original_problem)
+            relation = str((report.get("reference") or {}).get("relation") or "")
+            candidate_qtype = str(report.get("question_type") or "other")
+            duplicate = candidate_text.lower() in used_texts
+            relation_ok = _difficulty_relation_ok(variant_type, relation)
+            if variant_type == "isomorphic" and not _is_isomorphic_close(original_score, float(report.get("score") or original_score)):
+                relation_ok = False
+            if candidate_qtype != question_type and variant_type in {"isomorphic", "easier", "harder"}:
+                relation_ok = False
+            if variant_type == "easier" and relation == "about_the_same":
+                relation_ok = _looks_plausibly_easier(
+                    candidate,
+                    original_problem=original_problem,
+                    original_score=original_score,
+                    report=report,
+                )
+            if variant_type == "harder" and relation == "about_the_same":
+                relation_ok = _looks_plausibly_harder(
+                    candidate,
+                    original_problem=original_problem,
+                    original_score=original_score,
+                    report=report,
+                )
+            if duplicate:
+                relation_ok = False
+                candidate_reason.append("duplicate_text")
+            if not relation_ok:
+                candidate_reason.append(f"difficulty_or_structure_mismatch:{relation or 'unknown'}")
+                use_fallback = True
+        if use_fallback:
+            final_item = _fallback_variant_item(original_problem, variant_type, question_type, target_skill_value)
+            report = _local_difficulty_report(final_item["problem_text"], original_problem)
+            source = "fallback"
+        else:
+            final_item = {
+                "variant_type": variant_type,
+                "problem_text": candidate_text,
+                "changes": _coerce_list(candidate.get("changes")) or ["Adjusted the surface while preserving the target concept."],
+                "intent": str(candidate.get("intent") or "").strip() or ("same_concept_same_solution_frame" if variant_type == "isomorphic" else "targeted_transfer_practice"),
+                "difficulty_goal": str(candidate.get("difficulty_goal") or ("same" if variant_type == "isomorphic" else variant_type)).strip(),
+                "coach_note": str(candidate.get("coach_note") or target_skill_value or "Use this variant for transfer practice.").strip(),
+                "answer_outline": _coerce_list(candidate.get("answer_outline")) or ["Identify the target.", "Set up the key relation.", "Complete the final step."],
+            }
+            source = "qwen"
+        used_texts.add(normalize_problem_text(final_item["problem_text"]).lower())
+        final_item["difficulty_report"] = report
+        final_item["source"] = source
+        verified_variants.append(final_item)
+        validation.append(
+            {
+                "variant_type": variant_type,
+                "source": source,
+                "question_type": str(report.get("question_type") or "other"),
+                "difficulty_relation": str((report.get("reference") or {}).get("relation") or "unknown"),
+                "difficulty_band": str(report.get("band") or ""),
+                "notes": candidate_reason,
+            }
+        )
+
+    return {
+        "case_brief": case_brief,
+        "variant_set_title": str((drafted.get("draft_bundle") or {}).get("variant_set_title") or "Targeted Variant Set").strip(),
+        "variants": verified_variants,
+        "validation": validation,
+        "design_notes": _coerce_list((drafted.get("draft_bundle") or {}).get("design_notes")),
+    }
+
+
+def _render_variant_markdown(bundle: dict[str, Any]) -> str:
+    label_map = {
+        "isomorphic": "同构题",
+        "same": "同构题",
+        "easier": "降难题",
+        "harder": "升难题",
+    }
+    blocks: list[str] = []
+    for idx, item in enumerate(bundle.get("variants", []), start=1):
+        if not isinstance(item, dict):
+            continue
+        title = label_map.get(str(item.get("variant_type") or "").strip().lower(), "变式题")
+        problem_text = str(item.get("problem_text") or "").strip()
+        if not problem_text:
+            continue
+        lines = [f"{idx}. {title}", problem_text]
+        coach_note = str(item.get("coach_note") or "").strip()
+        if coach_note:
+            lines.append(f"提醒：{coach_note}")
+        outline = [str(step).strip() for step in _coerce_list(item.get("answer_outline")) if str(step).strip()]
+        if outline:
+            lines.append("参考思路：")
+            lines.extend(f"{step_idx + 1}. {step}" for step_idx, step in enumerate(outline[:3]))
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks).strip()
+
+
+def run_problem_variant_agent(
+    problem_text: str,
+    variant_request: str = "",
+    target_skill: str = "",
+    requested_count: int = 3,
+    grade_hint: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+    student_id: str = "",
+) -> dict[str, Any]:
+    cfg = _load_solver_config()
+    run_dir = _new_run_dir(problem_text or variant_request or "variant")
+    bundle = verify_problem_variants(
+        problem_text=problem_text,
+        variant_request=variant_request,
+        target_skill=target_skill,
+        requested_count=requested_count,
+        grade_hint=grade_hint,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+        student_id=student_id,
+    )
+    variant_md = _render_variant_markdown(bundle)
+    variant_md_path = run_dir / "VariantSet.md"
+    variant_md_path.write_text(variant_md, encoding="utf-8")
+    bundle_path = run_dir / "VariantBundle.json"
+    _write_json(bundle_path, bundle)
+    audit = {
+        "pipeline": "VariantGen-Q3VL",
+        "memory_context": bundle.get("case_brief", {}).get("memory_context", {}),
+        "run_dir": str(run_dir),
+        "model": cfg.get("model_name", _DEFAULT_VARIANT_MODEL),
+        "status": "generated",
+        "variant_count": len(bundle.get("variants") or []),
+        "VariantSet_md_path": str(variant_md_path),
+        "VariantBundle_json_path": str(bundle_path),
+    }
+    audit_path = run_dir / "VariantAudit.json"
+    _write_json(audit_path, audit)
+    audit["VariantAudit_json_path"] = str(audit_path)
+    return audit
+
+
+def generate_problem_variants(
+    problem_text: str,
+    question_type: str = "",
+    target_skill: str = "",
+    variant_request: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+    student_id: str = "",
+) -> dict[str, Any]:
+    bundle = verify_problem_variants(
+        problem_text=problem_text,
+        variant_request=variant_request,
+        target_skill=target_skill,
+        grade_hint="",
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+        student_id=student_id,
+    )
+    case_brief = bundle.get("case_brief") if isinstance(bundle.get("case_brief"), dict) else {}
+    return {
+        "question_type": str(question_type or case_brief.get("question_type") or "").strip(),
+        "target_skill": str(target_skill or case_brief.get("target_skill") or "").strip(),
+        "memory_context": case_brief.get("memory_context", {}),
+        "variants": [
+            {
+                "variant_type": item.get("variant_type"),
+                "problem_text": item.get("problem_text"),
+                "changes": item.get("changes"),
+                "intent": item.get("intent"),
+            }
+            for item in bundle.get("variants", [])
+            if isinstance(item, dict)
+        ],
+    }
+
+
+def calibrate_problem_difficulty(
+    problem_text: str,
+    reference_problem_text: str = "",
+) -> dict[str, Any]:
+    report = _local_difficulty_report(problem_text, reference_problem_text)
+    result = {
+        "score": report.get("score"),
+        "band": report.get("band"),
+        "signals": {
+            "question_type": report.get("question_type"),
+            "formula_count": len(re.findall(r"[=<>+\-*/^]", problem_text or "")),
+            "number_count": len(re.findall(r"-?\d+(?:\.\d+)?", problem_text or "")),
+        },
+    }
+    if report.get("reference"):
+        result["reference"] = report["reference"]
+    return result

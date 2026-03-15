@@ -1,0 +1,32 @@
+[
+  {
+    "value": 0.95,
+    "solver_role": "solver_a",
+    "method": "unspecified",
+    "reasoning_outline": [],
+    "key_steps": [
+      "Exact solver fallback produced x=2, x=3."
+    ],
+    "final_answer": "x=2, x=3",
+    "final_expression": "x=2, x=3",
+    "assumptions": [
+      "candidate repaired from exact solver because model output lacked a final answer"
+    ],
+    "confidence": 0.0
+  },
+  {
+    "value": 0.0,
+    "solver_role": "solver_b",
+    "method": "unspecified",
+    "reasoning_outline": [],
+    "key_steps": [
+      "Exact solver fallback produced x=2, x=3."
+    ],
+    "final_answer": "x=2, x=3",
+    "final_expression": "x=2, x=3",
+    "assumptions": [
+      "candidate repaired from exact solver because model output lacked a final answer"
+    ],
+    "confidence": 0.0
+  }
+]

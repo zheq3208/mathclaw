@@ -1,0 +1,30 @@
+{
+  "verification_compare": {
+    "status": "conflict",
+    "equation": "solve 2*x + 3 = 7.",
+    "variable": "x",
+    "expected_solutions": [
+      "2"
+    ],
+    "proposed_solutions": [
+      "5"
+    ],
+    "notes": []
+  },
+  "verification_status": "conflict",
+  "wrong_answer": true,
+  "process_incomplete": false,
+  "missing_steps": [],
+  "likely_error_causes": [
+    "symbolic_manipulation_gap"
+  ],
+  "evidence_items": [
+    "Student final answer conflicts with the verified answer or exact check.",
+    "Reference answer: 2",
+    "Input format mismatch: 'solve 2x + 3 = 7.' is not valid Python/SymPy syntax",
+    "No solver provided reasoning or steps — confidence in answer relies on manual check",
+    "Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+    "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+  ],
+  "method_tags": []
+}

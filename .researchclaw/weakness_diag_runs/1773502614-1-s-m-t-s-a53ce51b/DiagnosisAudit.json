@@ -1,0 +1,67 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b",
+  "model": "qwen3-vl-plus",
+  "status": "review",
+  "primary_weakness": "Calculus concept: derivative as instantaneous velocity",
+  "CaseBrief_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b/case_brief.json",
+  "LocalChecks_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b/local_checks.json",
+  "Process_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b/process.json",
+  "Learning_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b/learning.json",
+  "TeacherFeedback_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b/WeaknessReport.json",
+  "GlobalLearningMemory_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-14T15:37:46.805758Z",
+    "event": {
+      "timestamp": "2026-03-14T15:37:46.805758Z",
+      "conversation_id": "debug-exam-pipeline-2",
+      "source": "weakness_diag",
+      "result": "incorrect",
+      "primary_weakness": "Calculus concept: derivative as instantaneous velocity",
+      "secondary_weaknesses": [
+        "Arithmetic verification in derivative evaluation"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "kinematics"
+      ],
+      "prerequisite_gaps": [
+        "calculus_foundations",
+        "function_differentiation"
+      ],
+      "practice_focus": [
+        "Relating displacement functions to velocity via derivatives",
+        "Verifying derivative calculations step-by-step"
+      ],
+      "note": "Student demonstrated partial understanding of derivative calculation but failed to connect to correct answer selection. Requires reinforcement of calculus-kinematics relationship.",
+      "evidence": [
+        "Student calculated 24 m/s but selected option B (30 m/s)"
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "kinematics",
+        "linear equation"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  },
+  "BootstrapVerification_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773502614-1-s-m-t-s-a53ce51b/bootstrap_verification.json"
+}

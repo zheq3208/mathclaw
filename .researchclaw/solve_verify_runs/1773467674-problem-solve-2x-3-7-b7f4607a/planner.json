@@ -1,0 +1,21 @@
+{
+  "value": 0.0,
+  "problem_summary": "Problem: solve 2x + 3 = 7.",
+  "givens": [],
+  "target": "2x + 3 = 7",
+  "question_type": "equation",
+  "candidate_methods": [
+    "direct symbolic solving",
+    "sanity-check route"
+  ],
+  "exact_check_targets": {
+    "equation": "solve 2x + 3 = 7.",
+    "expressions": [
+      "Problem: solve 2x + 3 = 7."
+    ],
+    "answer_format": "numeric or symbolic"
+  },
+  "risks": [],
+  "preferred_variable": "x",
+  "requires_visual_reasoning": false
+}

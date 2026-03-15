@@ -1,0 +1,18 @@
+{
+  "session_id": "solve-verify-route-check",
+  "title": "New Research Chat",
+  "created_at": 1773463709.212658,
+  "updated_at": 1773463826.7882102,
+  "messages": [
+    {
+      "role": "user",
+      "content": "解方程 x^2 - 5x + 6 = 0，并说明状态。",
+      "timestamp": 1773463709.2131252
+    },
+    {
+      "role": "assistant",
+      "content": "Answer: [not provided]",
+      "timestamp": 1773463826.7882051
+    }
+  ]
+}

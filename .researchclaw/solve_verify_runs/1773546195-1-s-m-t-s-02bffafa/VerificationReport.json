@@ -1,0 +1,125 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 24 m/s \nC. 27 m/s \nD. 30 m/s",
+  "planner": {
+    "problem_summary": "Calculate instantaneous velocity at t=3s for displacement function S(t)=2t³-5t².",
+    "givens": [
+      "S(t) = 2t³ - 5t²",
+      "t = 3 s"
+    ],
+    "target": "Instantaneous velocity at t=3s in m/s",
+    "question_type": "calculus",
+    "candidate_methods": [
+      "Differentiate displacement function to find velocity",
+      "Substitute t=3 into velocity function"
+    ],
+    "exact_check_targets": {
+      "equation": "S'(t) = 6t² - 10t",
+      "expressions": [
+        "6*(3)^2 - 10*3"
+      ],
+      "answer_format": "Numerical value with unit m/s"
+    },
+    "risks": [
+      "Possible typo in displacement function (e.g., incorrect exponents or coefficients)",
+      "Misclassification as geometry instead of calculus leading to incorrect method",
+      "OCR errors in problem statement (e.g., misread '2t^3' as '2t^2')",
+      "Unit inconsistency (though units are consistent here)"
+    ],
+    "preferred_variable": "t",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "error": "Sympify of expression 'could not parse \"S'(t)\"' failed, because of exception being raised:\nTokenError: ('unterminated string literal (detected at line 1)', (1, 2))",
+      "equation": "S'(t) = 6t² - 10t",
+      "variable": "t"
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "",
+        "verification": {
+          "status": "conflict",
+          "equation": "S(t) = 2*t**3 - 5*t**2",
+          "variable": "t",
+          "expected_solutions": [
+            "0",
+            "5/4 - sqrt(33)/4",
+            "5/4 + sqrt(33)/4"
+          ],
+          "proposed_solutions": [],
+          "notes": []
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "solver_b",
+        "final_answer": "",
+        "verification": {
+          "status": "conflict",
+          "equation": "S(t) = 2*t**3 - 5*t**2",
+          "variable": "t",
+          "expected_solutions": [
+            "0",
+            "5/4 - sqrt(33)/4",
+            "5/4 + sqrt(33)/4"
+          ],
+          "proposed_solutions": [],
+          "notes": []
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "conflict",
+        "strengths": [],
+        "issues": [],
+        "first_conflicting_step": ""
+      },
+      {
+        "solver_role": "solver_b",
+        "verdict": "conflict",
+        "strengths": [],
+        "issues": [],
+        "first_conflicting_step": ""
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "Sympify of expression 'could not parse \"S'(t)\"' failed, because of exception being raised:\nTokenError: ('unterminated string literal (detected at line 1)', (1, 2))"
+    ],
+    "recommended_winner": "solver_a",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "21 m/s",
+    "final_expression": "6*(3)^2 - 10*3 = 54 - 30 = 21",
+    "concise_solution_markdown": "瞬时速度是位移对时间的导数：\n\n$$ v(t) = S'(t) = \\frac{d}{dt}(2t^3 - 5t^2) = 6t^2 - 10t $$\n\n代入 $ t = 3 $：\n\n$$ v(3) = 6(3)^2 - 10(3) = 54 - 30 = 21 \\, \\text{m/s} $$",
+    "verification_summary": [
+      "导数计算正确：$ S'(t) = 6t^2 - 10t $",
+      "代入 $ t=3 $ 得 $ 6\\cdot9 - 30 = 21 $",
+      "选项 A 为 21 m/s，匹配结果",
+      "工具检查失败源于字符串解析错误（如 'S'(t)' 未转义），非数学错误"
+    ],
+    "unresolved_risks": [
+      "tool_checks 中的 sympify 错误可能掩盖真实验证结果，需人工复核公式输入格式",
+      "solver_a 和 solver_b 均未提供有效推理或答案，依赖外部推导"
+    ],
+    "recommended_follow_up": "重新运行符号计算，使用正确转义表达式如 'diff(2*t**3 - 5*t**2, t)' 并代入 t=3；同时确认试卷中函数确为 $ S(t)=2t^3-5t^2 $（无 OCR 误读）"
+  }
+}

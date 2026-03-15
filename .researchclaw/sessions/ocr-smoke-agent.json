@@ -1,0 +1,18 @@
+{
+  "session_id": "ocr-smoke-agent",
+  "title": "New Research Chat",
+  "created_at": 1773460680.604429,
+  "updated_at": 1773460741.6986647,
+  "messages": [
+    {
+      "role": "user",
+      "content": "请直接调用 extract_math_document 工具，处理 /root/autodl-tmp/123456.png ，mode 用 stage1，只返回检测到的题目数量和工具名。",
+      "timestamp": 1773460680.6071708
+    },
+    {
+      "role": "assistant",
+      "content": "**工具名：** extract_math_document (MessToClean-Q3VL)\n\n**检测到的题目数量：** 4 题",
+      "timestamp": 1773460741.6986563
+    }
+  ]
+}

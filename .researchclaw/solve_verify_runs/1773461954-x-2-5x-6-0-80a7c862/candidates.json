@@ -1,0 +1,36 @@
+[
+  {
+    "value": 0.0,
+    "solver_role": "solver_a",
+    "method": "unspecified",
+    "reasoning_outline": [],
+    "key_steps": [],
+    "final_answer": "",
+    "final_expression": "",
+    "assumptions": [],
+    "confidence": 0.0
+  },
+  {
+    "solver_role": "Solver B",
+    "method": "Quadratic formula",
+    "reasoning_outline": [
+      "Identify coefficients: a=1, b=-5, c=6",
+      "Compute discriminant: D = b^2 - 4ac = 25 - 24 = 1",
+      "Apply quadratic formula: x = [5 ± sqrt(1)] / 2",
+      "Calculate roots: x = (5+1)/2 = 3 and x = (5-1)/2 = 2",
+      "Backward verification: substitute x=2 and x=3 into original equation to confirm both yield 0"
+    ],
+    "key_steps": [
+      "D = (-5)^2 - 4*1*6 = 25 - 24 = 1",
+      "x = [5 ± 1] / 2",
+      "x = 3 or x = 2"
+    ],
+    "final_answer": "x=2, x=3",
+    "final_expression": "x=2, x=3",
+    "assumptions": [
+      "Equation is correctly transcribed as x^2 - 5x + 6 = 0 (no OCR errors)",
+      "Variable is x with standard algebraic interpretation"
+    ],
+    "confidence": 1.0
+  }
+]

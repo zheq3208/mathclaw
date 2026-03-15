@@ -1,0 +1,13 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/.researchclaw/weakness_diag_runs/1773479552-x-2-5x-6-0-0ddf3866",
+  "model": "qwen3-vl-plus",
+  "status": "diagnosed",
+  "primary_weakness": "incomplete_reasoning",
+  "CaseBrief_json_path": "/root/.researchclaw/weakness_diag_runs/1773479552-x-2-5x-6-0-0ddf3866/case_brief.json",
+  "LocalChecks_json_path": "/root/.researchclaw/weakness_diag_runs/1773479552-x-2-5x-6-0-0ddf3866/local_checks.json",
+  "Process_json_path": "/root/.researchclaw/weakness_diag_runs/1773479552-x-2-5x-6-0-0ddf3866/process.json",
+  "Learning_json_path": "/root/.researchclaw/weakness_diag_runs/1773479552-x-2-5x-6-0-0ddf3866/learning.json",
+  "TeacherFeedback_md_path": "/root/.researchclaw/weakness_diag_runs/1773479552-x-2-5x-6-0-0ddf3866/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/.researchclaw/weakness_diag_runs/1773479552-x-2-5x-6-0-0ddf3866/WeaknessReport.json"
+}

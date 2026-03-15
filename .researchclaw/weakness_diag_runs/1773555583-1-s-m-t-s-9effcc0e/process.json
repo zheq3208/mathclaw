@@ -1,0 +1,16 @@
+{
+  "primary_error_stage": "execution",
+  "wrong_answer": false,
+  "process_incomplete": true,
+  "missing_steps": [
+    "学生作答未展示明确的中间步骤"
+  ],
+  "evidence_items": [
+    "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+  ],
+  "likely_error_causes": [
+    "strategy_gap",
+    "incomplete_reasoning"
+  ],
+  "confidence": 0.3
+}

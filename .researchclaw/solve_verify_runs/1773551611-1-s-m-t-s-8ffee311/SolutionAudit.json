@@ -1,0 +1,13 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773551611-1-s-m-t-s-8ffee311",
+  "model": "qwen3-vl-plus",
+  "candidate_count": 2,
+  "winner": "solver_a",
+  "status": "pass",
+  "planner_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773551611-1-s-m-t-s-8ffee311/planner.json",
+  "candidates_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773551611-1-s-m-t-s-8ffee311/candidates.json",
+  "critic_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773551611-1-s-m-t-s-8ffee311/critic.json",
+  "Solved_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773551611-1-s-m-t-s-8ffee311/Solved.md",
+  "VerificationReport_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/solve_verify_runs/1773551611-1-s-m-t-s-8ffee311/VerificationReport.json"
+}

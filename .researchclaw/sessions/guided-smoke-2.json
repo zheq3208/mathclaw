@@ -1,0 +1,18 @@
+{
+  "session_id": "guided-smoke-2",
+  "title": "New Research Chat",
+  "created_at": 1773481899.0331314,
+  "updated_at": 1773482011.0566401,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Solve x^2 - 5x + 6 = 0. Give me a hint step by step, not the full answer.",
+      "timestamp": 1773481899.033567
+    },
+    {
+      "role": "assistant",
+      "content": "观察方程 $x^2 - 5x + 6 = 0$，你能告诉我 $x$ 的最高次数是多少吗？\n\nHint level: 1\nStatus: guided",
+      "timestamp": 1773482011.0566332
+    }
+  ]
+}

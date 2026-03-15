@@ -9,6 +9,7 @@ import {
   Heart,
   Activity,
   FolderOpen,
+  Brain,
   Puzzle,
   Cable,
   Settings,
@@ -26,6 +27,7 @@ import EnvironmentsPage from "./pages/EnvironmentsPage";
 import SkillsPage from "./pages/SkillsPage";
 import McpPage from "./pages/McpPage";
 import WorkspacePage from "./pages/WorkspacePage";
+import MemoryPage from "./pages/MemoryPage";
 import AgentConfigPage from "./pages/AgentConfigPage";
 import ModelsPage from "./pages/ModelsPage";
 import ConsoleCronBubble from "./components/ConsoleCronBubble";
@@ -132,6 +134,16 @@ const systemNav: ShellNavItem[] = [
     ),
   },
   {
+    to: "/memory",
+    label: "Memory",
+    hint: "Global learning profile",
+    icon: (
+      <IconBadge tone="green" size="sm">
+        <Brain size={14} />
+      </IconBadge>
+    ),
+  },
+  {
     to: "/skills",
     label: "Skills",
     hint: "Skill lifecycle",
@@ -231,6 +243,12 @@ const pageMeta: Record<string, Meta> = {
     desc: "Keep file inspection and editor workflows.",
     ctaLabel: "Refresh Workspace",
     ctaTo: "/workspace",
+  },
+  "/memory": {
+    title: "Learning Memory",
+    desc: "Track active weaknesses, mastered points, and cross-session learning history.",
+    ctaLabel: "Refresh Memory",
+    ctaTo: "/memory",
   },
   "/skills": {
     title: "Skills",
@@ -379,6 +397,7 @@ export default function App() {
             <Route path="/heartbeat" element={<HeartbeatPage />} />
             <Route path="/status" element={<StatusPage />} />
             <Route path="/workspace" element={<WorkspacePage />} />
+            <Route path="/memory" element={<MemoryPage />} />
             <Route path="/skills" element={<SkillsPage />} />
             <Route path="/agent-config" element={<AgentConfigPage />} />
             <Route path="/models" element={<ModelsPage />} />

@@ -1,0 +1,21 @@
+{
+  "primary_weakness": "incomplete_reasoning",
+  "secondary_weaknesses": [
+    "diagram_or_theorem_gap"
+  ],
+  "knowledge_points": [
+    "geometry"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "angle_basics",
+    "length_and_area"
+  ],
+  "recommended_practice_focus": [
+    "geometry"
+  ],
+  "teacher_watchouts": [
+    "Ask the student to restate the target and show the first algebraic step."
+  ],
+  "confidence": 0.78
+}

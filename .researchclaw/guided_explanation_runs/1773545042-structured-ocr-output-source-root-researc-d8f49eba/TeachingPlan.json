@@ -1,0 +1,28 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "teacher_focus": "the goal of isolating the variable in a linear equation",
+  "immediate_goal": "identify that the solution requires isolating the variable on one side",
+  "diagnostic_focus": [
+    "arithmetic operations",
+    "integer operations",
+    "symbolic manipulation"
+  ],
+  "misconceptions_to_probe": [
+    "not knowing the goal of solving",
+    "confusing the steps for solving"
+  ],
+  "must_avoid": [
+    "revealing the solution steps",
+    "giving the final answer"
+  ],
+  "allowed_reveal": "the goal of isolating the variable",
+  "first_question": "What is the main goal when solving a linear equation? (What do we want to end up with?)",
+  "checkpoint_rubric": [
+    "states that the goal is to isolate the variable",
+    "mentions getting the variable alone on one side"
+  ],
+  "escalation_rule": "if the student does not correctly identify the goal, provide a breakthrough hint (hint_level=2) about reversing operations",
+  "allow_full_solution": false,
+  "confidence": 0.0
+}

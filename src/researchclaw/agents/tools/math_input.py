@@ -14,6 +14,13 @@ from .math_utils import (
     map_problem_structure,
     normalize_problem_text,
 )
+from .mess_to_clean_q3vl import (
+    extract_math_document as q3_extract_math_document,
+    extract_qwen_box_evidence,
+    recover_exam_layout_from_box_evidence,
+    render_pdf_pages_for_ocr,
+    run_mess_to_clean_q3vl,
+)
 from .paper_reader import read_paper
 
 
@@ -51,6 +58,7 @@ def inspect_math_media(source: str, max_pages: int = 2) -> dict[str, Any]:
 
     if suffix == ".pdf":
         pdf = read_pdf_document(str(path), max_pages=max_pages)
+        rendered = render_pdf_pages_for_ocr(str(path), max_pages=max_pages)
         text = str(pdf.get("text", ""))
         return {
             "media_type": "pdf",
@@ -60,7 +68,9 @@ def inspect_math_media(source: str, max_pages: int = 2) -> dict[str, Any]:
             "has_extractable_text": bool(text.strip()),
             "text_preview": text[:2000],
             "formula_candidates": extract_math_expressions(text),
-            "ocr_available": False,
+            "ocr_ready_page_count": rendered.get("page_count", 0),
+            "rendered_pages": rendered.get("rendered_pages", []),
+            "ocr_pipeline": "MessToClean-Q3VL",
         }
 
     try:
@@ -77,50 +87,26 @@ def inspect_math_media(source: str, max_pages: int = 2) -> dict[str, Any]:
             "width": image.width,
             "height": image.height,
             "mode": image.mode,
-            "ocr_available": False,
+            "ocr_pipeline": "MessToClean-Q3VL",
+            "ocr_available": True,
             "ocr_text_preview": "",
         }
-        try:
-            import pytesseract  # type: ignore
-
-            text = pytesseract.image_to_string(image)
-            result["ocr_available"] = True
-            result["ocr_text_preview"] = text[:2000]
-            result["formula_candidates"] = extract_math_expressions(text)
-        except Exception:
-            result["formula_candidates"] = []
         return result
 
 
-def extract_math_document(source: str, max_pages: int = 3) -> dict[str, Any]:
-    """Extract structural information from a math image or PDF."""
-    inspection = inspect_math_media(source=source, max_pages=max_pages)
-    if inspection.get("error"):
-        return inspection
-
-    if inspection.get("media_type") == "pdf":
-        text = inspection.get("text_preview", "") or ""
-        return {
-            "source": inspection.get("path", source),
-            "media_type": "pdf",
-            "page_count": inspection.get("page_count", 0),
-            "text_preview": text,
-            "formula_candidates": inspection.get("formula_candidates", []),
-            "question_count_estimate": max(1, text.count("\n\n") + 1) if text else 0,
-            "ocr_available": False,
-        }
-
-    text_preview = inspection.get("ocr_text_preview", "") or ""
-    return {
-        "source": inspection.get("path", source),
-        "media_type": "image",
-        "width": inspection.get("width", 0),
-        "height": inspection.get("height", 0),
-        "ocr_available": inspection.get("ocr_available", False),
-        "text_preview": text_preview,
-        "formula_candidates": inspection.get("formula_candidates", []),
-        "needs_manual_confirmation": not bool(text_preview.strip()),
-    }
+def extract_math_document(
+    source: str,
+    max_pages: int = 3,
+    mode: str = "full",
+    max_questions: Optional[int] = None,
+) -> dict[str, Any]:
+    """Run the MessToClean-Q3VL OCR pipeline on a math image or PDF."""
+    return q3_extract_math_document(
+        source=source,
+        max_pages=max_pages,
+        mode=mode,
+        max_questions=max_questions,
+    )
 
 
 def analyze_visual_math_context(
@@ -134,13 +120,13 @@ def analyze_visual_math_context(
     )
     tags: list[str] = []
     lowered = combined.lower()
-    if any(token in lowered for token in ("triangle", "circle", "图", "几何", "角")):
+    if any(token in lowered for token in ("triangle", "circle", "?", "??", "?")):
         tags.append("geometry_figure")
     if any(
-        token in lowered for token in ("graph", "图像", "坐标", "slope", "截距")
+        token in lowered for token in ("graph", "??", "??", "slope", "??")
     ):
         tags.append("coordinate_graph")
-    if any(token in lowered for token in ("table", "表格", "频数", "统计图")):
+    if any(token in lowered for token in ("table", "??", "??", "???")):
         tags.append("table_or_chart")
     if combined.count("(") >= 2 and combined.count(")") >= 2:
         tags.append("multi_part_layout")
@@ -148,9 +134,9 @@ def analyze_visual_math_context(
     result = {
         "visual_tags": dedupe_list(tags),
         "recommended_next_tools": [
-            "extract_math_document",
+            "extract_qwen_box_evidence",
+            "recover_exam_layout_from_box_evidence",
             "normalize_problem_json",
-            "synthesize_problem_brief",
         ],
     }
     if source:
@@ -227,3 +213,39 @@ def normalize_problem_json(
         "ocr_risk_flags": dedupe_list(ocr_flags),
         "student_note": student_note.strip(),
     }
+
+# === SIMPLE_MATH_INPUT_OVERRIDE_20260315 ===
+def extract_math_document(
+    source: str,
+    max_pages: int = 3,
+    mode: str = "full",
+    max_questions: Optional[int] = None,
+    original_prompt: str = "",
+) -> dict[str, Any]:
+    return q3_extract_math_document(
+        source=source,
+        max_pages=max_pages,
+        mode=mode,
+        max_questions=max_questions,
+        original_prompt=original_prompt,
+    )
+
+
+
+# === SIMPLE_MATH_INPUT_OVERRIDE_20260315B ===
+def extract_math_document(
+    source: str,
+    max_pages: int = 3,
+    mode: str = "full",
+    max_questions: Optional[int] = None,
+    original_prompt: str = "",
+) -> dict[str, Any]:
+    from . import mess_to_clean_q3vl as _ocr_module
+    return _ocr_module.extract_math_document(
+        source=source,
+        max_pages=max_pages,
+        mode=mode,
+        max_questions=max_questions,
+        original_prompt=original_prompt,
+    )
+

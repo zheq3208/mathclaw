@@ -1,0 +1,26 @@
+{
+  "problem_summary": "已知质点位移与时间的函数关系，求特定时刻的瞬时速度",
+  "givens": [
+    "位移函数 $ S(t) = 2t^3 - 5t^2 $",
+    "时间 $ t = 3 \\, \\text{s} $"
+  ],
+  "target": "当 $ t = 3 \\, \\text{s} $ 时质点的瞬时速度",
+  "question_type": "导数应用",
+  "candidate_methods": [
+    "求导法"
+  ],
+  "exact_check_targets": {
+    "equation": "$ S(t) = 2t^3 - 5t^2 $",
+    "expressions": [
+      "$ S'(t) = 6t^2 - 10t $",
+      "$ S'(3) $ 的计算过程"
+    ],
+    "answer_format": "数值（单位：m/s）"
+  },
+  "risks": [
+    "导数计算错误",
+    "单位遗漏"
+  ],
+  "preferred_variable": "t",
+  "requires_visual_reasoning": false
+}

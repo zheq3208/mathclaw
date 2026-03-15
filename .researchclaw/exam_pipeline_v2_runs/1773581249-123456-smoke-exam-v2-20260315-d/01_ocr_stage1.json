@@ -1,0 +1,181 @@
+{
+  "boxes": [
+    {
+      "id": "q1_a",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        300,
+        200,
+        320
+      ],
+      "text_hint": "A. 9 m/s"
+    },
+    {
+      "id": "q1_b",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        320,
+        200,
+        340
+      ],
+      "text_hint": "B. 24 m/s"
+    },
+    {
+      "id": "q1_c",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        340,
+        200,
+        360
+      ],
+      "text_hint": "C. 48 m/s"
+    },
+    {
+      "id": "q1_d",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        360,
+        200,
+        380
+      ],
+      "text_hint": "D. 54 m/s"
+    },
+    {
+      "id": "q2_a",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        400,
+        200,
+        420
+      ],
+      "text_hint": "A. 36 种"
+    },
+    {
+      "id": "q2_b",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        420,
+        200,
+        440
+      ],
+      "text_hint": "B. 48 种"
+    },
+    {
+      "id": "q2_c",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        440,
+        200,
+        460
+      ],
+      "text_hint": "C. 60 种"
+    },
+    {
+      "id": "q2_d",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        460,
+        200,
+        480
+      ],
+      "text_hint": "D. 72 种"
+    },
+    {
+      "id": "q3_a",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        500,
+        200,
+        520
+      ],
+      "text_hint": "A. e²"
+    },
+    {
+      "id": "q3_b",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        520,
+        200,
+        540
+      ],
+      "text_hint": "B. e"
+    },
+    {
+      "id": "q3_c",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        540,
+        200,
+        560
+      ],
+      "text_hint": "C. 1/e"
+    },
+    {
+      "id": "q3_d",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        560,
+        200,
+        580
+      ],
+      "text_hint": "D. -1/e²"
+    },
+    {
+      "id": "q4_a",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        600,
+        200,
+        620
+      ],
+      "text_hint": "A. 83"
+    },
+    {
+      "id": "q4_b",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        620,
+        200,
+        640
+      ],
+      "text_hint": "B. 119"
+    },
+    {
+      "id": "q4_c",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        640,
+        200,
+        660
+      ],
+      "text_hint": "C. 164"
+    },
+    {
+      "id": "q4_d",
+      "kind": "answer_choice",
+      "bbox": [
+        50,
+        660,
+        200,
+        680
+      ],
+      "text_hint": "D. 219"
+    }
+  ],
+  "page_note": "咸阳市实验中学高二数学第一次月考试题-1-(共4页)"
+}

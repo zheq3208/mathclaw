@@ -1,0 +1,13 @@
+{
+  "pipeline": "MessToClean-Q3VL",
+  "source": "/root/autodl-tmp/mathclaw/.researchclaw/uploads/chat/debug-exam-pipeline-4/bf8cc50fd84b/387c952b33b3-123456.png",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773504337-387c952b33b3-123456-47e7507c",
+  "stage1_box_evidence_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773504337-387c952b33b3-123456-47e7507c/stage1_box_evidence.json",
+  "stage1_raw_calls_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773504337-387c952b33b3-123456-47e7507c/stage1_raw_calls.json",
+  "stage2_layout_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773504337-387c952b33b3-123456-47e7507c/stage2_layout.json",
+  "Structured_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773504337-387c952b33b3-123456-47e7507c/Structured.md",
+  "FullAuditLog_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773504337-387c952b33b3-123456-47e7507c/FullAuditLog.json",
+  "page_count": 1,
+  "question_count": 4,
+  "question_count_processed": 1
+}

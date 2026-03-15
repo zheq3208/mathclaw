@@ -1,0 +1,25 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "teacher_focus": "Help student recognize the equation type and solution goal",
+  "immediate_goal": "Student identifies what solving the equation means",
+  "diagnostic_focus": [
+    "understanding of equation-solving purpose"
+  ],
+  "misconceptions_to_probe": [
+    "confusing solving with simplifying expressions"
+  ],
+  "must_avoid": [
+    "using 'quadratic' term",
+    "showing solution steps",
+    "mentioning factoring"
+  ],
+  "allowed_reveal": "This is an equation with an x² term. We need to find values of x that make both sides equal.",
+  "first_question": "What does 'solving' this equation mean we're trying to find?",
+  "checkpoint_rubric": [
+    "Correct response: 'values of x that satisfy the equation' or equivalent"
+  ],
+  "escalation_rule": "If student correctly states the goal, escalate to hint level 2. If incorrect, explain 'solving means finding x-values that make the equation true' and re-ask.",
+  "allow_full_solution": false,
+  "confidence": 0.8
+}

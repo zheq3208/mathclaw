@@ -1,0 +1,757 @@
+"""Solve-and-verify agent system for math workflows using Qwen3-VL-Plus."""
+
+from __future__ import annotations
+
+import base64
+import io
+import json
+import logging
+import mimetypes
+import re
+import time
+import uuid
+from pathlib import Path
+from typing import Any, Iterable
+
+from openai import OpenAI
+
+from ...config.config import load_config
+from ...constant import WORKING_DIR
+from .math_reasoning import (
+    check_formula_render_issues,
+    sympy_check_equivalence,
+    sympy_solve_equation,
+    verify_math_solution,
+)
+from .math_utils import (
+    extract_math_expressions,
+    infer_target,
+    map_problem_structure,
+    normalize_problem_text,
+)
+
+logger = logging.getLogger(__name__)
+
+_DEFAULT_SOLVER_MODEL = "qwen3-vl-plus"
+_FALLBACK_SOLVER_MODELS = ["qwen-vl-plus", "qwen3.5-plus-2026-02-15"]
+
+
+_PLANNER_SCHEMA = {
+    "problem_summary": "str",
+    "givens": ["str"],
+    "target": "str",
+    "question_type": "str",
+    "candidate_methods": ["str"],
+    "exact_check_targets": {
+        "equation": "str",
+        "expressions": ["str"],
+        "answer_format": "str",
+    },
+    "risks": ["str"],
+    "preferred_variable": "str",
+    "requires_visual_reasoning": True,
+}
+
+_CANDIDATE_SCHEMA = {
+    "solver_role": "str",
+    "method": "str",
+    "reasoning_outline": ["str"],
+    "key_steps": ["str"],
+    "final_answer": "str",
+    "final_expression": "str",
+    "assumptions": ["str"],
+    "confidence": 0.0,
+}
+
+_CRITIC_SCHEMA = {
+    "candidate_reviews": [
+        {
+            "solver_role": "str",
+            "verdict": "pass|conflict|review",
+            "strengths": ["str"],
+            "issues": ["str"],
+            "first_conflicting_step": "str",
+        }
+    ],
+    "consensus_answer": "str",
+    "consensus_expression": "str",
+    "conflict_summary": ["str"],
+    "recommended_winner": "str",
+    "revision_needed": True,
+}
+
+_ARBITER_SCHEMA = {
+    "status": "pass|conflict|review",
+    "final_answer": "str",
+    "final_expression": "str",
+    "concise_solution_markdown": "str",
+    "verification_summary": ["str"],
+    "unresolved_risks": ["str"],
+    "recommended_follow_up": "str",
+}
+
+
+def _resolve_source_path(source: str) -> Path:
+    path = Path(str(source or "")).expanduser()
+    if path.is_absolute():
+        return path
+    return Path(WORKING_DIR) / path
+
+
+def _solve_runs_dir() -> Path:
+    path = Path(WORKING_DIR) / "solve_verify_runs"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _slugify(text: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", str(text or "").strip()).strip("-")
+    return slug.lower() or "solve"
+
+
+def _new_run_dir(problem_text: str) -> Path:
+    stem = _slugify(problem_text[:48])
+    run_dir = _solve_runs_dir() / f"{int(time.time())}-{stem}-{uuid.uuid4().hex[:8]}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+
+def _write_json(path: Path, payload: Any) -> str:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return str(path)
+
+
+def _load_solver_config() -> dict[str, Any]:
+    config = load_config()
+    agents = config.get("agents", {}) if isinstance(config, dict) else {}
+    defaults = agents.get("defaults", {}) if isinstance(agents, dict) else {}
+    solver = defaults.get("solve_verify") if isinstance(defaults, dict) else None
+    if not isinstance(solver, dict):
+        solver = config.get("solve_verify") if isinstance(config, dict) else {}
+    if not isinstance(solver, dict):
+        solver = {}
+    fallback_models = list(solver.get("fallback_models") or [])
+    return {
+        "api_key": str(solver.get("api_key") or config.get("api_key") or "").strip(),
+        "base_url": str(solver.get("base_url") or config.get("base_url") or "https://dashscope.aliyuncs.com/compatible-mode/v1").strip(),
+        "model_name": str(solver.get("model_name") or _DEFAULT_SOLVER_MODEL).strip(),
+        "fallback_models": [str(name).strip() for name in fallback_models + _FALLBACK_SOLVER_MODELS if str(name).strip()],
+        "temperature": float(solver.get("temperature", 0.2) or 0.2),
+        "timeout_seconds": float(solver.get("timeout_seconds", 120) or 120),
+        "planner_enable_thinking": bool(solver.get("planner_enable_thinking", True)),
+        "solver_enable_thinking": bool(solver.get("solver_enable_thinking", True)),
+        "critic_enable_thinking": bool(solver.get("critic_enable_thinking", True)),
+        "arbiter_enable_thinking": bool(solver.get("arbiter_enable_thinking", False)),
+    }
+
+
+def _client_from_config(cfg: dict[str, Any]) -> OpenAI:
+    api_key = str(cfg.get("api_key") or "").strip()
+    if not api_key:
+        raise RuntimeError("求解与验证链路缺少 API Key，请检查 config.json。")
+    client_kwargs: dict[str, Any] = {"api_key": api_key, "timeout": cfg.get("timeout_seconds", 120)}
+    base_url = str(cfg.get("base_url") or "").strip()
+    if base_url:
+        client_kwargs["base_url"] = base_url
+    return OpenAI(**client_kwargs)
+
+
+def _model_candidates(cfg: dict[str, Any]) -> list[str]:
+    candidates: list[str] = []
+    for item in [cfg.get("model_name"), *list(cfg.get("fallback_models") or [])]:
+        model_name = str(item or "").strip()
+        if model_name and model_name not in candidates:
+            candidates.append(model_name)
+    return candidates or [_DEFAULT_SOLVER_MODEL]
+
+
+def _message_to_text(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for item in content:
+            if isinstance(item, dict):
+                text = item.get("text")
+                if text:
+                    parts.append(str(text))
+            else:
+                text = getattr(item, "text", None)
+                if text:
+                    parts.append(str(text))
+        return "\n".join(parts)
+    return str(content or "")
+
+
+def _parse_json_text(raw_text: str) -> Any:
+    text = str(raw_text or "").strip()
+    if not text:
+        return {}
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?\s*", "", text)
+        text = re.sub(r"\s*```$", "", text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r"(\{.*\}|\[.*\])", text, re.DOTALL)
+        if not match:
+            raise
+        return json.loads(match.group(1))
+
+
+def _image_to_data_url(image_path: Path) -> str:
+    from PIL import Image, ImageOps
+
+    suffix = image_path.suffix.lower()
+    mime_type = mimetypes.guess_type(image_path.name)[0] or "image/png"
+    with Image.open(image_path) as image:
+        image = ImageOps.exif_transpose(image)
+        image.load()
+        output = io.BytesIO()
+        if suffix in {".jpg", ".jpeg"}:
+            image.convert("RGB").save(output, format="JPEG", quality=90)
+            mime_type = "image/jpeg"
+        elif suffix == ".png":
+            image.save(output, format="PNG")
+            mime_type = "image/png"
+        else:
+            image.convert("RGB").save(output, format="JPEG", quality=90)
+            mime_type = "image/jpeg"
+    return f"data:{mime_type};base64,{base64.b64encode(output.getvalue()).decode('ascii')}"
+
+
+def _resolve_supporting_images(supporting_images: str | Iterable[str] | None) -> list[Path]:
+    if supporting_images is None:
+        return []
+    if isinstance(supporting_images, str):
+        raw_items = re.split(r"[,\n]", supporting_images)
+    else:
+        raw_items = [str(item) for item in supporting_images]
+    paths: list[Path] = []
+    for item in raw_items:
+        text = str(item or "").strip()
+        if not text:
+            continue
+        path = _resolve_source_path(text)
+        if path.exists() and path.is_file():
+            paths.append(path)
+    deduped: list[Path] = []
+    seen: set[str] = set()
+    for path in paths:
+        key = str(path)
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(path)
+    return deduped
+
+
+def _call_qwen_json(*, cfg: dict[str, Any], system_prompt: str, user_prompt: str, enable_thinking: bool, supporting_images: Iterable[Path] | None = None) -> dict[str, Any]:
+    client = _client_from_config(cfg)
+    content: list[dict[str, Any]] = [{"type": "text", "text": user_prompt + "\n\n请只返回一个 JSON 对象，不要输出任何额外说明。"}]
+    for image_path in list(supporting_images or []):
+        content.append({"type": "image_url", "image_url": {"url": _image_to_data_url(Path(image_path))}})
+
+    last_error: Exception | None = None
+    for model_name in _model_candidates(cfg):
+        try:
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": content},
+                ],
+                response_format={"type": "json_object"},
+                temperature=cfg.get("temperature", 0.2),
+                extra_body={"enable_thinking": bool(enable_thinking)},
+            )
+            message = response.choices[0].message if response.choices else None
+            raw_text = _message_to_text(getattr(message, "content", None)) or "{}"
+            payload = _parse_json_text(raw_text)
+            return payload if isinstance(payload, dict) else {"value": payload}
+        except Exception as exc:
+            last_error = exc
+            logger.debug("solve/verify qwen call failed for model=%s", model_name, exc_info=True)
+    raise RuntimeError(f"Solve/verify Qwen call failed: {last_error}") from last_error
+
+
+def _extract_equation_from_text(problem_text: str) -> str:
+    normalized = normalize_problem_text(problem_text)
+    normalized = normalized.replace("^", "**")
+    pattern = r"([A-Za-z0-9_().+\-*/\s]+=[A-Za-z0-9_().+\-*/\s]+)"
+    match = re.search(pattern, normalized)
+    if match:
+        return match.group(1).strip()
+    return ""
+
+
+def _coerce_list(value: Any) -> list[str]:
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if isinstance(value, str) and value.strip():
+        return [value.strip()]
+    return []
+
+
+def _normalize_equation_for_tool(equation: str) -> str:
+    text = str(equation or '').strip()
+    text = text.replace('==', '=')
+    text = re.sub(r'\s+=\s+=\s*', ' = ', text)
+    return text
+
+
+def _is_expression_like(text: str) -> bool:
+    value = str(text or '').strip()
+    if not value:
+        return False
+    if ',' in value or ';' in value:
+        return False
+    if value.count('=') > 0:
+        return False
+    return True
+
+
+def _fallback_critic(candidates: list[dict[str, Any]], tool_checks: dict[str, Any]) -> dict[str, Any]:
+    candidate_checks = list(tool_checks.get('candidate_checks') or [])
+    reviews: list[dict[str, Any]] = []
+    passing_answers: list[str] = []
+    recommended_winner = ''
+    for candidate, check in zip(candidates, candidate_checks):
+        status = str(check.get('verification', {}).get('status') or 'review')
+        verdict = 'pass' if status == 'pass' else ('conflict' if status == 'conflict' else 'review')
+        issues = [str(item) for item in check.get('verification', {}).get('notes') or []]
+        if check.get('formula_issues', {}).get('issue_count', 0):
+            issues.extend(issue.get('message', '') for issue in check.get('formula_issues', {}).get('issues', []))
+        strengths = []
+        if verdict == 'pass':
+            strengths.append('matches exact verification')
+            answer = str(check.get('final_answer') or '').strip()
+            if answer:
+                passing_answers.append(answer)
+            if not recommended_winner:
+                recommended_winner = str(candidate.get('solver_role') or '')
+        reviews.append({
+            'solver_role': str(candidate.get('solver_role') or ''),
+            'verdict': verdict,
+            'strengths': strengths,
+            'issues': [item for item in issues if item],
+            'first_conflicting_step': issues[0] if issues else '',
+        })
+    consensus_answer = ''
+    if passing_answers:
+        counter = {}
+        for answer in passing_answers:
+            counter[answer] = counter.get(answer, 0) + 1
+        consensus_answer = sorted(counter.items(), key=lambda item: (-item[1], item[0]))[0][0]
+    conflict_summary = []
+    equation_solution = tool_checks.get('equation_solution') or {}
+    if isinstance(equation_solution, dict) and equation_solution.get('error'):
+        conflict_summary.append(str(equation_solution['error']))
+    if not recommended_winner and candidates:
+        recommended_winner = str(candidates[0].get('solver_role') or 'solver_a')
+    return {
+        'candidate_reviews': reviews,
+        'consensus_answer': consensus_answer,
+        'consensus_expression': consensus_answer,
+        'conflict_summary': conflict_summary,
+        'recommended_winner': recommended_winner,
+        'revision_needed': any(review['verdict'] != 'pass' for review in reviews),
+    }
+
+
+def _merge_critic_with_fallback(critic: dict[str, Any], fallback: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(fallback)
+    if isinstance(critic, dict):
+        for key, value in critic.items():
+            if key == 'value':
+                continue
+            if value in (None, '', [], {}):
+                continue
+            merged[key] = value
+    if not merged.get('candidate_reviews'):
+        merged['candidate_reviews'] = fallback.get('candidate_reviews', [])
+    if not merged.get('consensus_answer'):
+        merged['consensus_answer'] = fallback.get('consensus_answer', '')
+    if not merged.get('recommended_winner'):
+        merged['recommended_winner'] = fallback.get('recommended_winner', '')
+    if 'revision_needed' not in merged:
+        merged['revision_needed'] = fallback.get('revision_needed', False)
+    return merged
+
+
+def _derive_fallback_arbiter(candidates: list[dict[str, Any]], tool_checks: dict[str, Any], critic: dict[str, Any]) -> dict[str, Any]:
+    reviews = list(critic.get('candidate_reviews') or [])
+    pass_reviews = [review for review in reviews if review.get('verdict') == 'pass']
+    candidate_map = {str(candidate.get('solver_role') or ''): candidate for candidate in candidates}
+    final_answer = str(critic.get('consensus_answer') or '').strip()
+    if not final_answer and pass_reviews:
+        winner = str(pass_reviews[0].get('solver_role') or '')
+        final_answer = str(candidate_map.get(winner, {}).get('final_answer') or '')
+    status = 'review'
+    if pass_reviews and final_answer:
+        distinct_pass = {str(candidate_map.get(review.get('solver_role', ''), {}).get('final_answer') or '').strip() for review in pass_reviews}
+        distinct_pass = {item for item in distinct_pass if item}
+        status = 'pass' if len(distinct_pass) <= 1 else 'conflict'
+    elif any(review.get('verdict') == 'conflict' for review in reviews):
+        status = 'conflict'
+    verification_summary = []
+    for review in pass_reviews:
+        verification_summary.append(f"{review.get('solver_role')} passed exact checks.")
+    for item in critic.get('conflict_summary', []) or []:
+        verification_summary.append(str(item))
+    winner = str(critic.get('recommended_winner') or '')
+    solution_markdown = ''
+    if winner and candidate_map.get(winner):
+        key_steps = candidate_map[winner].get('key_steps') or candidate_map[winner].get('reasoning_outline') or []
+        solution_markdown = '\n'.join(f"- {step}" for step in key_steps)
+    return {
+        'status': status,
+        'final_answer': final_answer,
+        'final_expression': str(critic.get('consensus_expression') or final_answer),
+        'concise_solution_markdown': solution_markdown,
+        'verification_summary': verification_summary,
+        'unresolved_risks': list(critic.get('conflict_summary') or []),
+        'recommended_follow_up': '' if status == 'pass' else 'Inspect the first conflicting step before presenting this as fully verified.',
+    }
+
+
+def _build_problem_brief(problem_text: str, expected_answer: str = "") -> dict[str, Any]:
+    normalized = normalize_problem_text(problem_text)
+    structure = map_problem_structure(normalized)
+    equations = extract_math_expressions(normalized)
+    equation = _extract_equation_from_text(normalized)
+    return {
+        "normalized_problem": normalized,
+        "question_type": structure.get("question_type", "unknown"),
+        "chapter": structure.get("chapter", ""),
+        "knowledge_points": structure.get("knowledge_points", []),
+        "prerequisites": structure.get("prerequisites", []),
+        "difficulty_band": structure.get("difficulty_band", ""),
+        "equation": equation,
+        "formula_candidates": equations,
+        "target": infer_target(normalized),
+        "expected_answer": expected_answer.strip(),
+    }
+
+
+_PLANNER_PROMPT = """
+你是数学求解系统中的“规划器”。
+你的任务是先把题目转成稳定的求解简报，不直接给学生写长篇答案。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- 先提炼题意、已知条件、所求目标、题型和候选方法。
+- 明确哪些表达式需要精确校验。
+- 如果题目依赖图像或版面信息，要明确标记。
+- 不要输出 schema 之外的任何解释文字。
+""".strip()
+
+_SOLVER_A_PROMPT = """
+你是数学求解系统中的“求解器A”。
+请根据规划简报独立求解，优先采用直接、标准、便于校验的解法。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- 给出清晰的思路提纲和关键步骤。
+- 不要编造图像信息或缺失条件。
+- 如果证据不足，必须在 assumptions 中明确说明。
+""".strip()
+
+_SOLVER_B_PROMPT = """
+你是数学求解系统中的“求解器B”。
+请在不参考求解器A结论的前提下独立求解，优先采用不同于直接套路的检查视角，例如逆向代入、边界校验、数量关系复核。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- 保持步骤可核验。
+- 如果无法稳定得出结论，要如实说明，不要猜答案。
+""".strip()
+
+_CRITIC_PROMPT = """
+你是数学求解系统中的“核验器”。
+请比较两份独立候选解和精确工具结果，找出最早的冲突点，并判断哪一份更可信。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- 重点说明：哪一步先出问题、为什么有冲突、是否还能给出稳定结论。
+- 如果证据不足，verdict 必须使用 conflict 或 review，不能假装确定。
+""".strip()
+
+_ARBITER_PROMPT = """
+你是数学求解系统中的“裁决与修补器”。
+请阅读规划简报、所有候选解和核验结果，给出最终可交付版本。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- concise_solution_markdown 必须写成适合学生阅读的中文解答，不要夹杂英文标题。
+- verification_summary 必须是中文短句。
+- 如果证据冲突或题面信息不足，status 必须标记为 conflict 或 review。
+""".strip()
+
+
+def build_math_solution_brief(problem_text: str, expected_answer: str = "", supporting_images: str = "", original_prompt: str = "") -> dict[str, Any]:
+    cfg = _load_solver_config()
+    base_brief = _build_problem_brief(problem_text, expected_answer=expected_answer)
+    prompt = (
+        f"用户原始需求：{str(original_prompt or '').strip() or '未提供'}\n\n"
+        f"problem_text:\n{base_brief['normalized_problem']}\n\n"
+        f"expected_answer:{expected_answer or '[未提供]'}\n"
+        f"local_question_type:{base_brief['question_type']}\n"
+        f"local_target:{base_brief['target']}\n"
+        f"local_formula_candidates:{base_brief['formula_candidates']}\n"
+        f"local_equation:{base_brief['equation'] or '[无]'}\n\n"
+        f"请严格返回一个 JSON 对象，字段结构必须匹配：{_PLANNER_SCHEMA}"
+    )
+    planner = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_PLANNER_PROMPT,
+        user_prompt=prompt,
+        enable_thinking=cfg.get("planner_enable_thinking", True),
+        supporting_images=_resolve_supporting_images(supporting_images),
+    )
+    planner.setdefault("problem_summary", base_brief["normalized_problem"][:240])
+    planner.setdefault("givens", [])
+    planner.setdefault("target", base_brief["target"])
+    planner.setdefault("question_type", base_brief["question_type"])
+    planner.setdefault("candidate_methods", ["直接代数求解", "校验复核路径"])
+    planner.setdefault(
+        "exact_check_targets",
+        {
+            "equation": base_brief["equation"],
+            "expressions": base_brief["formula_candidates"][:6],
+            "answer_format": "数值或符号形式",
+        },
+    )
+    planner.setdefault("risks", [])
+    planner.setdefault("preferred_variable", "x")
+    planner.setdefault("requires_visual_reasoning", bool(_resolve_supporting_images(supporting_images)))
+    planner["local_brief"] = base_brief
+    return planner
+
+
+def draft_math_solution_candidates(problem_text: str, expected_answer: str = "", supporting_images: str = "", original_prompt: str = "") -> dict[str, Any]:
+    cfg = _load_solver_config()
+    planner = build_math_solution_brief(problem_text, expected_answer=expected_answer, supporting_images=supporting_images, original_prompt=original_prompt)
+    images = _resolve_supporting_images(supporting_images)
+    common_prompt = (
+        f"用户原始需求：{str(original_prompt or '').strip() or '未提供'}\n\n"
+        f"problem_text:\n{planner['local_brief']['normalized_problem']}\n\n"
+        f"planner_brief:\n{json.dumps({k: v for k, v in planner.items() if k != 'local_brief'}, ensure_ascii=False)}\n\n"
+        f"请严格返回一个 JSON 对象，字段结构必须匹配：{_CANDIDATE_SCHEMA}"
+    )
+    solver_a = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_SOLVER_A_PROMPT,
+        user_prompt=common_prompt,
+        enable_thinking=cfg.get("solver_enable_thinking", True),
+        supporting_images=images,
+    )
+    solver_b = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_SOLVER_B_PROMPT,
+        user_prompt=common_prompt,
+        enable_thinking=cfg.get("solver_enable_thinking", True),
+        supporting_images=images,
+    )
+    for role, payload in (("solver_a", solver_a), ("solver_b", solver_b)):
+        payload.setdefault("solver_role", role)
+        payload.setdefault("method", "标准求解")
+        payload.setdefault("reasoning_outline", [])
+        payload.setdefault("key_steps", [])
+        payload.setdefault("final_answer", "")
+        payload.setdefault("final_expression", "")
+        payload.setdefault("assumptions", [])
+        payload.setdefault("confidence", 0.0)
+    return {
+        "planner": planner,
+        "candidates": [solver_a, solver_b],
+    }
+
+
+def _candidate_exact_check(problem_text: str, candidate: dict[str, Any], expected_answer: str, variable: str) -> dict[str, Any]:
+    final_answer = str(candidate.get("final_answer") or candidate.get("final_expression") or "").strip()
+    verification = verify_math_solution(
+        problem_text=problem_text,
+        proposed_answer=final_answer,
+        expected_answer=expected_answer,
+        variable=variable or "x",
+    )
+    formula_target = str(candidate.get("final_expression") or candidate.get("final_answer") or "")
+    formula_issues = check_formula_render_issues(formula_target) if formula_target else {"issue_count": 0, "issues": []}
+    equivalence = None
+    expr_a = str(candidate.get("final_expression") or "").strip()
+    expr_b = str(expected_answer or "").strip()
+    if _is_expression_like(expr_a) and _is_expression_like(expr_b):
+        try:
+            equivalence = sympy_check_equivalence(expr_a, expr_b, variables=variable or "x")
+        except Exception as exc:
+            equivalence = {"equivalent": False, "difference": str(exc)}
+    return {
+        "solver_role": candidate.get("solver_role", "solver"),
+        "final_answer": final_answer,
+        "verification": verification,
+        "formula_issues": formula_issues,
+        "equivalence": equivalence,
+    }
+
+
+def verify_math_solution_candidates(problem_text: str, expected_answer: str = "", supporting_images: str = "", original_prompt: str = "") -> dict[str, Any]:
+    draft = draft_math_solution_candidates(problem_text, expected_answer=expected_answer, supporting_images=supporting_images, original_prompt=original_prompt)
+    planner = draft["planner"]
+    candidates = list(draft["candidates"])
+    variable = str(planner.get("preferred_variable") or "x").strip() or "x"
+    equation = _normalize_equation_for_tool(str(planner.get("exact_check_targets", {}).get("equation") or planner["local_brief"].get("equation") or "").strip())
+
+    tool_checks = {
+        "equation_solution": None,
+        "candidate_checks": [],
+    }
+    if equation:
+        try:
+            tool_checks["equation_solution"] = sympy_solve_equation(equation, variable=variable)
+        except Exception as exc:
+            tool_checks["equation_solution"] = {"error": str(exc), "equation": equation, "variable": variable}
+
+    fallback_solution_text = ''
+    if isinstance(tool_checks.get('equation_solution'), dict):
+        solutions = list(tool_checks['equation_solution'].get('solutions') or [])
+        if solutions:
+            fallback_solution_text = ', '.join(f"{variable}={solution}" for solution in solutions)
+
+    for candidate in candidates:
+        if fallback_solution_text and not str(candidate.get('final_answer') or candidate.get('final_expression') or '').strip():
+            candidate['final_answer'] = fallback_solution_text
+            candidate['final_expression'] = fallback_solution_text
+            candidate['key_steps'] = list(candidate.get('key_steps') or []) + [f"精确求解器给出的候选答案：{fallback_solution_text}"]
+            candidate['assumptions'] = list(candidate.get('assumptions') or []) + ['当前候选解没有给出明确答案，已补充精确求解器结果用于核验。']
+        tool_checks["candidate_checks"].append(_candidate_exact_check(problem_text, candidate, expected_answer, variable))
+
+    critic_prompt = (
+        f"problem_text:\n{planner['local_brief']['normalized_problem']}\n\n"
+        f"planner:\n{json.dumps({k: v for k, v in planner.items() if k != 'local_brief'}, ensure_ascii=False)}\n\n"
+        f"candidates:\n{json.dumps(candidates, ensure_ascii=False)}\n\n"
+        f"tool_checks:\n{json.dumps(tool_checks, ensure_ascii=False)}\n\n"
+        f"请严格返回一个 JSON 对象，字段结构必须匹配：{_CRITIC_SCHEMA}"
+    )
+    cfg = _load_solver_config()
+    critic = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_CRITIC_PROMPT,
+        user_prompt=critic_prompt,
+        enable_thinking=cfg.get("critic_enable_thinking", True),
+        supporting_images=_resolve_supporting_images(supporting_images),
+    )
+    fallback_critic = _fallback_critic(candidates, tool_checks)
+    critic = _merge_critic_with_fallback(critic, fallback_critic)
+
+    return {
+        "planner": planner,
+        "candidates": candidates,
+        "tool_checks": tool_checks,
+        "critic": critic,
+    }
+
+
+def _build_solution_markdown(problem_text: str, arbiter: dict[str, Any]) -> str:
+    answer = str(arbiter.get("final_answer") or "").strip()
+    solution = str(arbiter.get("concise_solution_markdown") or "").strip()
+    verification = [str(item).strip() for item in arbiter.get("verification_summary", []) if str(item).strip()]
+    parts: list[str] = []
+    if solution:
+        parts.append(solution)
+    elif answer:
+        parts.append(f"这道题的答案是：{answer}")
+    else:
+        parts.append("这次已经完成求解与验证，但还没有得到稳定的最终答案。")
+    if verification:
+        parts.append("核验结果：\n" + "\n".join(f"{idx + 1}. {item}" for idx, item in enumerate(verification[:4])))
+    return "\n\n".join(part for part in parts if part).strip()
+
+
+def run_math_solve_verify_agent(problem_text: str, expected_answer: str = "", supporting_images: str = "", original_prompt: str = "") -> dict[str, Any]:
+    cfg = _load_solver_config()
+    run_dir = _new_run_dir(problem_text)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    verified = verify_math_solution_candidates(
+        problem_text=problem_text,
+        expected_answer=expected_answer,
+        supporting_images=supporting_images,
+        original_prompt=original_prompt,
+    )
+    planner = verified["planner"]
+    candidates = verified["candidates"]
+    tool_checks = verified["tool_checks"]
+    critic = verified["critic"]
+
+    arbiter_prompt = (
+        f"problem_text:\n{planner['local_brief']['normalized_problem']}\n\n"
+        f"planner:\n{json.dumps({k: v for k, v in planner.items() if k != 'local_brief'}, ensure_ascii=False)}\n\n"
+        f"candidates:\n{json.dumps(candidates, ensure_ascii=False)}\n\n"
+        f"tool_checks:\n{json.dumps(tool_checks, ensure_ascii=False)}\n\n"
+        f"critic:\n{json.dumps(critic, ensure_ascii=False)}\n\n"
+        f"请严格返回一个 JSON 对象，字段结构必须匹配：{_ARBITER_SCHEMA}"
+    )
+    arbiter = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_ARBITER_PROMPT,
+        user_prompt=arbiter_prompt,
+        enable_thinking=cfg.get("arbiter_enable_thinking", False),
+        supporting_images=_resolve_supporting_images(supporting_images),
+    )
+    fallback_arbiter = _derive_fallback_arbiter(candidates, tool_checks, critic)
+    arbiter = {**fallback_arbiter, **{k: v for k, v in arbiter.items() if v not in (None, '', [], {})}}
+    if fallback_arbiter.get('status') == 'pass' and arbiter.get('status') != 'pass':
+        arbiter['status'] = 'pass'
+    if fallback_arbiter.get('final_answer') and not arbiter.get('final_answer'):
+        arbiter['final_answer'] = fallback_arbiter['final_answer']
+    if fallback_arbiter.get('final_expression') and not arbiter.get('final_expression'):
+        arbiter['final_expression'] = fallback_arbiter['final_expression']
+    if not arbiter.get('verification_summary'):
+        arbiter['verification_summary'] = fallback_arbiter.get('verification_summary', [])
+    if not arbiter.get('unresolved_risks'):
+        arbiter['unresolved_risks'] = fallback_arbiter.get('unresolved_risks', [])
+    arbiter.setdefault("recommended_follow_up", fallback_arbiter.get('recommended_follow_up', ''))
+
+    solved_md = _build_solution_markdown(problem_text, arbiter)
+    solved_path = run_dir / "Solved.md"
+    solved_path.write_text(solved_md, encoding="utf-8")
+
+    verification_report = {
+        "pipeline": "SolveVerify-Q3VL",
+        "problem_text": planner["local_brief"]["normalized_problem"],
+        "planner": {k: v for k, v in planner.items() if k != "local_brief"},
+        "tool_checks": tool_checks,
+        "critic": critic,
+        "arbiter": arbiter,
+    }
+    verification_report_path = run_dir / "VerificationReport.json"
+    _write_json(verification_report_path, verification_report)
+
+    solution_audit = {
+        "pipeline": "SolveVerify-Q3VL",
+        "run_dir": str(run_dir),
+        "original_prompt": original_prompt,
+        "model": cfg.get("model_name", _DEFAULT_SOLVER_MODEL),
+        "candidate_count": len(candidates),
+        "winner": critic.get("recommended_winner", ""),
+        "status": arbiter.get("status", "review"),
+        "planner_path": _write_json(run_dir / "planner.json", {k: v for k, v in planner.items() if k != "local_brief"}),
+        "candidates_path": _write_json(run_dir / "candidates.json", candidates),
+        "critic_path": _write_json(run_dir / "critic.json", critic),
+        "Solved_md_path": str(solved_path),
+        "VerificationReport_json_path": str(verification_report_path),
+    }
+    solution_audit_path = run_dir / "SolutionAudit.json"
+    _write_json(solution_audit_path, solution_audit)
+    solution_audit["SolutionAudit_json_path"] = str(solution_audit_path)
+    return solution_audit
+
+
+def solve_and_verify_math_problem(problem_text: str, expected_answer: str = "", supporting_images: str = "", original_prompt: str = "") -> dict[str, Any]:
+    return run_math_solve_verify_agent(
+        problem_text=problem_text,
+        expected_answer=expected_answer,
+        supporting_images=supporting_images,
+        original_prompt=original_prompt,
+    )

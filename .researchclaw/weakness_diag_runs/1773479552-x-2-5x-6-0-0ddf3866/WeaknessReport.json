@@ -1,0 +1,113 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "解方程 x^2 - 5x + 6 = 0",
+  "case_brief": {
+    "problem_summary": "解方程 x^2 - 5x + 6 = 0",
+    "student_state": "student answer and process need diagnosis",
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "target": "",
+    "observed_signals": [
+      "Student final answer conflicts with the verified answer or exact check.",
+      "Student process is incomplete for diagnostic checking.",
+      "Reference answer: x=2, x=3"
+    ],
+    "diagnosis_focus": [
+      "wrong answer",
+      "incomplete process",
+      "prerequisite gap"
+    ],
+    "evidence_gaps": [
+      "Need more student steps."
+    ],
+    "needs_solution_bootstrap": false,
+    "difficulty_band": "easy",
+    "reference_answer": "x=2, x=3"
+  },
+  "process": {
+    "primary_error_stage": "reasoning",
+    "wrong_answer": true,
+    "process_incomplete": true,
+    "missing_steps": [
+      "The attempt jumps too quickly and does not expose the first derivation step."
+    ],
+    "evidence_items": [
+      "Student final answer conflicts with the verified answer or exact check.",
+      "Student process is incomplete for diagnostic checking.",
+      "Reference answer: x=2, x=3"
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning",
+      "symbolic_manipulation_gap"
+    ],
+    "confidence": 0.82
+  },
+  "learning": {
+    "primary_weakness": "incomplete_reasoning",
+    "secondary_weaknesses": [
+      "symbolic_manipulation_gap"
+    ],
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [
+      "arithmetic_operations",
+      "integer_operations",
+      "symbolic_manipulation"
+    ],
+    "recommended_practice_focus": [
+      "linear_equation"
+    ],
+    "teacher_watchouts": [
+      "Ask the student to restate the target and show the first algebraic step."
+    ],
+    "confidence": 0.78
+  },
+  "arbiter": {
+    "status": "diagnosed",
+    "problem_summary": "解方程 x^2 - 5x + 6 = 0",
+    "primary_weakness": "incomplete_reasoning",
+    "secondary_weaknesses": [
+      "symbolic_manipulation_gap"
+    ],
+    "wrong_answer": true,
+    "process_incomplete": true,
+    "missing_steps": [
+      "The attempt jumps too quickly and does not expose the first derivation step."
+    ],
+    "evidence_items": [
+      "Student final answer conflicts with the verified answer or exact check.",
+      "Student process is incomplete for diagnostic checking.",
+      "Reference answer: x=2, x=3"
+    ],
+    "chapter": "equations_and_inequalities",
+    "question_type": "equation",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [
+      "arithmetic_operations",
+      "integer_operations",
+      "symbolic_manipulation"
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning",
+      "symbolic_manipulation_gap"
+    ],
+    "recommended_practice_focus": [
+      "linear_equation"
+    ],
+    "teacher_feedback_markdown": "# Weakness Diagnosis\n\n- Primary weakness: incomplete_reasoning\n- Wrong answer: yes\n- Process incomplete: yes\n- Missing steps:\n  - The attempt jumps too quickly and does not expose the first derivation step.\n- Practice focus:\n  - linear_equation",
+    "mastery_update_suggestion": {
+      "result": "incorrect",
+      "knowledge_points": [
+        "linear_equation"
+      ],
+      "note": "incomplete_reasoning"
+    },
+    "confidence": 0.82
+  }
+}

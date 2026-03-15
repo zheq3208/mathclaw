@@ -1,0 +1,277 @@
+[
+  {
+    "page_index": 0,
+    "view_name": "original",
+    "image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773546076-123456-2d1387a2/views/page-001/original.png",
+    "response": {
+      "boxes": [
+        {
+          "bbox": [
+            85,
+            476,
+            952,
+            588
+          ],
+          "cls": "question",
+          "confidence": 0.95,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.9
+        },
+        {
+          "bbox": [
+            85,
+            588,
+            952,
+            731
+          ],
+          "cls": "question",
+          "confidence": 0.92,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.88
+        },
+        {
+          "bbox": [
+            85,
+            731,
+            952,
+            825
+          ],
+          "cls": "question",
+          "confidence": 0.94,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.95
+        },
+        {
+          "bbox": [
+            85,
+            825,
+            952,
+            912
+          ],
+          "cls": "question",
+          "confidence": 0.93,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.92
+        }
+      ]
+    }
+  },
+  {
+    "page_index": 0,
+    "view_name": "contrast_enhanced",
+    "image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773546076-123456-2d1387a2/views/page-001/contrast_enhanced.png",
+    "response": {
+      "boxes": [
+        {
+          "bbox": [
+            85,
+            479,
+            946,
+            587
+          ],
+          "cls": "question",
+          "confidence": 0.95,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.92
+        },
+        {
+          "bbox": [
+            85,
+            587,
+            963,
+            727
+          ],
+          "cls": "question",
+          "confidence": 0.93,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.88
+        },
+        {
+          "bbox": [
+            85,
+            727,
+            946,
+            819
+          ],
+          "cls": "question",
+          "confidence": 0.96,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.94
+        },
+        {
+          "bbox": [
+            85,
+            819,
+            946,
+            892
+          ],
+          "cls": "question",
+          "confidence": 0.94,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.91
+        }
+      ]
+    }
+  },
+  {
+    "page_index": 0,
+    "view_name": "cleaned_grayscale",
+    "image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773546076-123456-2d1387a2/views/page-001/cleaned_grayscale.png",
+    "response": {
+      "boxes": [
+        {
+          "bbox": [
+            85,
+            479,
+            945,
+            592
+          ],
+          "cls": "question",
+          "confidence": 0.95,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.85
+        },
+        {
+          "bbox": [
+            85,
+            592,
+            945,
+            731
+          ],
+          "cls": "question",
+          "confidence": 0.92,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.88
+        },
+        {
+          "bbox": [
+            85,
+            731,
+            945,
+            826
+          ],
+          "cls": "question",
+          "confidence": 0.94,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.9
+        },
+        {
+          "bbox": [
+            85,
+            826,
+            945,
+            912
+          ],
+          "cls": "question",
+          "confidence": 0.93,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.87
+        }
+      ]
+    }
+  },
+  {
+    "page_index": 0,
+    "crop_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773546076-123456-2d1387a2/refine/page-001/seed-001.png",
+    "seed_bbox": [
+      85,
+      727,
+      800,
+      819
+    ],
+    "response": {
+      "boxes": [
+        {
+          "bbox": [
+            85,
+            727,
+            800,
+            819
+          ],
+          "cls": "question",
+          "confidence": 0.95,
+          "qtype": "MC",
+          "visibility_ratio_est": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "page_index": 0,
+    "crop_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773546076-123456-2d1387a2/refine/page-001/seed-002.png",
+    "seed_bbox": [
+      85,
+      476,
+      800,
+      588
+    ],
+    "response": {
+      "boxes": [
+        {
+          "bbox": [
+            85,
+            476,
+            800,
+            588
+          ],
+          "cls": "question",
+          "confidence": 0.95,
+          "qtype": "MC",
+          "visibility_ratio_est": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "page_index": 0,
+    "crop_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773546076-123456-2d1387a2/refine/page-001/seed-003.png",
+    "seed_bbox": [
+      85,
+      819,
+      800,
+      892
+    ],
+    "response": {
+      "boxes": [
+        {
+          "bbox": [
+            85,
+            819,
+            800,
+            892
+          ],
+          "cls": "question",
+          "confidence": 0.95,
+          "qtype": "MC",
+          "visibility_ratio_est": 1.0
+        }
+      ]
+    }
+  },
+  {
+    "page_index": 0,
+    "crop_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773546076-123456-2d1387a2/refine/page-001/seed-004.png",
+    "seed_bbox": [
+      85,
+      587,
+      800,
+      727
+    ],
+    "response": {
+      "boxes": [
+        {
+          "bbox": [
+            85,
+            587,
+            800,
+            727
+          ],
+          "cls": "question",
+          "confidence": 0.95,
+          "qtype": "MC",
+          "visibility_ratio_est": 0.98
+        }
+      ]
+    }
+  }
+]

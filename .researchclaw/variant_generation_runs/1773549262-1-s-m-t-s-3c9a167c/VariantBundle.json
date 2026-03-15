@@ -1,0 +1,144 @@
+{
+  "case_brief": {
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^2 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^2 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "source_problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^2 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "variant_request": "Generate three follow-up variants for this question: one isomorphic, one easier, and one harder. Prioritize the historical weakness memory snapshot and the current solve/verify evidence.",
+    "requested_count": 3,
+    "question_type": "geometry",
+    "chapter": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "this question: one isomorphic, one easier, and one harder",
+    "difficulty_score": 4.5,
+    "difficulty_band": "hard",
+    "method_tags": [],
+    "requires_visual_reasoning": true,
+    "memory_context": {
+      "student_id": "__global__",
+      "variant_source": "current_problem",
+      "targeted_knowledge_point": "geometry",
+      "targeted_weaknesses": [
+        "reading_or_prompt_misread",
+        "sign_error",
+        "calculation_or_careless_error"
+      ],
+      "active_knowledge_point_count": 5
+    }
+  },
+  "variant_set_title": "位移与瞬时速度关系变式训练",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 3t^3 - 4t^2 $,则当 $ t = 2 \\, \\text{s} $ 时该质点的瞬时速度为",
+      "changes": [
+        "将原函数系数由 $ 2t^3 - 5t^2 $ 改为 $ 3t^3 - 4t^2 $",
+        "将时间点由 $ t = 3 \\, \\text{s} $ 改为 $ t = 2 \\, \\text{s} $"
+      ],
+      "intent": "保持相同解题框架（三次函数求导），但调整系数和时间点以避免机械记忆，强化导数运算流程",
+      "difficulty_goal": "same",
+      "coach_note": "注意 $ -4t^2 $ 的导数符号易错，计算时需逐项验证",
+      "answer_outline": [
+        "求导得 $ S'(t) = 9t^2 - 8t $",
+        "代入 $ t = 2 $ 计算 $ 9 \\times 4 - 8 \\times 2 = 20 $"
+      ],
+      "difficulty_report": {
+        "score": 4.5,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.5,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = t^2 - 3t $,则当 $ t = 1 \\, \\text{s} $ 时该质点的瞬时速度为",
+      "changes": [
+        "将三次函数简化为二次函数 $ t^2 - 3t $",
+        "降低时间点计算复杂度"
+      ],
+      "intent": "通过简化函数次数和数值，聚焦导数基础概念，减少计算干扰",
+      "difficulty_goal": "easier",
+      "coach_note": "二次函数求导更直观，重点检查 $ -3t $ 的导数符号",
+      "answer_outline": [
+        "求导得 $ S'(t) = 2t - 3 $",
+        "代入 $ t = 1 $ 计算 $ 2 \\times 1 - 3 = -1 $"
+      ],
+      "difficulty_report": {
+        "score": 4.3,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.5,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = -\\frac{1}{2}t^3 + 4t^2 - 5t $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+      "changes": [
+        "引入分数系数 $ -\\frac{1}{2}t^3 $",
+        "增加常数项 $ -5t $",
+        "强化负号运算复杂度"
+      ],
+      "intent": "通过分数系数和多重符号组合，暴露符号错误和计算疏漏风险",
+      "difficulty_goal": "harder",
+      "coach_note": "特别注意分数系数的导数运算和连续负号叠加",
+      "answer_outline": [
+        "求导得 $ S'(t) = -\\frac{3}{2}t^2 + 8t - 5 $",
+        "代入 $ t = 3 $ 计算 $ -\\frac{3}{2} \\times 9 + 8 \\times 3 - 5 = -13.5 + 24 - 5 = 5.5 $"
+      ],
+      "difficulty_report": {
+        "score": 4.5,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.5,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    }
+  ],
+  "design_notes": [
+    "基于历史弱点（符号错误/计算疏漏）设计变式：等效变式保留三次函数结构但调整系数，易错点聚焦符号处理",
+    "简化变式采用二次函数降低认知负荷，确保学生掌握导数核心逻辑",
+    "进阶变式引入分数系数和多重符号，模拟真实考试中高风险计算场景"
+  ]
+}

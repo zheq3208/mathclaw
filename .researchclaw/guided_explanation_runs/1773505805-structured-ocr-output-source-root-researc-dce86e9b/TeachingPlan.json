@@ -1,0 +1,25 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "teacher_focus": "先帮助学生重新审题，并圈出与 linear_equation 相关的已知条件。",
+  "immediate_goal": "让学生先完成当前层级下的下一步，而不是直接拿到答案。",
+  "diagnostic_focus": [
+    "linear_equation procedural execution"
+  ],
+  "misconceptions_to_probe": [],
+  "must_avoid": [
+    "Do not dump the final answer before the student engages.",
+    "Do not use long monologues when one checkpoint question is enough."
+  ],
+  "allowed_reveal": "只提醒目标与已知，不给算式答案。",
+  "first_question": "这道题最终要求你求什么，已知条件里最关键的是哪一条？",
+  "checkpoint_rubric": [
+    "Can the student restate the target?",
+    "Can the student identify the first useful setup?",
+    "Can the student produce the next valid step independently?"
+  ],
+  "escalation_rule": "If the student remains stuck after two attempts, raise the hint level by one.",
+  "allow_full_solution": false,
+  "confidence": 0.72,
+  "value": 0.8
+}

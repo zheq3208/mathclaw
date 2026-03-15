@@ -1,0 +1,19 @@
+{
+  "pipeline": "VariantGen-Q3VL",
+  "memory_context": {
+    "student_id": "__global__",
+    "variant_source": "current_problem",
+    "targeted_knowledge_point": "linear_equation",
+    "targeted_weaknesses": [
+      "linear_equation procedural execution",
+      "step documentation"
+    ],
+    "active_knowledge_point_count": 5
+  },
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/variant_generation_runs/1773544332-structured-ocr-output-source-root-researc-a10699a9",
+  "model": "qwen3-vl-plus",
+  "status": "generated",
+  "variant_count": 3,
+  "VariantSet_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/variant_generation_runs/1773544332-structured-ocr-output-source-root-researc-a10699a9/VariantSet.md",
+  "VariantBundle_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/variant_generation_runs/1773544332-structured-ocr-output-source-root-researc-a10699a9/VariantBundle.json"
+}

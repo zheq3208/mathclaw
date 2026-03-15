@@ -1,0 +1,13 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "run_dir": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610",
+  "model": "qwen3-vl-plus",
+  "candidate_count": 2,
+  "winner": "solver_a",
+  "status": "review",
+  "planner_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/planner.json",
+  "candidates_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/candidates.json",
+  "critic_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/critic.json",
+  "Solved_md_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/Solved.md",
+  "VerificationReport_json_path": "/root/.researchclaw/solve_verify_runs/1773467566-problem-solve-2x-3-7-student-answer-x-5-1c62c610/VerificationReport.json"
+}

@@ -1,0 +1,21 @@
+{
+  "value": 0.0,
+  "problem_summary": "解方程 x^2 - 5x + 6 = 0",
+  "givens": [],
+  "target": "方程 x^2 - 5x + 6 = 0",
+  "question_type": "equation",
+  "candidate_methods": [
+    "direct symbolic solving",
+    "sanity-check route"
+  ],
+  "exact_check_targets": {
+    "equation": "x**2 - 5x + 6 = 0",
+    "expressions": [
+      "解方程 x^2 - 5x + 6 = 0"
+    ],
+    "answer_format": "numeric or symbolic"
+  },
+  "risks": [],
+  "preferred_variable": "x",
+  "requires_visual_reasoning": false
+}

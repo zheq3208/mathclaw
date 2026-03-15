@@ -1,10 +1,12 @@
-﻿"""AgentRunnerManager 鈥?top-level manager for the agent runner lifecycle."""
+"""AgentRunnerManager 鈥?top-level manager for the agent runner lifecycle."""
 
 from __future__ import annotations
 
 import json
 import logging
 import mimetypes
+import re
+import time
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -24,6 +26,8 @@ class AgentRunnerManager:
     Used in the FastAPI lifespan to start/stop the agent, and provides
     a unified interface for chat operations.
     """
+
+    TRACE_FOOTER_TITLE = "[\u8c03\u8bd5\u94fe\u8def]"
 
     def __init__(self):
         self.runner = AgentRunner()
@@ -98,6 +102,134 @@ class AgentRunnerManager:
             )
 
         return normalized
+
+    @staticmethod
+    def _safe_session_slug(session_id: str | None) -> str:
+        raw = str(session_id or "main").strip() or "main"
+        return re.sub(r"[^A-Za-z0-9._-]+", "_", raw)
+
+    def _trace_dir(self) -> Path:
+        path = Path(WORKING_DIR) / "turn_traces"
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    def _runtime_config(self) -> dict[str, Any]:
+        if self._model_config:
+            return dict(self._model_config)
+        return self._load_model_config()
+
+    def _debug_skill_footer_enabled(self) -> bool:
+        return bool(self._runtime_config().get("debug_skill_footer", False))
+
+    @staticmethod
+    def _clone_trace(trace: Any) -> dict[str, Any]:
+        if not isinstance(trace, dict):
+            return {}
+        try:
+            return json.loads(json.dumps(trace, ensure_ascii=False))
+        except Exception:
+            return dict(trace)
+
+    def _collect_turn_trace(self) -> dict[str, Any]:
+        agent = getattr(self.runner, "agent", None)
+        getter = getattr(agent, "get_last_turn_trace", None)
+        if not callable(getter):
+            return {}
+        try:
+            return self._clone_trace(getter())
+        except Exception:
+            logger.debug("collect turn trace failed", exc_info=True)
+            return {}
+
+    def _write_turn_trace(
+        self,
+        session_id: str | None,
+        user_message: str,
+        response: str,
+        trace: dict[str, Any],
+    ) -> str:
+        if not trace:
+            return ""
+        trace_file = self._trace_dir() / f"{self._safe_session_slug(session_id)}.jsonl"
+        payload = {
+            "timestamp": time.time(),
+            "session_id": session_id or "",
+            "user_message": user_message,
+            "response": response,
+            "trace": trace,
+        }
+        with trace_file.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        return str(trace_file)
+
+    @staticmethod
+    def _trace_string_list(trace: dict[str, Any], key: str) -> list[str]:
+        values = trace.get(key, []) if isinstance(trace, dict) else []
+        if not isinstance(values, list):
+            return []
+        out: list[str] = []
+        for value in values:
+            text = str(value or "").strip()
+            if text and text not in out:
+                out.append(text)
+        return out
+
+    def _format_turn_trace_footer(self, trace: dict[str, Any]) -> str:
+        if not trace:
+            return ""
+        lines = [self.TRACE_FOOTER_TITLE]
+        route = self._normalize_text(trace.get("route", "")).strip()
+        if route:
+            lines.append(f"\u8def\u7531: {route}")
+        used_skills = self._trace_string_list(trace, "used_skills")
+        selected_skills = self._trace_string_list(trace, "selected_skills")
+        if used_skills:
+            lines.append(f"\u6280\u80fd: {', '.join(used_skills[:6])}")
+        elif selected_skills:
+            lines.append(f"\u6280\u80fd(\u5019\u9009): {', '.join(selected_skills[:6])}")
+        used_tools = self._trace_string_list(trace, "used_tools")
+        if used_tools:
+            lines.append(f"\u5de5\u5177: {', '.join(used_tools[:8])}")
+        used_mcp = self._trace_string_list(trace, "used_mcp")
+        if used_mcp:
+            lines.append(f"MCP: {', '.join(used_mcp[:4])}")
+        artifacts = self._trace_string_list(trace, "artifacts")
+        if artifacts:
+            lines.append(f"\u4ea7\u7269: {', '.join(artifacts[:4])}")
+        status = self._normalize_text(trace.get("status", "")).strip()
+        if status:
+            lines.append(f"\u72b6\u6001: {status}")
+        if len(lines) == 1:
+            return ""
+        return "\n".join(lines)
+
+    def _decorate_response_with_trace(
+        self,
+        response: str,
+        trace: dict[str, Any],
+    ) -> str:
+        base = self._normalize_text(response)
+        if not self._debug_skill_footer_enabled():
+            return base
+        footer = self._format_turn_trace_footer(trace)
+        if not footer or self.TRACE_FOOTER_TITLE in base:
+            return base
+        if not base.strip():
+            return footer
+        return f"{base.rstrip()}\n\n{footer}"
+
+    def _assistant_trace_metadata(
+        self,
+        trace: dict[str, Any],
+        trace_file: str,
+    ) -> dict[str, Any] | None:
+        metadata: dict[str, Any] = {}
+        cloned = self._clone_trace(trace)
+        if cloned:
+            metadata["turn_trace"] = cloned
+        if trace_file:
+            metadata["trace_file"] = trace_file
+        return metadata or None
 
     def _get_or_create_session(
         self,
@@ -338,12 +470,24 @@ class AgentRunnerManager:
             else None
         )
         session.add_message("user", message, metadata=user_metadata)
-        response = await self.runner.chat(
+        raw_response = await self.runner.chat(
             message,
             session.session_id,
             attachments=normalized_attachments,
         )
-        session.add_message("assistant", response)
+        trace = self._collect_turn_trace()
+        trace_file = self._write_turn_trace(
+            session.session_id,
+            message,
+            raw_response,
+            trace,
+        )
+        response = self._decorate_response_with_trace(raw_response, trace)
+        session.add_message(
+            "assistant",
+            response,
+            metadata=self._assistant_trace_metadata(trace, trace_file),
+        )
         self.session_manager._save_session(session)
 
         return response
@@ -377,6 +521,8 @@ class AgentRunnerManager:
         )
         session.add_message("user", message, metadata=user_metadata)
         full_content = ""
+        trace: dict[str, Any] = {}
+        trace_file = ""
 
         async for event in self.runner.chat_stream(
             message,
@@ -384,11 +530,37 @@ class AgentRunnerManager:
             attachments=normalized_attachments,
         ):
             if event.get("type") == "done":
-                full_content = event.get("content", full_content)
+                raw_content = event.get("content", full_content)
+                trace = self._collect_turn_trace()
+                trace_file = self._write_turn_trace(
+                    session.session_id,
+                    message,
+                    raw_content,
+                    trace,
+                )
+                full_content = self._decorate_response_with_trace(raw_content, trace)
+                event = dict(event)
+                event["content"] = full_content
+                stage_messages = event.get("stage_messages")
+                if isinstance(stage_messages, list):
+                    normalized_stage_messages = [
+                        self._normalize_text(item).strip()
+                        for item in stage_messages
+                        if self._normalize_text(item).strip()
+                    ]
+                    if normalized_stage_messages:
+                        footer = self._format_turn_trace_footer(trace) if self._debug_skill_footer_enabled() else ""
+                        if footer and self.TRACE_FOOTER_TITLE not in normalized_stage_messages[-1]:
+                            normalized_stage_messages[-1] = f"{normalized_stage_messages[-1].rstrip()}\n\n{footer}"
+                        event["stage_messages"] = normalized_stage_messages
             yield event
 
         if full_content:
-            session.add_message("assistant", full_content)
+            session.add_message(
+                "assistant",
+                full_content,
+                metadata=self._assistant_trace_metadata(trace, trace_file),
+            )
             self.session_manager._save_session(session)
 
     async def stream_query(self, request: Any):
@@ -489,6 +661,19 @@ class AgentRunnerManager:
                         content_chunks.append(chunk)
                     continue
 
+                if event_type == "stage_message":
+                    text = self._normalize_text(
+                        self._extract_value(raw_event, "content", ""),
+                    ).strip()
+                    if text:
+                        yield self._build_message_event(
+                            event_type="content",
+                            content_items=[
+                                {"type": "text", "text": text},
+                            ],
+                        )
+                    continue
+
                 if event_type == "error":
                     err = self._normalize_text(
                         self._extract_value(raw_event, "content", ""),
@@ -509,10 +694,26 @@ class AgentRunnerManager:
                     return
 
                 if event_type == "done":
+                    stage_messages = self._extract_value(raw_event, "stage_messages", [])
+                    suppress_emit = bool(self._extract_value(raw_event, "suppress_emit", False))
+                    if isinstance(stage_messages, list) and stage_messages:
+                        for segment in stage_messages:
+                            text = self._normalize_text(segment).strip()
+                            if not text:
+                                continue
+                            yield self._build_message_event(
+                                event_type="content",
+                                content_items=[
+                                    {"type": "text", "text": text},
+                                ],
+                            )
+                        yield self._build_response_event()
+                        return
+
                     full_text = self._normalize_text(
                         self._extract_value(raw_event, "content", ""),
                     ).strip() or "".join(content_chunks).strip()
-                    if full_text:
+                    if full_text and not suppress_emit:
                         yield self._build_message_event(
                             event_type="content",
                             content_items=[

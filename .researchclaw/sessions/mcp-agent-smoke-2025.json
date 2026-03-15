@@ -1,0 +1,18 @@
+{
+  "session_id": "mcp-agent-smoke-2025",
+  "title": "New Research Chat",
+  "created_at": 1773401929.5063796,
+  "updated_at": 1773402052.212091,
+  "messages": [
+    {
+      "role": "user",
+      "content": "你必须使用 tavily_search 工具，搜索 2025年新高考一卷 数学 试卷 pdf，只返回3个最相关链接。",
+      "timestamp": 1773401929.5069788
+    },
+    {
+      "role": "assistant",
+      "content": "I understand you want me to use the tavily_search tool to find the 2025 New Gaokao Math Paper PDF and return only the top 3 most relevant links.\n\nHowever, I need to clarify that I cannot directly access external search tools like tavily_search from this interface. My current capabilities are limited to analyzing and processing content within this conversation.\n\nTo help you find the 2025 New Gaokao Math Paper PDF, I recommend:\n\n1. **Visit official educational websites** like:\n   - Gaokao official websites\n   - Educational resource platforms like \"高考资源网\" or \"高考直通车\"\n\n2. **Search for keywords** like:\n   - \"2025 新高考一卷 数学试卷 PDF\"\n   - \"2025 新高考数学真题 PDF\"\n   - \"2025 高考数学试卷 PDF\"\n\n3. **Use academic search engines** like:\n   - arXiv.org\n   - Semantic Scholar\n   - Google Scholar\n\n4. **Check educational platforms** like:\n   - Baidu Wenku (百度文库)\n   - 作业帮 (Zuoyebang)\n   - 考试吧 (KaoShiBa)\n\nWould you like me to help you with any of these approaches? I can assist with:\n- Searching for relevant educational resources\n- Summarizing the content of the paper\n- Explaining specific questions from the paper\n- Providing study tips for the New Gaokao math exam\n\nPlease let me know how I can assist you further!",
+      "timestamp": 1773402052.2120864
+    }
+  ]
+}

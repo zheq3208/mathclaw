@@ -1,0 +1,13 @@
+{
+  "pipeline": "GuidedExplain-Q3VL",
+  "run_dir": "/root/.researchclaw/guided_explanation_runs/1773481492-solve-x-2-5x-6-0-76a05baa",
+  "model": "qwen3-vl-plus",
+  "status": "guided",
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "patched_for_answer_leak": true,
+  "TeacherReply_md_path": "/root/.researchclaw/guided_explanation_runs/1773481492-solve-x-2-5x-6-0-76a05baa/TeacherReply.md",
+  "TeachingCase_json_path": "/root/.researchclaw/guided_explanation_runs/1773481492-solve-x-2-5x-6-0-76a05baa/TeachingCase.json",
+  "TeachingPlan_json_path": "/root/.researchclaw/guided_explanation_runs/1773481492-solve-x-2-5x-6-0-76a05baa/TeachingPlan.json",
+  "TutorTurn_json_path": "/root/.researchclaw/guided_explanation_runs/1773481492-solve-x-2-5x-6-0-76a05baa/TutorTurn.json"
+}

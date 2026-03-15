@@ -1,0 +1,117 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "Problem: solve 2x + 3 = 7.",
+  "case_brief": {
+    "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+    "student_state": "Student guessed x=5 without showing any steps for isolating the variable.",
+    "question_type": "Algebraic equation solving",
+    "chapter": "Solving Linear Equations",
+    "knowledge_points": [
+      "Isolating the variable using inverse operations",
+      "Balancing equations",
+      "Solving two-step linear equations"
+    ],
+    "target": "Correctly solving a two-step linear equation by isolating the variable",
+    "observed_signals": [
+      "Student provided an incorrect final answer (x=5 instead of x=2)",
+      "Student did not show any work or steps",
+      "Student admitted to guessing without process"
+    ],
+    "diagnosis_focus": [
+      "Lack of process in solving equations",
+      "Possible misunderstanding of inverse operations",
+      "Symbolic manipulation gap"
+    ],
+    "evidence_gaps": [
+      "No evidence of student's thought process beyond the final guess",
+      "Verification tools failed due to input format issues, but manual verification confirms the correct answer"
+    ],
+    "needs_solution_bootstrap": true,
+    "difficulty_band": "easy",
+    "reference_answer": "2"
+  },
+  "process": {
+    "primary_error_stage": "final_answer",
+    "wrong_answer": true,
+    "process_incomplete": false,
+    "missing_steps": [],
+    "evidence_items": [
+      "Student final answer conflicts with the verified answer or exact check.",
+      "Reference answer: 2",
+      "Input format mismatch: 'solve 2x + 3 = 7.' is not valid Python/SymPy syntax",
+      "No solver provided reasoning or steps — confidence in answer relies on manual check",
+      "Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+      "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+    ],
+    "likely_error_causes": [
+      "symbolic_manipulation_gap"
+    ],
+    "confidence": 0.82
+  },
+  "learning": {
+    "primary_weakness": "symbolic_manipulation_gap",
+    "secondary_weaknesses": [],
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [
+      "arithmetic_operations",
+      "integer_operations",
+      "symbolic_manipulation"
+    ],
+    "recommended_practice_focus": [
+      "linear_equation"
+    ],
+    "teacher_watchouts": [
+      "Ask the student to restate the target and show the first algebraic step."
+    ],
+    "confidence": 0.78
+  },
+  "arbiter": {
+    "status": "diagnosed",
+    "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+    "primary_weakness": "symbolic_manipulation_gap",
+    "secondary_weaknesses": [],
+    "wrong_answer": true,
+    "process_incomplete": true,
+    "missing_steps": [
+      "Subtract 3 from both sides",
+      "Divide both sides by 2"
+    ],
+    "evidence_items": [
+      "Student provided an incorrect final answer (x=5 instead of x=2)",
+      "Student did not show any work or steps",
+      "Student admitted to guessing without process",
+      "Verification confirms correct answer is x=2",
+      "Input format mismatch prevented automated solving, but manual check validates reference answer"
+    ],
+    "chapter": "Solving Linear Equations",
+    "question_type": "Algebraic equation solving",
+    "knowledge_points": [
+      "Isolating the variable using inverse operations",
+      "Balancing equations",
+      "Solving two-step linear equations"
+    ],
+    "prerequisite_gaps": [
+      "arithmetic_operations",
+      "integer_operations",
+      "symbolic_manipulation"
+    ],
+    "likely_error_causes": [
+      "symbolic_manipulation_gap"
+    ],
+    "recommended_practice_focus": [
+      "linear_equation"
+    ],
+    "teacher_feedback_markdown": "The student guessed x=5 without showing any steps. The correct solution requires isolating x: subtract 3 from both sides (2x = 4), then divide by 2 (x = 2). Ask the student to restate the goal and write the first algebraic step explicitly.",
+    "mastery_update_suggestion": {
+      "result": "incorrect",
+      "knowledge_points": [
+        "Isolating the variable using inverse operations",
+        "Solving two-step linear equations"
+      ],
+      "note": "Student lacks procedural fluency in symbolic manipulation; needs guided practice with step-by-step isolation."
+    },
+    "confidence": 0.82
+  }
+}

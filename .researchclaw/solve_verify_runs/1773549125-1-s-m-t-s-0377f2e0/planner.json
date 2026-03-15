@@ -1,0 +1,28 @@
+{
+  "problem_summary": "A particle moves along a straight line with displacement S(t) given by S(t) = 2t^2 - 5t^2. Find the instantaneous velocity at t = 3 s.",
+  "givens": [
+    "Displacement function: S(t) = 2t^2 - 5t^2",
+    "Time: t = 3 s"
+  ],
+  "target": "Instantaneous velocity at t = 3 s",
+  "question_type": "calculus",
+  "candidate_methods": [
+    "Differentiate displacement function to get velocity",
+    "Evaluate derivative at t = 3 s"
+  ],
+  "exact_check_targets": {
+    "equation": "S(t) = 2t^2 - 5t^2",
+    "expressions": [
+      "v(t) = dS/dt",
+      "v(3) = derivative evaluated at t=3"
+    ],
+    "answer_format": "Numerical value with unit m/s"
+  },
+  "risks": [
+    "Critical OCR error: S(t) = 2t^2 - 5t^2 simplifies to -3t^2, but answer choices suggest intended equation was S(t) = 2t^3 - 5t^2 (exponent typo)",
+    "Domain risk: Negative velocity not reflected in positive answer choices",
+    "Notation risk: Missing cubic term in original problem statement"
+  ],
+  "preferred_variable": "t",
+  "requires_visual_reasoning": true
+}

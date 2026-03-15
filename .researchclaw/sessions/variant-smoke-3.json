@@ -1,0 +1,18 @@
+{
+  "session_id": "variant-smoke-3",
+  "title": "New Research Chat",
+  "created_at": 1773484264.3236256,
+  "updated_at": 1773484331.5700626,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+      "timestamp": 1773484264.3240366
+    },
+    {
+      "role": "assistant",
+      "content": "# Quadratic Equation Factoring Practice\n\n- Source problem: Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.\n- Target skill: x^2 - 5x + 6 = 0\n- Base difficulty: medium\n\n## Isomorphic\n\nSolve the equation: x^2 - 7x + 12 = 0.\n\n- Intent: To practice identical factoring method with different numerical values\n- Difficulty relation: about_the_same\n- Coach note: Focus on finding two numbers that multiply to 12 and add to -7\n- Changes:\n  - Replaced the linear coefficient -5 with -7 and constant term 6 with 12 while maintaining monic quadratic form and integer roots\n- Answer outline:\n  - Factor as (x-3)(x-4)=0\n  - Set each factor to zero\n  - Solutions: x=3, x=4\n\n## Easier\n\nSolve the equation: x^2 - 3x + 2 = 0.\n\n- Intent: To build confidence with minimal calculation steps\n- Difficulty relation: about_the_same\n- Coach note: Emphasize that roots are consecutive small integers\n- Changes:\n  - Used smaller coefficients (-3 and 2) with simpler integer roots (1 and 2)\n- Answer outline:\n  - Factor as (x-1)(x-2)=0\n  - Set each factor to zero\n  - Solutions: x=1, x=2\n\nVariant count: 2\nStatus: generated",
+      "timestamp": 1773484331.5700607
+    }
+  ]
+}

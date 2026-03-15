@@ -1,0 +1,1 @@
+The student's process for solving the linear equation is incomplete. They did not show any intermediate steps. Encourage the student to write out each step of the equation solving process, including the application of inverse operations and simplification. Focus on building the habit of showing all work to avoid errors and to facilitate checking.

@@ -1,0 +1,26 @@
+{
+  "problem_summary": "解方程 x^2 - 5x + 6 = 0",
+  "student_state": "student answer and process need diagnosis",
+  "question_type": "equation",
+  "chapter": "equations_and_inequalities",
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "target": "",
+  "observed_signals": [
+    "Student final answer conflicts with the verified answer or exact check.",
+    "Student process is incomplete for diagnostic checking.",
+    "Reference answer: x=2, x=3"
+  ],
+  "diagnosis_focus": [
+    "wrong answer",
+    "incomplete process",
+    "prerequisite gap"
+  ],
+  "evidence_gaps": [
+    "Need more student steps."
+  ],
+  "needs_solution_bootstrap": false,
+  "difficulty_band": "easy",
+  "reference_answer": "x=2, x=3"
+}

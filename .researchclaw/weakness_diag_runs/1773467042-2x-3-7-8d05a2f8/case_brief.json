@@ -1,0 +1,29 @@
+{
+  "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+  "student_state": "Student provided the answer x=5 with minimal or unclear work (only 'x=5?').",
+  "question_type": "algebraic equation solving",
+  "chapter": "Linear Equations",
+  "knowledge_points": [
+    "Solving linear equations",
+    "Inverse operations (subtraction and division)",
+    "Verifying solutions"
+  ],
+  "target": "Solve two-step linear equations correctly by applying inverse operations.",
+  "observed_signals": [
+    "Student answer (x=5) conflicts with the correct answer (x=2)",
+    "Student work is minimal and unclear, showing only the final answer with a question mark",
+    "Verification shows a conflict between proposed and expected solutions"
+  ],
+  "diagnosis_focus": [
+    "Possible misreading of the problem or signs (e.g., misreading 2x as 2+x or misreading the constant term)",
+    "Calculation error in the solving process (e.g., subtracting 3 from 7 to get 4, then dividing by 2 to get 2, but student got 5)",
+    "Lack of proper algebraic steps and verification"
+  ],
+  "evidence_gaps": [
+    "Specific error description not provided",
+    "Insufficient student work to identify the exact step of error"
+  ],
+  "needs_solution_bootstrap": true,
+  "difficulty_band": "beginner",
+  "reference_answer": "2"
+}

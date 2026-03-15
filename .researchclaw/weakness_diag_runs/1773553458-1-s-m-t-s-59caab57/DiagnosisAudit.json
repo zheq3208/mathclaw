@@ -1,0 +1,75 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57",
+  "model": "qwen3-vl-plus",
+  "status": "review",
+  "primary_weakness": "解题步骤完整性",
+  "CaseBrief_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57/case_brief.json",
+  "LocalChecks_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57/local_checks.json",
+  "Process_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57/process.json",
+  "Learning_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57/learning.json",
+  "TeacherFeedback_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57/WeaknessReport.json",
+  "GlobalLearningMemory_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-15T05:45:32.696984Z",
+    "event": {
+      "timestamp": "2026-03-15T05:45:32.696984Z",
+      "conversation_id": "debug-http-chinese-9a9c8f96",
+      "source": "weakness_diag",
+      "result": "partial",
+      "primary_weakness": "解题步骤完整性",
+      "secondary_weaknesses": [
+        "sign_error",
+        "calculation_or_careless_error",
+        "推理步骤缺失",
+        "reading_or_prompt_misread"
+      ],
+      "knowledge_points": [
+        "导数的计算与应用"
+      ],
+      "prerequisite_gaps": [
+        "arithmetic_operations"
+      ],
+      "practice_focus": [
+        "规范书写导数求解过程",
+        "强化瞬时速度与位移函数导数的关联训练"
+      ],
+      "note": "答案正确但步骤缺失，需补充完整推导过程",
+      "evidence": [
+        "学生作答未提供解题中间步骤，仅给出选项"
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation",
+        "diagram_or_theorem_gap",
+        "reading_or_prompt_misread",
+        "sign_error",
+        "calculation_or_careless_error"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation",
+        "linear_equation",
+        "导数的计算与应用"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  },
+  "BootstrapVerification_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773553458-1-s-m-t-s-59caab57/bootstrap_verification.json"
+}

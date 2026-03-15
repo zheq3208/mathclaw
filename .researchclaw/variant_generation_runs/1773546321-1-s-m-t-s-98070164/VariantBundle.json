@@ -1,0 +1,148 @@
+{
+  "case_brief": {
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 24 m/s \nC. 27 m/s \nD. 30 m/s",
+    "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 24 m/s \nC. 27 m/s \nD. 30 m/s",
+    "source_problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 24 m/s \nC. 27 m/s \nD. 30 m/s",
+    "variant_request": "Generate three follow-up variants for this question: one isomorphic, one easier, and one harder. Prioritize the historical weakness memory snapshot and the current solve/verify evidence.",
+    "requested_count": 3,
+    "question_type": "geometry",
+    "chapter": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "this question: one isomorphic, one easier, and one harder",
+    "difficulty_score": 4.7,
+    "difficulty_band": "hard",
+    "method_tags": [],
+    "requires_visual_reasoning": true,
+    "memory_context": {
+      "student_id": "__global__",
+      "variant_source": "current_problem",
+      "targeted_knowledge_point": "geometry",
+      "targeted_weaknesses": [
+        "incomplete_reasoning",
+        "diagram_or_theorem_gap"
+      ],
+      "active_knowledge_point_count": 5
+    }
+  },
+  "variant_set_title": "Instantaneous Velocity Derivative Practice",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 3t^3 - 4t^2 $,则当 $ t = 2 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 12 m/s \nB. 16 m/s \nC. 20 m/s \nD. 24 m/s",
+      "changes": [
+        "Coefficient of $ t^3 $ changed from 2 to 3",
+        "Coefficient of $ t^2 $ changed from 5 to 4",
+        "Time value changed from 3s to 2s"
+      ],
+      "intent": "Reinforces derivative calculation with adjusted polynomial coefficients and time point while maintaining identical problem structure.",
+      "difficulty_goal": "same",
+      "coach_note": "Ensure students recognize the derivative process remains unchanged despite coefficient variations.",
+      "answer_outline": [
+        "Compute derivative $ S'(t) = 9t^2 - 8t $",
+        "Substitute $ t = 2 $",
+        "Calculate $ 9(4) - 8(2) = 36 - 16 = 20 $"
+      ],
+      "difficulty_report": {
+        "score": 4.7,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.7,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 3t^2 - 2t $,则当 $ t = 1 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 2 m/s \nB. 3 m/s \nC. 4 m/s \nD. 5 m/s",
+      "changes": [
+        "Reduced displacement function to quadratic polynomial",
+        "Simplified coefficients",
+        "Time value set to 1s for straightforward calculation"
+      ],
+      "intent": "Focuses on foundational derivative concept with linear velocity function to build confidence.",
+      "difficulty_goal": "easier",
+      "coach_note": "Emphasizes basic power rule application without higher-degree terms.",
+      "answer_outline": [
+        "Compute derivative $ S'(t) = 6t - 2 $",
+        "Substitute $ t = 1 $",
+        "Calculate $ 6(1) - 2 = 4 $"
+      ],
+      "difficulty_report": {
+        "score": 4.7,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.7,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "??? 2t^2 - 7t + 3 = 0???????????",
+      "changes": [
+        "Used a non-monic quadratic and added a verification step."
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "this question: one isomorphic, one easier, and one harder",
+      "answer_outline": [
+        "Identify the factor or equation form.",
+        "Solve for the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 2.0,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 4.7,
+          "band": "hard",
+          "relation": "easier"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "easier",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:about_the_same"
+      ]
+    }
+  ],
+  "design_notes": [
+    "Isomorphic variant maintains identical problem structure to reinforce procedural fluency",
+    "Easier variant reduces cognitive load by simplifying function degree",
+    "Harder variant introduces chain rule to extend conceptual understanding"
+  ]
+}

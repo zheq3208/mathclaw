@@ -1,0 +1,55 @@
+{
+  "all_correct": false,
+  "overall_comment": "学生在导数应用和排列组合基础题上表现良好，但在组合数性质应用题上出现错误，需加强组合恒等式的记忆与应用。",
+  "knowledge_points": [
+    "导数的物理意义（瞬时速度）",
+    "排列组合中的不相邻问题",
+    "导数与函数单调性的关系",
+    "组合数的性质与求和"
+  ],
+  "current_weaknesses": [
+    "组合数性质的应用不熟练"
+  ],
+  "problems": [
+    {
+      "question_id": "q1",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B",
+      "why": "瞬时速度是位移函数的导数，S'(t)=6t²-10t，代入t=3得24 m/s",
+      "solution": "S'(t)=6t²-10t，S'(3)=6×9-10×3=54-30=24",
+      "knowledge_point": "导数的物理意义",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q2",
+      "judgement": "正确",
+      "student_answer": "D",
+      "correct_answer": "D",
+      "why": "总排列数5!减去超重与失重相邻的排列数2×4!，得72种",
+      "solution": "5! - 2×4! = 120 - 48 = 72",
+      "knowledge_point": "排列组合中的不相邻问题",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q3",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B",
+      "why": "函数单调递减要求导数≤0，即a≥x e^x，x e^x在(0,1)最大值为e",
+      "solution": "f'(x)=e^x - a/x ≤ 0 ⇒ a ≥ x e^x，g(x)=x e^x在(0,1)递增，g(1)=e",
+      "knowledge_point": "导数与函数单调性的关系",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q4",
+      "judgement": "错误",
+      "student_answer": "D",
+      "correct_answer": "220",
+      "why": "组合数求和公式C₂²+...+C₁₁²=C₁₂³=220，学生答案219错误",
+      "solution": "C₂²+C₃²+...+C₁₁²=C₁₂³=220",
+      "knowledge_point": "组合数的性质与求和",
+      "is_wrong": true
+    }
+  ]
+}

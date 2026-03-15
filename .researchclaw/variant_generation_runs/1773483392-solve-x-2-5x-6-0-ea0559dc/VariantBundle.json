@@ -1,0 +1,133 @@
+{
+  "case_brief": {
+    "problem_summary": "Solve x^2 - 5x + 6 = 0",
+    "problem_text": "Solve x^2 - 5x + 6 = 0",
+    "variant_request": "Generate isomorphic, easier, and harder follow-up practice variants.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "",
+    "difficulty_score": 2.35,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false
+  },
+  "variant_set_title": "Targeted Variant Set",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Solve x^4 - 7x + 8 = 0",
+      "changes": [
+        "Changed 2 to 4",
+        "Changed 5 to 7",
+        "Changed 6 to 8"
+      ],
+      "intent": "same_concept_same_solution_frame",
+      "difficulty_goal": "same",
+      "coach_note": "Use this variant to practice the same core skill.",
+      "answer_outline": [
+        "Identify the target.",
+        "Set up the key relation.",
+        "Complete the calculation or proof."
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Solve x^1 - 2.5x + 3 = 0",
+      "changes": [
+        "Changed 2 to 1",
+        "Changed 5 to 2.5",
+        "Changed 6 to 3"
+      ],
+      "intent": "reduced_prerequisite_load",
+      "difficulty_goal": "easier",
+      "coach_note": "Use this variant to practice the same core skill.",
+      "answer_outline": [
+        "Identify the target.",
+        "Set up the key relation.",
+        "Complete the calculation or proof."
+      ],
+      "difficulty_report": {
+        "score": 2.55,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "Solve x^4 - 10x + 12 = 0 Add one extra condition or transfer step.",
+      "changes": [
+        "Changed 2 to 4",
+        "Changed 5 to 10",
+        "Changed 6 to 12"
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "Use this variant to practice the same core skill.",
+      "answer_outline": [
+        "Identify the target.",
+        "Set up the key relation.",
+        "Complete the calculation or proof."
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    }
+  ],
+  "design_notes": []
+}

@@ -1,0 +1,27 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "breakthrough_hint",
+  "teacher_focus": "导数与瞬时速度的物理意义关联",
+  "immediate_goal": "引导学生明确瞬时速度的数学定义",
+  "diagnostic_focus": [
+    "学生是否理解瞬时速度需通过导数求解",
+    "是否存在混淆平均速度与瞬时速度的情况"
+  ],
+  "misconceptions_to_probe": [
+    "误用平均速度公式计算瞬时速度",
+    "未建立位移函数与速度函数的导数关系"
+  ],
+  "must_avoid": [
+    "直接写出导数公式",
+    "代入t=3进行计算"
+  ],
+  "allowed_reveal": "瞬时速度是位移函数对时间的瞬时变化率",
+  "first_question": "在直线运动中，位移S(t)与瞬时速度v(t)之间存在怎样的数学关系？请回忆速度的定义",
+  "checkpoint_rubric": [
+    "学生能正确表述v(t)=S'(t)",
+    "学生能说明导数的物理意义"
+  ],
+  "escalation_rule": "若学生无法回答导数关系，则提示'速度是位移的变化率，数学上如何表示变化率？'",
+  "allow_full_solution": false,
+  "confidence": 0.85
+}

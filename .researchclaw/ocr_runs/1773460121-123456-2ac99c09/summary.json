@@ -1,0 +1,13 @@
+{
+  "pipeline": "MessToClean-Q3VL",
+  "source": "/root/autodl-tmp/123456.png",
+  "run_dir": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09",
+  "stage1_box_evidence_path": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09/stage1_box_evidence.json",
+  "stage1_raw_calls_path": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09/stage1_raw_calls.json",
+  "stage2_layout_path": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09/stage2_layout.json",
+  "Structured_md_path": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09/Structured.md",
+  "FullAuditLog_json_path": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09/FullAuditLog.json",
+  "page_count": 1,
+  "question_count": 4,
+  "question_count_processed": 2
+}

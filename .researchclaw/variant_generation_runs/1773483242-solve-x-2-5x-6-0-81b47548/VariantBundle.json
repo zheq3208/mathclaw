@@ -1,0 +1,140 @@
+{
+  "case_brief": {
+    "problem_summary": "Solve x^2 - 5x + 6 = 0",
+    "problem_text": "Solve x^2 - 5x + 6 = 0",
+    "variant_request": "Generate isomorphic, easier, and harder follow-up practice variants.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "",
+    "difficulty_score": 2.35,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false
+  },
+  "variant_set_title": "Quadratic Equation Factoring Practice",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Solve x^2 - 7x + 12 = 0",
+      "changes": [
+        "Changed the linear coefficient from -5 to -7 and the constant term from 6 to 12, resulting in roots 3 and 4 instead of 2 and 3."
+      ],
+      "intent": "To practice the same factoring technique with different numbers.",
+      "difficulty_goal": "same",
+      "coach_note": "This problem factors similarly to the original. Look for two numbers that multiply to 12 and add to -7.",
+      "answer_outline": [
+        "Factor as (x-3)(x-4)=0",
+        "Set each factor to zero: x-3=0 or x-4=0",
+        "Solutions: x=3, x=4"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Solve x^1 - 2.5x + 3 = 0",
+      "changes": [
+        "Changed 2 to 1",
+        "Changed 5 to 2.5",
+        "Changed 6 to 3"
+      ],
+      "intent": "reduced_prerequisite_load",
+      "difficulty_goal": "easier",
+      "coach_note": "Use this variant to practice the same core skill.",
+      "answer_outline": [
+        "Identify the target.",
+        "Set up the key relation.",
+        "Complete the calculation or proof."
+      ],
+      "difficulty_report": {
+        "score": 2.55,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "Solve x^4 - 10x + 12 = 0 Add one extra condition or transfer step.",
+      "changes": [
+        "Changed 2 to 4",
+        "Changed 5 to 10",
+        "Changed 6 to 12"
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "Use this variant to practice the same core skill.",
+      "answer_outline": [
+        "Identify the target.",
+        "Set up the key relation.",
+        "Complete the calculation or proof."
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:about_the_same"
+      ]
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:about_the_same"
+      ]
+    }
+  ],
+  "design_notes": [
+    "The source problem is quadratic, so the knowledge point is quadratic factoring. The case_brief incorrectly listed 'linear_equation', but we are generating quadratic problems to match the problem structure.",
+    "For the isomorphic variant, we kept the monic quadratic form and changed the numbers to maintain the same factoring process.",
+    "For the easier variant, we chose a perfect square trinomial to simplify the factoring step (only one distinct root).",
+    "For the harder variant, we introduced a non-monic quadratic to require an additional step (factoring by grouping)."
+  ]
+}

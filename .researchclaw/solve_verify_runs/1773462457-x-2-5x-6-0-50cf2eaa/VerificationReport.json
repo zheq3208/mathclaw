@@ -1,0 +1,124 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "解方程 x^2 - 5x + 6 = 0",
+  "planner": {
+    "value": 0.0,
+    "problem_summary": "解方程 x^2 - 5x + 6 = 0",
+    "givens": [],
+    "target": "方程 x^2 - 5x + 6 = 0",
+    "question_type": "equation",
+    "candidate_methods": [
+      "direct symbolic solving",
+      "sanity-check route"
+    ],
+    "exact_check_targets": {
+      "equation": "x**2 - 5x + 6 = 0",
+      "expressions": [
+        "解方程 x^2 - 5x + 6 = 0"
+      ],
+      "answer_format": "numeric or symbolic"
+    },
+    "risks": [],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "x**2 - 5*x + 6 = 0",
+      "variable": "x",
+      "solutions": [
+        "2",
+        "3"
+      ]
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "",
+        "verification": {
+          "status": "conflict",
+          "equation": "x**2 - 5*x + 6 = 0",
+          "variable": "x",
+          "expected_solutions": [
+            "2",
+            "3"
+          ],
+          "proposed_solutions": [],
+          "notes": []
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "solver_b",
+        "final_answer": "",
+        "verification": {
+          "status": "conflict",
+          "equation": "x**2 - 5*x + 6 = 0",
+          "variable": "x",
+          "expected_solutions": [
+            "2",
+            "3"
+          ],
+          "proposed_solutions": [],
+          "notes": []
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "conflict",
+        "strengths": [],
+        "issues": [
+          "No solution provided",
+          "Missing key steps"
+        ],
+        "first_conflicting_step": "No steps provided; expected solutions [2, 3] not found"
+      },
+      {
+        "solver_role": "solver_b",
+        "verdict": "conflict",
+        "strengths": [],
+        "issues": [
+          "No solution provided",
+          "Missing key steps"
+        ],
+        "first_conflicting_step": "No steps provided; expected solutions [2, 3] not found"
+      }
+    ],
+    "consensus_answer": "2, 3",
+    "consensus_expression": "x = 2 or x = 3",
+    "conflict_summary": [
+      "Both candidates failed to provide any solution steps or final answer",
+      "Expected solutions: 2 and 3, but both candidates returned empty answer"
+    ],
+    "recommended_winner": "none",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "2, 3",
+    "final_expression": "x = 2 or x = 3",
+    "concise_solution_markdown": "方程 $x^2 - 5x + 6 = 0$ 可因式分解为 $(x - 2)(x - 3) = 0$，故解为 $x = 2$ 或 $x = 3$。",
+    "verification_summary": [
+      "工具验证确认方程 $x^2 - 5x + 6 = 0$ 的解为 $x = 2$ 和 $x = 3$",
+      "两位候选求解器均未提供任何解或步骤，导致验证冲突"
+    ],
+    "unresolved_risks": [
+      "无求解过程提交，无法评估推理正确性",
+      "需确保后续提交包含完整推导步骤"
+    ],
+    "recommended_follow_up": "要求重新提交带完整因式分解或求根公式推导的解答"
+  }
+}

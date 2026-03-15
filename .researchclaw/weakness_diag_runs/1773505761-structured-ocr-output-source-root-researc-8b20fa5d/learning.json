@@ -1,0 +1,19 @@
+{
+  "primary_weakness": "linear_equation procedural execution",
+  "secondary_weaknesses": [
+    "step documentation"
+  ],
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "prerequisite_gaps": [
+    "symbolic_manipulation"
+  ],
+  "recommended_practice_focus": [
+    "Demonstrate each algebraic manipulation step explicitly"
+  ],
+  "teacher_watchouts": [
+    "Verify student shows all intermediate steps for linear equation solutions"
+  ],
+  "confidence": 0.0
+}

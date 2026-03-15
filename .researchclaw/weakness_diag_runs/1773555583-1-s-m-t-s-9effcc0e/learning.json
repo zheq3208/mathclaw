@@ -1,0 +1,23 @@
+{
+  "primary_weakness": "导数的物理意义理解（瞬时速度与位移导数的关系）",
+  "secondary_weaknesses": [
+    "sign_error",
+    "calculation_or_careless_error"
+  ],
+  "knowledge_points": [
+    "导数的物理意义"
+  ],
+  "prerequisite_gaps": [
+    "导数的定义",
+    "基本求导公式"
+  ],
+  "recommended_practice_focus": [
+    "理解瞬时速度是位移函数的导数",
+    "练习位移函数求导计算"
+  ],
+  "teacher_watchouts": [
+    "学生可能混淆平均速度与瞬时速度",
+    "未掌握导数的物理意义"
+  ],
+  "confidence": 0.4
+}

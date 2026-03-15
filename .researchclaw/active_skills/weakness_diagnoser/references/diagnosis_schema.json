@@ -1,0 +1,7 @@
+{
+  "chapter": "string",
+  "knowledge_point": "string",
+  "prerequisites": ["string"],
+  "difficulty": "easy|medium|hard",
+  "likely_error_causes": ["reading", "modeling", "algebra", "calculation", "careless", "concept_gap"]
+}

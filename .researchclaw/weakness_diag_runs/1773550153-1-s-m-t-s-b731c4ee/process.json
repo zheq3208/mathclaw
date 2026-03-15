@@ -1,0 +1,20 @@
+{
+  "primary_error_stage": "reasoning",
+  "wrong_answer": false,
+  "process_incomplete": true,
+  "missing_steps": [
+    "Student attempt does not show explicit intermediate steps."
+  ],
+  "evidence_items": [
+    "Student process is incomplete for diagnostic checking."
+  ],
+  "likely_error_causes": [
+    "reading_or_prompt_misread",
+    "sign_error",
+    "calculation_or_careless_error",
+    "strategy_gap",
+    "incomplete_reasoning",
+    "diagram_or_theorem_gap"
+  ],
+  "confidence": 0.82
+}

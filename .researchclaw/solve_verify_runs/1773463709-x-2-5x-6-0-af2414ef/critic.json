@@ -1,0 +1,33 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "Solver A",
+      "verdict": "pass",
+      "strengths": [
+        "Correctly factors the equation to find roots",
+        "Calculates discriminant to confirm nature of roots",
+        "Provides complete answer including the nature of roots as required"
+      ],
+      "issues": [],
+      "first_conflicting_step": ""
+    },
+    {
+      "solver_role": "solver_b",
+      "verdict": "conflict",
+      "strengths": [
+        "Correctly identifies the roots (x=2 and x=3)"
+      ],
+      "issues": [
+        "Fails to state the nature of the roots (status) as required by the problem"
+      ],
+      "first_conflicting_step": "The candidate does not state the nature of the roots (status) as required by the problem"
+    }
+  ],
+  "consensus_answer": "Two distinct real roots: x=2 and x=3",
+  "consensus_expression": "x=2, x=3",
+  "conflict_summary": [
+    "solver_b does not state the nature of the roots (status) as required by the problem"
+  ],
+  "recommended_winner": "Solver A",
+  "revision_needed": false
+}

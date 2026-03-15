@@ -55,15 +55,14 @@ def build_env_context(
             "then use edit_file for partial updates or appending.\n"
             "  3. For math tasks, first normalize the input with tools such as "
             "extract_math_document, inspect_math_media, or normalize_problem_json.\n"
-            "  4. Before trusting a math answer, use exact-check tools such as "
-            "sympy_solve_equation, sympy_check_equivalence, or verify_math_solution.\n"
-            "  5. In tutoring mode, prefer guided tools such as "
-            "plan_guided_explanation, generate_socratic_turn, and choose_hint_level.\n"
-            "  6. After solving, map weak points and update long-term learning state with "
-            "diagnose_math_weakness, extract_math_knowledge, and update_math_mastery.\n"
-            "  7. Before ending a teaching turn, prefer using generate_micro_quiz and "
+            "  4. For solving and verification, prefer run_math_solve_verify_agent or solve_and_verify_math_problem before trusting a math answer; use sympy_solve_equation, sympy_check_equivalence, and verify_math_solution as exact backstops.\n"
+            "  5. In tutoring mode, prefer run_guided_explanation_agent first; then use plan_guided_explanation, compose_guided_explanation_turn, generate_socratic_turn, and choose_hint_level for smaller guided steps.\n"
+            "  6. After solving or grading, prefer run_math_weakness_diagnosis_agent or diagnose_math_weakness to diagnose wrong answers, missing steps, and weak prerequisite skills before updating long-term state with "
+            "extract_math_knowledge and update_math_mastery.\n"
+            "  7. After solving or diagnosing, prefer run_problem_variant_agent or generate_problem_variants to create isomorphic, easier, and harder follow-up practice; then use calibrate_problem_difficulty to sanity-check the level shift.\n"
+            "  8. Before ending a teaching turn, prefer using generate_micro_quiz and "
             "grade_micro_quiz to check whether the student can solve 2-3 short items independently.\n"
-            "  8. When the user wants spaced review, use schedule_review_reminder, "
+            "  9. When the user wants spaced review, use schedule_review_reminder, "
             "list_review_reminders, or cancel_review_reminder instead of only suggesting reminders.",
         )
 

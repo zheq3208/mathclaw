@@ -1,0 +1,27 @@
+{
+  "problem_summary": "Verify if x=5 is the solution to the equation 2x+3=7.",
+  "givens": [
+    "2x + 3 = 7",
+    "x = 5"
+  ],
+  "target": "Determine whether x=5 satisfies the equation 2x+3=7.",
+  "question_type": "equation",
+  "candidate_methods": [
+    "Substitute x=5 into the equation and check equality",
+    "Solve the equation for x and compare with 5"
+  ],
+  "exact_check_targets": {
+    "equation": "2x + 3 = 7",
+    "expressions": [
+      "2x+3",
+      "7"
+    ],
+    "answer_format": "boolean (true if x=5 is the solution, false otherwise)"
+  },
+  "risks": [
+    "OCR artifacts: the problem text contains question marks (??????) which may indicate missing or corrupted text, potentially obscuring additional context or conditions.",
+    "Notation risk: the equation uses standard algebraic notation, but the presence of question marks might hide critical information (e.g., domain restrictions or multiple equations)."
+  ],
+  "preferred_variable": "x",
+  "requires_visual_reasoning": false
+}

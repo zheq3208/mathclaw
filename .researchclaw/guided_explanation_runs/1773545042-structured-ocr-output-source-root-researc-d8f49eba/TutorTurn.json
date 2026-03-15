@@ -1,0 +1,13 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "先不直接给最终答案。\n\n本轮先做到这里：the goal of isolating the variable\n\n你先回答我：What is the main goal when solving a linear equation? (What do we want to end up with?)",
+  "student_checkpoint_question": "What is the main goal when solving a linear equation? (What do we want to end up with?)",
+  "expected_student_action": "restate_goal",
+  "if_student_stuck_then": "Raise the hint level by one and reveal one more concrete step.",
+  "revealed_step": "the goal of isolating the variable",
+  "progress_signal": "Student can restate the goal and produce the next valid step.",
+  "stop_condition": "Stop when the student can complete the next step independently.",
+  "confidence": 0.74,
+  "value": 0.0,
+  "patched_for_answer_leak": true
+}

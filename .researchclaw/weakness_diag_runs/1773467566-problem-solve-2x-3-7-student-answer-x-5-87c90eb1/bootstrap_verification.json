@@ -1,0 +1,136 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "Problem: solve 2x + 3 = 7. Student answer: x=5.",
+  "planner": {
+    "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+    "givens": [
+      "2x + 3 = 7",
+      "Student answer: x=5"
+    ],
+    "target": "The value of x that satisfies the equation",
+    "question_type": "equation",
+    "candidate_methods": [
+      "algebraic manipulation",
+      "isolate variable",
+      "subtraction and division"
+    ],
+    "exact_check_targets": {
+      "equation": "2x + 3 = 7",
+      "expressions": [
+        "x=5"
+      ],
+      "answer_format": "x = [number]"
+    },
+    "risks": [
+      "OCR might misread the equation (e.g., '7' as '1' or 'x' as '×')",
+      "Student answer might be misread (e.g., '5' as '6')",
+      "Notation inconsistency: student answer uses 'x' but equation might have been misread as different variable"
+    ],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "2*x + 3 = 7",
+      "variable": "x",
+      "solutions": [
+        "2"
+      ]
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "x=2",
+        "verification": {
+          "status": "uncertain",
+          "equation": "solve 2*x + 3 = 7. Student answer",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": [
+            "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "x=2",
+          "normalized_formula": "x=2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "solver_b",
+        "final_answer": "x=2",
+        "verification": {
+          "status": "uncertain",
+          "equation": "solve 2*x + 3 = 7. Student answer",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": [
+            "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "x=2",
+          "normalized_formula": "x=2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+      },
+      {
+        "solver_role": "solver_b",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [],
+    "recommended_winner": "solver_a",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "x=2",
+    "final_expression": "x=2",
+    "concise_solution_markdown": "Subtract 3 from both sides: $2x = 4$. Divide by 2: $x = 2$.",
+    "verification_summary": [
+      "The correct solution to $2x + 3 = 7$ is $x = 2$.",
+      "Student answer $x = 5$ is incorrect (plugging in gives $2(5) + 3 = 13 \\neq 7$).",
+      "Both solver candidates returned $x = 2$, but tool verification failed due to syntax error in parsing the equation string, not due to mathematical error."
+    ],
+    "unresolved_risks": [
+      "Tool parsing failure due to malformed input string (e.g., 'solve 2*x + 3 = 7. Student answer' instead of clean equation).",
+      "No ground-truth expected solution was provided to the verifier, causing uncertainty despite correct manual derivation."
+    ],
+    "recommended_follow_up": "Re-run verification with properly formatted equation string (e.g., '2*x + 3 - 7') and explicit expected solution x=2."
+  }
+}

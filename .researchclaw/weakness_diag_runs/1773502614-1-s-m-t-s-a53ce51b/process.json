@@ -1,0 +1,16 @@
+{
+  "primary_error_stage": "final_answer",
+  "wrong_answer": true,
+  "process_incomplete": true,
+  "missing_steps": [
+    "Did not explicitly state that instantaneous velocity is the derivative of displacement"
+  ],
+  "evidence_items": [
+    "Student calculated 24 m/s but selected option B (30 m/s)"
+  ],
+  "likely_error_causes": [
+    "answer_selection_error",
+    "conceptual_misapplication"
+  ],
+  "confidence": 0.8
+}

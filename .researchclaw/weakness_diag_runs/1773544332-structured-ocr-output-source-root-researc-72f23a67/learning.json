@@ -1,0 +1,17 @@
+{
+  "primary_weakness": "incomplete_reasoning",
+  "secondary_weaknesses": [],
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "prerequisite_gaps": [
+    "symbolic_manipulation"
+  ],
+  "recommended_practice_focus": [
+    "showing all intermediate steps when solving linear equations"
+  ],
+  "teacher_watchouts": [
+    "Ensure student is writing each step of the equation solving process"
+  ],
+  "confidence": 0.0
+}

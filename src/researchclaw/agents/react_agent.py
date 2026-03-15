@@ -65,6 +65,86 @@ _VISION_MODEL_HINTS = (
     "pixtral",
     "minicpm-v",
 )
+_MATH_SOLVE_TERMS = (
+    "\u89e3\u9898",
+    "\u6c42\u89e3",
+    "\u7b97\u4e00\u4e0b",
+    "\u8ba1\u7b97",
+    "\u9a8c\u8bc1",
+    "\u68c0\u67e5\u7b54\u6848",
+    "\u6279\u6539",
+    "\u6279\u6539\u8bd5\u5377",
+    "\u6279\u6539\u6211\u7684\u8bd5\u5377",
+    "\u505a\u8fd9\u9898",
+    "\u89e3\u8fd9\u9898",
+    "\u7ed9\u51fa\u7b54\u6848",
+    "\u8be6\u89e3",
+    "\u89e3\u65b9\u7a0b",
+    "\u5224\u5b9a\u5bf9\u9519",
+    "\u5206\u6790\u8fd9\u9898",
+)
+_EQUATION_REQUEST_RE = re.compile(r"[A-Za-z][A-Za-z0-9_()^*+\-/\s]*=")
+_GUIDED_EXPLANATION_TERMS = (
+    "引导",
+    "提示",
+    "给我一点提示",
+    "一步一步",
+    "先别给答案",
+    "不要直接给答案",
+    "只给提示",
+    "带我做",
+    "学习模式",
+    "苏格拉底",
+)
+
+_WEAKNESS_DIAG_TERMS = (
+    "\u8584\u5f31\u70b9",
+    "\u9519\u56e0",
+    "\u4e3a\u4ec0\u4e48\u9519",
+    "\u54ea\u91cc\u9519",
+    "\u54ea\u91cc\u4e0d\u4f1a",
+    "\u6f0f\u6b65",
+    "\u8fc7\u7a0b\u4e0d\u5b8c\u6574",
+    "\u6b65\u9aa4\u4e0d\u5b8c\u6574",
+    "\u8bca\u65ad",
+    "\u6613\u9519\u70b9",
+)
+
+_VARIANT_GENERATION_TERMS = (
+    "\u53d8\u5f0f",
+    "\u53d8\u5f0f\u9898",
+    "\u540c\u6784",
+    "\u540c\u6784\u9898",
+    "\u7c7b\u4f3c\u9898",
+    "\u76f8\u4f3c\u9898",
+    "\u540c\u7c7b\u578b\u9898",
+    "\u518d\u6765\u4e00\u9053",
+    "\u518d\u6765\u4e00\u9898",
+    "\u4e3e\u4e00\u53cd\u4e09",
+    "\u66f4\u7b80\u5355",
+    "\u66f4\u96be",
+    "\u964d\u96be\u9898",
+    "\u5347\u96be\u9898",
+)
+
+_EXAM_PIPELINE_TERMS = (
+    "\u5168\u94fe\u8def",
+    "\u5168\u6d41\u7a0b",
+    "\u4e32\u8054",
+    "pipeline",
+    "\u6309\u6b65\u9aa4",
+    "\u5148ocr",
+    "\u5148\u505aocr",
+    "\u5b8c\u6574\u94fe\u8def",
+    "\u8054\u52a8\u6d4b\u8bd5",
+    "\u6279\u6539\u6211\u7684\u8bd5\u5377",
+    "\u6279\u6539\u8fd9\u5f20\u8bd5\u5377",
+    "\u6279\u6539\u6574\u5f20\u8bd5\u5377",
+    "\u8bd5\u5377\u6279\u6539",
+    "\u5206\u6790\u8fd9\u5f20\u8bd5\u5377",
+    "\u8bd5\u5377\u5168\u6d41\u7a0b",
+)
+
 
 
 class ScholarAgent:
@@ -112,8 +192,11 @@ class ScholarAgent:
 
         # 鈹€鈹€ 1. Build toolkit 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€
         self._tools: dict[str, Any] = {}
+        self._tool_sources: dict[str, str] = {}
         self._skill_docs: list[SkillDoc] = []
         self._last_skill_debug: dict[str, Any] = {}
+        self._last_turn_trace: dict[str, Any] = {}
+        self._current_turn_trace: dict[str, Any] | None = None
         self._mcp_registered_tools: set[str] = set()
         self._register_builtin_tools()
         self._register_skills()
@@ -220,9 +303,14 @@ class ScholarAgent:
 
     def _register_tool(self, name: str, func: Any, source: str = "") -> str:
         """Register a single tool with namesake strategy handling."""
+
+        def _remember(tool_name: str) -> str:
+            self._tool_sources[tool_name] = source or "builtin"
+            return tool_name
+
         if name not in self._tools:
             self._tools[name] = func
-            return name
+            return _remember(name)
 
         strategy = self.namesake_strategy
         prefix = f"{source} " if source else ""
@@ -245,12 +333,12 @@ class ScholarAgent:
                 renamed = f"{name}_{idx}"
             self._tools[renamed] = func
             logger.info("Renamed duplicate tool '%s' -> '%s'", name, renamed)
-            return renamed
+            return _remember(renamed)
 
         # override
         self._tools[name] = func
         logger.info("Override tool '%s' from %s", name, source or "unknown")
-        return name
+        return _remember(name)
 
     def _register_skills(self) -> None:
         """Load and register skills from the active_skills directory."""
@@ -410,9 +498,143 @@ class ScholarAgent:
         for tool_name in list(registered):
             if tool_name in self._tools:
                 self._tools.pop(tool_name, None)
+                self._tool_sources.pop(tool_name, None)
                 removed = True
         registered.clear()
         return removed
+
+    def _new_turn_trace(
+        self,
+        message: str,
+        *,
+        session_id: str | None = None,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> dict[str, Any]:
+        return {
+            "message": str(message or ""),
+            "session_id": session_id or "",
+            "attachments": [
+                {
+                    "name": str(item.get("name") or ""),
+                    "kind": str(item.get("kind") or ""),
+                    "relative_path": str(item.get("relative_path") or ""),
+                }
+                for item in (attachments or [])
+                if isinstance(item, dict)
+            ],
+            "route": "",
+            "selected_skills": [],
+            "used_skills": [],
+            "used_tools": [],
+            "used_mcp": [],
+            "artifacts": [],
+            "status": "pending",
+        }
+
+    @staticmethod
+    def _clone_trace(trace: dict[str, Any] | None) -> dict[str, Any]:
+        if not isinstance(trace, dict):
+            return {}
+        try:
+            return json.loads(json.dumps(trace, ensure_ascii=False))
+        except Exception:
+            return dict(trace)
+
+    def _begin_turn_trace(
+        self,
+        message: str,
+        *,
+        session_id: str | None = None,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> None:
+        self._current_turn_trace = self._new_turn_trace(
+            message,
+            session_id=session_id,
+            attachments=attachments,
+        )
+
+    def _finish_turn_trace(
+        self,
+        response: str = "",
+        *,
+        status: str = "ok",
+    ) -> dict[str, Any]:
+        trace = self._current_turn_trace or {}
+        if trace:
+            trace["status"] = status or trace.get("status") or "ok"
+            if response:
+                trace["response_preview"] = str(response).strip()[:400]
+        self._last_turn_trace = self._clone_trace(trace)
+        self._current_turn_trace = None
+        return self._clone_trace(self._last_turn_trace)
+
+    def _trace_add(self, key: str, value: Any) -> None:
+        if self._current_turn_trace is None:
+            return
+        text = str(value or "").strip()
+        if not text:
+            return
+        bucket = self._current_turn_trace.setdefault(key, [])
+        if text not in bucket:
+            bucket.append(text)
+
+    def _mark_turn_route(self, route: str) -> None:
+        if self._current_turn_trace is not None and route:
+            self._current_turn_trace["route"] = route
+
+    def _record_selected_skills(
+        self,
+        selection_debug: dict[str, Any],
+        selected_skills: list[Any],
+    ) -> None:
+        for item in selected_skills:
+            name = str(getattr(item, "name", "") or "").strip()
+            if name:
+                self._trace_add("selected_skills", name)
+        if self._current_turn_trace is None or self._current_turn_trace.get("selected_skills"):
+            return
+        for item in selection_debug.get("selected", []) if isinstance(selection_debug, dict) else []:
+            name = str(item or "").strip()
+            if name:
+                self._trace_add("selected_skills", name)
+
+    def _normalize_trace_path(self, value: Any) -> str:
+        path = str(value or "").strip()
+        if not path:
+            return ""
+        candidate = Path(path)
+        working_dir = Path(self.working_dir)
+        if candidate.is_absolute():
+            try:
+                return str(candidate.relative_to(working_dir))
+            except Exception:
+                return str(candidate)
+        return path
+
+    def _record_tool_result(self, result: Any) -> None:
+        if self._current_turn_trace is None:
+            return
+        payload = result if isinstance(result, dict) else self._tool_response_json(result)
+        if not isinstance(payload, dict):
+            return
+        status = str(payload.get("status") or "").strip()
+        if status:
+            self._current_turn_trace["status"] = status
+        for key, value in payload.items():
+            lower = str(key).lower()
+            if any(token in lower for token in ("path", "dir", "artifact", "audit", "report", "trace")):
+                if isinstance(value, str):
+                    normalized = self._normalize_trace_path(value)
+                    if normalized:
+                        self._trace_add("artifacts", normalized)
+                elif isinstance(value, list):
+                    for item in value:
+                        normalized = self._normalize_trace_path(item)
+                        if normalized:
+                            self._trace_add("artifacts", normalized)
+
+    def get_last_turn_trace(self) -> dict[str, Any]:
+        return self._clone_trace(self._last_turn_trace)
 
     @staticmethod
     def _await_tool_result(result: Any) -> Any:
@@ -469,8 +691,16 @@ class ScholarAgent:
 
     def _invoke_tool(self, tool_name: str, tool_args: dict[str, Any]) -> Any:
         tool = self._tools[tool_name]
+        self._trace_add("used_tools", tool_name)
+        source = str(self._tool_sources.get(tool_name, "") or "").strip()
+        if source.startswith("skill:"):
+            self._trace_add("used_skills", source.split(":", 1)[1])
+        elif source.startswith("mcp:"):
+            self._trace_add("used_mcp", source.split(":", 2)[1])
         result = tool(**tool_args)
-        return self._await_tool_result(result)
+        resolved = self._await_tool_result(result)
+        self._record_tool_result(resolved)
+        return resolved
 
     @staticmethod
     def _tool_response_text(result: Any) -> str:
@@ -494,6 +724,8 @@ class ScholarAgent:
 
     @staticmethod
     def _tool_response_json(result: Any) -> dict[str, Any]:
+        if isinstance(result, dict):
+            return result
         payload_text = ScholarAgent._tool_response_text(result).strip()
         if not payload_text:
             return {}
@@ -507,6 +739,983 @@ class ScholarAgent:
                 return json.loads(match.group(1))
             except Exception:
                 return {}
+
+    
+    def _looks_like_exam_pipeline_request(
+        self,
+        message: str,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> bool:
+        normalized = str(message or '').strip()
+        if normalized and build_resource_query_context(normalized) is not None:
+            return False
+        kinds = {str(item.get('kind') or '').strip().lower() for item in (attachments or []) if isinstance(item, dict)}
+        if 'image' in kinds:
+            return True
+        if 'pdf' in kinds:
+            if not normalized:
+                return True
+            lowered = normalized.lower()
+            return any(term in normalized for term in _EXAM_PIPELINE_TERMS) or any(token in lowered for token in ('full chain', 'full pipeline', 'end-to-end pipeline'))
+        return False
+
+    @staticmethod
+    def _pipeline_source_from_attachments(
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> str:
+        for item in (attachments or []):
+            if item.get('kind') in ('image', 'pdf'):
+                path = str(item.get('absolute_path') or '').strip()
+                if path:
+                    return path
+        return ''
+
+    @staticmethod
+    def _read_file_excerpt(path_value: str, max_chars: int = 420) -> str:
+        path = Path(str(path_value or '').strip())
+        if not path.exists() or not path.is_file():
+            return ''
+        text = path.read_text(encoding='utf-8').strip()
+        text = re.sub(r'\s+', ' ', text).strip()
+        if len(text) <= max_chars:
+            return text
+        return text[: max_chars - 3].rstrip() + '...'
+
+    @staticmethod
+    def _extract_first_structured_question(structured_path: str) -> tuple[str, int]:
+        path = Path(str(structured_path or '').strip())
+        if not path.exists() or not path.is_file():
+            return '', 0
+        text = path.read_text(encoding='utf-8').strip()
+        matches = list(re.finditer(r'(?m)^\s*(\d+)[\.??]\s+', text))
+        if not matches:
+            return '', 0
+        blocks: list[str] = []
+        for idx, match in enumerate(matches):
+            start = match.start()
+            end = matches[idx + 1].start() if idx + 1 < len(matches) else len(text)
+            block = text[start:end].strip()
+            if block:
+                blocks.append(block)
+        if not blocks:
+            return '', 0
+        return blocks[0], len(blocks)
+
+    @staticmethod
+    def _pipeline_question_crop(ocr_payload: dict[str, Any]) -> str:
+        run_dir = Path(str(ocr_payload.get('run_dir') or '').strip())
+        if not run_dir.exists() or not run_dir.is_dir():
+            return ''
+        crop_dir = run_dir / 'question_crops'
+        if not crop_dir.exists() or not crop_dir.is_dir():
+            return ''
+        for pattern in ('*.png', '*.jpg', '*.jpeg', '*.webp'):
+            files = sorted(crop_dir.glob(pattern))
+            if files:
+                return str(files[0])
+        return ''
+
+    
+    @staticmethod
+    def _summarize_global_memory_snapshot(memory_payload: dict[str, Any]) -> str:
+        if not isinstance(memory_payload, dict):
+            return ''
+        memory = memory_payload.get('memory') if isinstance(memory_payload.get('memory'), dict) else None
+        if memory is None:
+            students = memory_payload.get('students') if isinstance(memory_payload.get('students'), dict) else {}
+            memory = students.get('__global__') if isinstance(students, dict) else None
+            if memory is None and isinstance(students, dict) and students:
+                memory = next(iter(students.values()))
+        if not isinstance(memory, dict):
+            return ''
+        weakness_items=[]
+        for name, record in (memory.get('weaknesses') or {}).items():
+            if isinstance(record, dict) and str(record.get('status') or '').strip().lower() != 'mastered':
+                weakness_items.append((float(record.get('severity', 0.0) or 0.0), str(name).strip()))
+        knowledge_items=[]
+        for name, record in (memory.get('knowledge_points') or {}).items():
+            if isinstance(record, dict) and str(record.get('status') or '').strip().lower() != 'mastered':
+                knowledge_items.append((float(record.get('risk_score', 0.0) or 0.0), str(name).strip()))
+        practice_focus=[str(item).strip() for item in (memory.get('practice_focus') or []) if str(item).strip()][:3]
+        lines=[]
+        weaknesses=[name for _, name in sorted(weakness_items, reverse=True)[:3] if name]
+        knowledge=[name for _, name in sorted(knowledge_items, reverse=True)[:3] if name]
+        if weaknesses:
+            lines.append('\u5386\u53f2\u8584\u5f31\u70b9\uff1a' + '?'.join(ScholarAgent._translate_exam_label(name) or name for name in weaknesses))
+        if knowledge:
+            lines.append('\u5f53\u524d\u9ad8\u98ce\u9669\u77e5\u8bc6\u70b9\uff1a' + '?'.join(ScholarAgent._translate_exam_label(name) or name for name in knowledge))
+        if practice_focus:
+            lines.append('\u5f53\u524d\u8bad\u7ec3\u91cd\u70b9\uff1a' + '?'.join(ScholarAgent._translate_exam_label(name) or name for name in practice_focus))
+        return '\n'.join(lines)
+
+
+
+    def _can_handle_exam_pipeline_request(
+        self,
+        message: str,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> bool:
+        required_tools = (
+            'extract_math_document',
+            'run_math_solve_verify_agent',
+            'run_math_weakness_diagnosis_agent',
+            'run_guided_explanation_agent',
+            'run_problem_variant_agent',
+        )
+        if any(tool_name not in self._tools for tool_name in required_tools):
+            return False
+        if not self._looks_like_exam_pipeline_request(message, attachments):
+            return False
+        return bool(self._pipeline_source_from_attachments(attachments))
+
+    def _prepare_exam_pipeline_context(
+        self,
+        message: str,
+        *,
+        attachments: list[dict[str, Any]] | None = None,
+        session_id: str | None = None,
+    ) -> dict[str, Any] | None:
+        if not self._can_handle_exam_pipeline_request(message, attachments):
+            return None
+        source = self._pipeline_source_from_attachments(attachments)
+        if not source:
+            return None
+        self._mark_turn_route('exam_pipeline')
+        logger.info('[ExamPipeline] session=%s message=%s', session_id or '', str(message or '')[:120])
+        try:
+            ocr_payload = self._tool_response_json(
+                self._invoke_tool(
+                    'extract_math_document',
+                    {'source': source, 'max_pages': 1, 'mode': 'full', 'max_questions': 4},
+                ),
+            )
+        except Exception:
+            logger.exception('[ExamPipeline] OCR stage failed')
+            return {
+                'status': 'error',
+                'failure_response': 'OCR \u8bc6\u522b\u5931\u8d25\uff0c\u8bf7\u53d1\u9001\u66f4\u6e05\u6670\u7684\u622a\u56fe\uff0c\u6216\u76f4\u63a5\u88c1\u526a\u5230\u5355\u9898\u540e\u91cd\u8bd5\u3002',
+            }
+        structured_path = str(ocr_payload.get('Structured_md_path') or '').strip()
+        question_text, recognized_questions = self._extract_first_structured_question(structured_path)
+        if not question_text:
+            return {
+                'status': 'partial',
+                'failure_response': '\u6211\u5df2\u7ecf\u5b8c\u6210\u622a\u56fe\u8bc6\u522b\uff0c\u4f46\u8fd8\u6ca1\u6709\u7a33\u5b9a\u8bc6\u522b\u51fa\u5177\u4f53\u9898\u76ee\u3002\u8bf7\u628a\u76ee\u6807\u9898\u76ee\u5355\u72ec\u88c1\u526a\u540e\u518d\u53d1\u4e00\u6b21\u3002',
+            }
+        support_paths: list[str] = []
+        crop_path = self._pipeline_question_crop(ocr_payload)
+        if crop_path:
+            support_paths.append(crop_path)
+        suffix = Path(source).suffix.lower()
+        if suffix in {'.png', '.jpg', '.jpeg', '.webp', '.bmp'} and source not in support_paths:
+            support_paths.append(source)
+        supporting_images = ','.join(support_paths)
+        try:
+            solve_payload = self._tool_response_json(
+                self._invoke_tool(
+                    'run_math_solve_verify_agent',
+                    {
+                        'problem_text': question_text,
+                        'expected_answer': '',
+                        'supporting_images': supporting_images,
+                    },
+                ),
+            )
+        except Exception:
+            logger.exception('[ExamPipeline] solve/verify stage failed')
+            return {
+                'status': 'error',
+                'failure_response': '\u9898\u76ee\u5df2\u7ecf\u8bc6\u522b\u51fa\u6765\u4e86\uff0c\u4f46\u8fd9\u6b21\u6c42\u89e3\u4e0e\u9a8c\u8bc1\u6ca1\u6709\u7a33\u5b9a\u5b8c\u6210\u3002\u8bf7\u628a\u76ee\u6807\u9898\u76ee\u5355\u72ec\u88c1\u526a\u540e\u518d\u8bd5\u4e00\u6b21\u3002',
+            }
+        memory_payload: dict[str, Any] = {}
+        if 'get_global_learning_memory' in self._tools:
+            try:
+                memory_payload = self._tool_response_json(
+                    self._invoke_tool('get_global_learning_memory', {'student_id': ''}),
+                )
+            except Exception:
+                logger.exception('[ExamPipeline] memory snapshot failed')
+        memory_summary = self._summarize_global_memory_snapshot(memory_payload)
+        verification_report = json.dumps(solve_payload, ensure_ascii=False)
+        common_context = str(message or '').strip()
+        if memory_summary:
+            common_context = (common_context + "\n\n\u5386\u53f2\u5b66\u4e60\u8bb0\u5fc6\uff1a\n" + memory_summary).strip()
+        question_summary = re.sub(r'\s+', ' ', question_text).strip()
+        question_summary = question_summary[:280] + ('...' if len(question_summary) > 280 else '')
+        memory_note = '\u5df2\u7ed3\u5408\u5386\u53f2\u8584\u5f31\u70b9\u8bb0\u5fc6\u3002' if memory_summary else '\u5f53\u524d\u8fd8\u6ca1\u6709\u53ef\u7528\u7684\u5386\u53f2\u8584\u5f31\u70b9\u8bb0\u5fc6\u3002'
+        return {
+            'status': 'ok',
+            'source': source,
+            'ocr_payload': ocr_payload,
+            'question_text': question_text,
+            'recognized_questions': recognized_questions,
+            'supporting_images': supporting_images,
+            'solve_payload': solve_payload,
+            'memory_payload': memory_payload,
+            'memory_summary': memory_summary,
+            'verification_report': verification_report,
+            'common_context': common_context,
+            'question_summary': question_summary,
+            'memory_note': memory_note,
+            'weakness_args': {
+                'problem_text': question_text,
+                'student_answer': '',
+                'student_work': '',
+                'reference_answer': '',
+                'error_description': '\u8bf7\u6839\u636e OCR \u8bc6\u522b\u51fa\u7684\u9898\u76ee\u3001\u6c42\u89e3\u4e0e\u9a8c\u8bc1\u7ed3\u679c\uff0c\u4ee5\u53ca\u5386\u53f2\u5b66\u4e60\u8bb0\u5fc6\uff0c\u8bca\u65ad\u5f53\u524d\u6700\u53ef\u80fd\u66b4\u9732\u7684\u8584\u5f31\u70b9\u548c\u7f3a\u5931\u6b65\u9aa4\u3002',
+                'verification_report': verification_report,
+                'conversation_excerpt': common_context,
+                'supporting_images': supporting_images,
+                'student_id': '',
+                'conversation_id': session_id or '',
+            },
+            'guided_args': {
+                'problem_text': question_text,
+                'student_attempt': '',
+                'learning_goal': '\u8bf7\u7528\u5f15\u5bfc\u5f0f\u8bb2\u89e3\u6a21\u5f0f\u5904\u7406\u8fd9\u9053\u8bd5\u5377\u9898\u3002\u4e0d\u8981\u7acb\u5373\u7ed9\u51fa\u6700\u7ec8\u7b54\u6848\uff0c\u8bb2\u89e3\u65f6\u8981\u540c\u65f6\u53c2\u8003\u5386\u53f2\u8584\u5f31\u70b9\u8bb0\u5fc6\u548c\u5f53\u524d\u6c42\u89e3\u9a8c\u8bc1\u8bc1\u636e\u3002',
+                'requested_hint_level': 1,
+                'latest_student_reply': '',
+                'conversation_excerpt': common_context,
+                'grade_hint': '',
+                'verification_report': verification_report,
+                'weakness_report': '',
+                'supporting_images': supporting_images,
+            },
+            'variant_args': {
+                'problem_text': question_text,
+                'variant_request': '\u8bf7\u56f4\u7ed5\u8fd9\u9053\u9898\u751f\u6210\u4e09\u9053\u540e\u7eed\u7ec3\u4e60\uff1a\u4e00\u9053\u540c\u6784\u9898\u3001\u4e00\u9053\u964d\u96be\u9898\u3001\u4e00\u9053\u5347\u96be\u9898\uff0c\u5e76\u4f18\u5148\u7ed3\u5408\u5386\u53f2\u8584\u5f31\u70b9\u8bb0\u5fc6\u4e0e\u5f53\u524d\u6c42\u89e3\u9a8c\u8bc1\u8bc1\u636e\u3002',
+                'target_skill': '',
+                'requested_count': 3,
+                'grade_hint': '',
+                'weakness_report': '',
+                'supporting_images': supporting_images,
+                'student_id': '',
+            },
+        }
+
+    @staticmethod
+    def _resolve_exam_pipeline_future(
+        future: Any,
+        *,
+        stage: str,
+        tool_response_json: Any,
+    ) -> dict[str, Any]:
+        try:
+            return tool_response_json(future.result())
+        except Exception as exc:
+            logger.exception('[ExamPipeline] %s stage failed', stage)
+            return {'status': 'error', 'error': str(exc), 'stage': stage}
+
+
+
+    @staticmethod
+    def _read_json_payload_file(path_value: str) -> dict[str, Any]:
+        path = Path(str(path_value or '').strip())
+        if not path.exists() or not path.is_file():
+            return {}
+        try:
+            return json.loads(path.read_text(encoding='utf-8'))
+        except Exception:
+            return {}
+
+    @staticmethod
+    def _contains_chinese(text: str) -> bool:
+        return bool(re.search(r'[\u4e00-\u9fff]', str(text or '')))
+
+    @staticmethod
+    def _clean_exam_pipeline_user_text(text: str) -> str:
+        raw = str(text or '').replace('\r\n', '\n').replace('\r', '\n')
+        if not raw.strip():
+            return ''
+        drop_lines = {
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+        }
+        cleaned: list[str] = []
+        previous_blank = False
+        for line in raw.splitlines():
+            stripped = line.strip()
+            if not stripped:
+                if cleaned and not previous_blank:
+                    cleaned.append('')
+                previous_blank = True
+                continue
+            stripped = re.sub(r'^\s*#{1,6}\s*', '', stripped)
+            stripped = re.sub(r'^\s*>\s*', '', stripped)
+            stripped = re.sub(r'^\s*[-*]\s*', '', stripped)
+            stripped = stripped.replace('```', '').replace('`', '')
+            stripped = stripped.replace('$$', '').replace('$', '')
+            stripped = re.sub(r'\\frac\{([^{}]+)\}\{([^{}]+)\}', r'(\1/\2)', stripped)
+            stripped = stripped.replace('\\cdot', ' \u4e58 ')
+            stripped = stripped.replace('\\times', ' \u4e58 ')
+            stripped = stripped.replace(' times ', ' \u4e58 ')
+            stripped = stripped.replace('\u00b2', '^2')
+            stripped = stripped.replace('\u00b3', '^3')
+            stripped = stripped.replace('\u2074', '^4')
+            stripped = stripped.replace('\u00b9', '^1')
+            stripped = stripped.replace('\u2032', "'")
+            stripped = stripped.replace('\\,', ' ')
+            stripped = re.sub(r'\\text\{([^{}]+)\}', r'\1', stripped)
+            stripped = stripped.replace('\\', '')
+            stripped = re.sub(r'\s+', ' ', stripped).strip()
+            if not stripped:
+                continue
+            if stripped in drop_lines:
+                continue
+            if stripped.lower().startswith('source:'):
+                continue
+            lowered = stripped.lower()
+            if lowered.startswith('target skill:') or lowered.startswith('base difficulty:') or lowered.startswith('intent:') or lowered.startswith('difficulty relation:') or lowered.startswith('coach note:') or lowered.startswith('answer outline:') or lowered.startswith('historical weakness memory applied'):
+                continue
+            if '/root/' in stripped:
+                continue
+            sentence_map = {
+                'Student attempt does not show explicit intermediate steps.': '\u6ca1\u6709\u5c55\u793a\u660e\u786e\u7684\u4e2d\u95f4\u6b65\u9aa4\u3002',
+                'Historical weakness memory applied.': '\u5df2\u7ecf\u7ed3\u5408\u5386\u53f2\u8584\u5f31\u70b9\u8bb0\u5fc6\u3002',
+                'Identify the factor or equation form.': '\u5148\u5224\u65ad\u9002\u5408\u7528\u54ea\u79cd\u65b9\u6cd5\u6c42\u89e3\u3002',
+                'Solve for the variable.': '\u6c42\u51fa\u672a\u77e5\u6570\u3002',
+                'Check the result if asked.': '\u628a\u7ed3\u679c\u4ee3\u56de\u539f\u5f0f\u68c0\u67e5\u3002',
+            }
+            stripped = sentence_map.get(stripped, stripped)
+            cleaned.append(stripped)
+            previous_blank = False
+        return re.sub(r'\n{3,}', '\n\n', '\n'.join(cleaned)).strip()
+
+    @staticmethod
+    def _translate_exam_label(value: Any) -> str:
+        text = str(value or '').strip()
+        if not text:
+            return ''
+        if re.search(r'[\u4e00-\u9fff]', text):
+            return text
+        normalized = text.lower().replace('-', '_').replace(' ', '_')
+        mapping = {
+            'pass': '\u5df2\u9a8c\u8bc1\u901a\u8fc7',
+            'conflict': '\u5b58\u5728\u51b2\u7a81\uff0c\u5efa\u8bae\u590d\u6838',
+            'review': '\u9700\u8981\u8fdb\u4e00\u6b65\u590d\u6838',
+            'ok': '\u5df2\u5b8c\u6210',
+            'generated': '\u5df2\u751f\u6210',
+            'diagnosed': '\u5df2\u5b8c\u6210\u8bca\u65ad',
+            'incomplete_reasoning': '\u89e3\u9898\u8fc7\u7a0b\u4e0d\u5b8c\u6574',
+            'symbolic_manipulation_gap': '\u7b26\u53f7\u8fd0\u7b97\u4e0d\u7a33\u5b9a',
+            'diagram_or_theorem_gap': '\u56fe\u5f62\u4fe1\u606f\u6216\u5b9a\u7406\u4f7f\u7528\u4e0d\u7a33\u5b9a',
+            'linear_equation': '\u4e00\u5143\u4e00\u6b21\u65b9\u7a0b',
+            'equations_and_inequalities': '\u65b9\u7a0b\u4e0e\u4e0d\u7b49\u5f0f',
+            'arithmetic_operations': '\u56db\u5219\u8fd0\u7b97',
+            'integer_operations': '\u6574\u6570\u8fd0\u7b97',
+            'symbolic_manipulation': '\u7b26\u53f7\u5316\u7b80',
+            'showing_intermediate_steps': '\u4e2d\u95f4\u6b65\u9aa4\u4e66\u5199',
+            'derivative_computation': '\u5bfc\u6570\u8ba1\u7b97',
+            'factoring': '\u56e0\u5f0f\u5206\u89e3',
+            'quadratic_equation': '\u4e00\u5143\u4e8c\u6b21\u65b9\u7a0b',
+            'geometry': '\u51e0\u4f55',
+            'same': '\u540c\u6784\u9898',
+            'isomorphic': '\u540c\u6784\u9898',
+            'easier': '\u66f4\u7b80\u5355\u7684\u7ec3\u4e60',
+            'harder': '\u66f4\u6709\u6311\u6218\u7684\u7ec3\u4e60',
+        }
+        return mapping.get(normalized, '')
+
+    @staticmethod
+    def _looks_like_invalid_variant(problem_text: str) -> bool:
+        text = str(problem_text or '').strip()
+        if not text:
+            return True
+        lowered = text.lower()
+        if 'structured ocr output' in lowered or '/root/' in text or 'source:' in lowered:
+            return True
+        if '???' in text:
+            return True
+        return False
+
+    def _format_exam_pipeline_stage_one(
+        self,
+        *,
+        question_summary: str,
+        memory_note: str,
+        solve_payload: dict[str, Any],
+        weakness_payload: dict[str, Any],
+    ) -> str:
+        parts: list[str] = []
+        solved_path = Path(str(solve_payload.get("Solved_md_path") or "").strip())
+        if solved_path.exists() and solved_path.is_file():
+            solved_text = self._clean_exam_pipeline_user_text(solved_path.read_text(encoding="utf-8"))
+            if solved_text:
+                parts.append(solved_text)
+        teacher_path = Path(str(weakness_payload.get("TeacherFeedback_md_path") or "").strip())
+        if teacher_path.exists() and teacher_path.is_file():
+            teacher_text = self._clean_exam_pipeline_user_text(teacher_path.read_text(encoding="utf-8"))
+            if teacher_text:
+                parts.append(teacher_text)
+        if not parts:
+            return "这次已经完成求解、验证和薄弱点诊断，但还没有整理出可直接展示的结果。"
+        return "\n\n".join(parts).strip()
+
+    def _format_exam_pipeline_stage_two(
+        self,
+        *,
+        memory_note: str,
+        guided_payload: dict[str, Any],
+    ) -> str:
+        path = Path(str(guided_payload.get("TeacherReply_md_path") or "").strip())
+        if path.exists() and path.is_file():
+            guided_text = self._clean_exam_pipeline_user_text(path.read_text(encoding="utf-8"))
+            if guided_text:
+                return guided_text
+        return "我可以继续用引导式讲解带你自己推出来，不会直接把答案丢给你。"
+
+    def _format_exam_pipeline_stage_three(
+        self,
+        *,
+        memory_note: str,
+        variant_payload: dict[str, Any],
+    ) -> str:
+        path = Path(str(variant_payload.get("VariantSet_md_path") or "").strip())
+        if path.exists() and path.is_file():
+            variant_text = self._clean_exam_pipeline_user_text(path.read_text(encoding="utf-8"))
+            if variant_text:
+                return variant_text
+        return "这次还没有稳定生成变式题。你可以把题目再裁成单题后发一次，我会继续生成同构题、降难题和升难题。"
+
+    def _maybe_handle_exam_pipeline_request(
+        self,
+        message: str,
+        *,
+        attachments: list[dict[str, Any]] | None = None,
+        session_id: str | None = None,
+        store_response: bool = True,
+        return_bundle: bool = False,
+    ) -> str | dict[str, Any] | None:
+        context = self._prepare_exam_pipeline_context(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+        )
+        if context is None:
+            return None
+        failure_response = str(context.get('failure_response') or '').strip()
+        if failure_response:
+            bundle = {
+                'combined_response': failure_response,
+                'stage_messages': [failure_response],
+                'status': str(context.get('status') or 'partial').strip() or 'partial',
+            }
+            if return_bundle:
+                return bundle
+            if store_response:
+                self.memory.add_message('assistant', failure_response, session_id=session_id)
+            return failure_response
+        from concurrent.futures import ThreadPoolExecutor
+
+        specs = {
+            'weakness': ('run_math_weakness_diagnosis_agent', context['weakness_args']),
+            'guided': ('run_guided_explanation_agent', context['guided_args']),
+            'variant': ('run_problem_variant_agent', context['variant_args']),
+        }
+        results: dict[str, dict[str, Any]] = {}
+        with ThreadPoolExecutor(max_workers=3) as executor:
+            future_map = {
+                name: executor.submit(self._invoke_tool, tool_name, tool_args)
+                for name, (tool_name, tool_args) in specs.items()
+            }
+            for name, future in future_map.items():
+                results[name] = self._resolve_exam_pipeline_future(
+                    future,
+                    stage=name,
+                    tool_response_json=self._tool_response_json,
+                )
+        stage_messages = [
+            self._format_exam_pipeline_stage_one(
+                question_summary=str(context['question_summary']),
+                memory_note=str(context['memory_note']),
+                solve_payload=context['solve_payload'],
+                weakness_payload=results.get('weakness', {}),
+            ),
+            self._format_exam_pipeline_stage_two(
+                memory_note=str(context['memory_note']),
+                guided_payload=results.get('guided', {}),
+            ),
+            self._format_exam_pipeline_stage_three(
+                memory_note=str(context['memory_note']),
+                variant_payload=results.get('variant', {}),
+            ),
+        ]
+        bundle_status = 'ok'
+        if any(
+            str(results.get(stage, {}).get('status') or '').strip().lower() == 'error'
+            for stage in ('weakness', 'guided', 'variant')
+        ):
+            bundle_status = 'partial'
+        bundle = {
+            'combined_response': '\n\n---\n\n'.join(stage_messages),
+            'stage_messages': stage_messages,
+            'status': bundle_status,
+        }
+        if return_bundle:
+            return bundle
+        response = str(bundle.get('combined_response') or '').strip()
+        if store_response:
+            self.memory.add_message('assistant', response, session_id=session_id)
+        return response
+
+    def _looks_like_solve_verify_request(
+        self,
+        message: str,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> bool:
+        normalized = str(message or '').strip()
+        if not normalized:
+            return False
+        if build_resource_query_context(normalized) is not None:
+            return False
+        lowered = normalized.lower()
+        has_keyword = any(term in normalized for term in _MATH_SOLVE_TERMS)
+        has_equation = bool(_EQUATION_REQUEST_RE.search(normalized)) or 'x=' in normalized or 'y=' in normalized
+        has_math_markers = any(token in lowered for token in ('sqrt', '^', 'sin', 'cos', 'tan', '\u65b9\u7a0b', '\u51fd\u6570', '\u51e0\u4f55', '\u6570\u5b66'))
+        has_image = any((item.get('kind') == 'image') for item in (attachments or []))
+        return bool(has_keyword or has_equation or (has_image and has_math_markers))
+
+    def _maybe_handle_solve_verify_request(
+        self,
+        message: str,
+        *,
+        attachments: list[dict[str, Any]] | None = None,
+        session_id: str | None = None,
+        store_response: bool = True,
+    ) -> str | None:
+        if 'run_math_solve_verify_agent' not in self._tools:
+            return None
+        if not self._looks_like_solve_verify_request(message, attachments):
+            return None
+
+        image_paths = [
+            str(item.get('absolute_path') or '')
+            for item in (attachments or [])
+            if item.get('kind') == 'image' and str(item.get('absolute_path') or '').strip()
+        ]
+
+        self._mark_turn_route('solve_verify')
+        logger.info('[SolveVerify] session=%s message=%s', session_id or '', message[:120])
+        try:
+            result = self._invoke_tool(
+                'run_math_solve_verify_agent',
+                {
+                    'problem_text': message,
+                    'expected_answer': '',
+                    'supporting_images': ','.join(image_paths),
+                },
+            )
+        except Exception:
+            logger.exception('[SolveVerify] tool failed')
+            return None
+
+        payload = self._tool_response_json(result)
+        solved_path = str(payload.get('Solved_md_path') or '').strip()
+        status = str(payload.get('status') or '').strip()
+        response = ''
+        if solved_path and Path(solved_path).exists():
+            response = Path(solved_path).read_text(encoding='utf-8').strip()
+            if status and 'Status:' not in response:
+                response = response + f'\n\nStatus: {status}'
+        else:
+            final_answer = str(payload.get('final_answer') or '').strip()
+            response = f'Answer: {final_answer or "[not provided]"}'
+            if status:
+                response += f'\nStatus: {status}'
+
+        if store_response:
+            self.memory.add_message('assistant', response, session_id=session_id)
+        return response
+
+
+    def _session_messages(
+        self,
+        session_id: str | None,
+        limit: int = 10,
+    ) -> list[dict[str, Any]]:
+        raw_messages = getattr(self.memory, '_messages', None)
+        if isinstance(raw_messages, list):
+            messages = raw_messages
+            if session_id:
+                messages = [msg for msg in messages if msg.get('session_id') == session_id]
+            return messages[-limit:]
+
+        getter = getattr(self.memory, 'get_recent_messages', None)
+        if callable(getter):
+            try:
+                recent = getter(limit)
+                if isinstance(recent, list):
+                    return recent[-limit:]
+            except Exception:
+                logger.debug('[WeaknessDiag] failed to fetch recent messages', exc_info=True)
+        return []
+
+    def _recent_conversation_excerpt(
+        self,
+        session_id: str | None,
+        *,
+        current_message: str = '',
+        limit: int = 8,
+    ) -> str:
+        messages = list(self._session_messages(session_id, limit=limit + 2))
+        current = str(current_message or '').strip()
+        if messages and current:
+            last = messages[-1]
+            if str(last.get('role') or '').lower() == 'user' and str(last.get('content') or '').strip() == current:
+                messages = messages[:-1]
+        lines: list[str] = []
+        for msg in messages[-limit:]:
+            role = str(msg.get('role') or 'user').upper()
+            content = str(msg.get('content') or '').strip()
+            if not content:
+                continue
+            lines.append(f'[{role}] {content[:500]}')
+        return "\n".join(lines)
+
+    def _recent_problem_statement(
+        self,
+        session_id: str | None,
+        current_message: str,
+    ) -> str:
+        current = str(current_message or '').strip()
+        for msg in reversed(self._session_messages(session_id, limit=12)):
+            if str(msg.get('role') or '').lower() != 'user':
+                continue
+            content = str(msg.get('content') or '').strip()
+            if not content or content == current:
+                continue
+            if self._looks_like_weakness_diagnosis_request(content):
+                continue
+            if self._looks_like_guided_explanation_request(content):
+                continue
+            if self._looks_like_variant_generation_request(content):
+                continue
+            return content
+        return current
+
+    def _looks_like_guided_explanation_request(
+        self,
+        message: str,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> bool:
+        normalized = str(message or '').strip()
+        if not normalized:
+            return False
+        if build_resource_query_context(normalized) is not None:
+            return False
+        lowered = normalized.lower()
+        has_keyword = any(term in normalized for term in _GUIDED_EXPLANATION_TERMS)
+        has_english_hint = any(
+            token in lowered
+            for token in (
+                'hint',
+                'guide me',
+                'step by step',
+                "don't give the answer",
+                'socratic',
+                'learning mode',
+                'walk me through',
+            )
+        )
+        if not (has_keyword or has_english_hint):
+            return False
+        if any(term in normalized for term in _WEAKNESS_DIAG_TERMS):
+            return False
+        has_attachment = any(item.get('kind') in ('image', 'pdf') for item in (attachments or []))
+        has_math_context = bool(
+            has_attachment
+            or len(normalized) < 160
+            or self._looks_like_solve_verify_request(normalized, attachments)
+        )
+        return has_math_context
+
+    def _maybe_handle_guided_explanation_request(
+        self,
+        message: str,
+        *,
+        attachments: list[dict[str, Any]] | None = None,
+        session_id: str | None = None,
+        store_response: bool = True,
+    ) -> str | None:
+        if 'run_guided_explanation_agent' not in self._tools:
+            return None
+        if not self._looks_like_guided_explanation_request(message, attachments):
+            return None
+
+        normalized = str(message or '').strip()
+        image_paths = [
+            str(item.get('absolute_path') or '')
+            for item in (attachments or [])
+            if item.get('kind') == 'image' and str(item.get('absolute_path') or '').strip()
+        ]
+        excerpt = self._recent_conversation_excerpt(
+            session_id,
+            current_message=message,
+            limit=8,
+        )
+        if image_paths:
+            problem_text = self._recent_problem_statement(session_id, normalized)
+        elif len(normalized) < 120 or not self._looks_like_solve_verify_request(normalized, attachments):
+            problem_text = self._recent_problem_statement(session_id, normalized)
+        else:
+            problem_text = normalized
+        if not str(problem_text or '').strip():
+            problem_text = normalized
+
+        latest_student_reply = normalized if problem_text != normalized else ''
+        student_attempt = normalized if latest_student_reply and any(token in normalized for token in ('??', '???', '??', '??', 'stuck', 'confused')) else ''
+
+        self._mark_turn_route('guided_explanation')
+        logger.info('[GuidedExplain] session=%s message=%s', session_id or '', normalized[:120])
+        try:
+            result = self._invoke_tool(
+                'run_guided_explanation_agent',
+                {
+                    'problem_text': problem_text,
+                    'student_attempt': student_attempt,
+                    'learning_goal': normalized,
+                    'latest_student_reply': latest_student_reply,
+                    'conversation_excerpt': excerpt,
+                    'supporting_images': ','.join(image_paths),
+                },
+            )
+        except Exception:
+            logger.exception('[GuidedExplain] tool failed')
+            return None
+
+        payload = self._tool_response_json(result)
+        reply_path = str(payload.get('TeacherReply_md_path') or '').strip()
+        status = str(payload.get('status') or '').strip()
+        hint_level = str(payload.get('hint_level') or '').strip()
+        response = ''
+        if reply_path and Path(reply_path).exists():
+            response = Path(reply_path).read_text(encoding='utf-8').strip()
+        else:
+            response = 'I will guide you step by step without jumping to the final answer.'
+        if hint_level and 'Hint level:' not in response:
+            response = response + f'\n\nHint level: {hint_level}'
+        if status and 'Status:' not in response:
+            response = response + f'\nStatus: {status}'
+
+        if store_response:
+            self.memory.add_message('assistant', response, session_id=session_id)
+        return response
+
+    def _looks_like_variant_generation_request(
+        self,
+        message: str,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> bool:
+        normalized = str(message or '').strip()
+        if not normalized:
+            return False
+        if build_resource_query_context(normalized) is not None:
+            return False
+        lowered = normalized.lower()
+        has_keyword = any(term in normalized for term in _VARIANT_GENERATION_TERMS)
+        has_english_hint = any(
+            token in lowered
+            for token in (
+                'variant',
+                'isomorphic',
+                'similar problem',
+                'similar one',
+                'follow-up problem',
+                'easier version',
+                'harder version',
+                'transfer practice',
+            )
+        )
+        if not (has_keyword or has_english_hint):
+            return False
+        if any(term in normalized for term in _GUIDED_EXPLANATION_TERMS):
+            return False
+        has_attachment = any(item.get('kind') in ('image', 'pdf') for item in (attachments or []))
+        has_math_markers = bool(_EQUATION_REQUEST_RE.search(normalized)) or any(
+            token in normalized for token in ('=', '^', '+', '-', '*', '/', 'x', 'y', 'z')
+        )
+        has_math_words = any(
+            token in normalized
+            for token in (
+                '\u6570\u5b66',
+                '\u65b9\u7a0b',
+                '\u51fd\u6570',
+                '\u51e0\u4f55',
+                '\u5bfc\u6570',
+                '\u6982\u7387',
+                '\u4e0d\u7b49\u5f0f',
+                '\u56fe\u50cf',
+            )
+        ) or any(
+            token in lowered
+            for token in ('math', 'equation', 'function', 'geometry', 'algebra', 'quadratic')
+        )
+        return bool(has_attachment or has_math_markers or has_math_words or len(normalized) < 120)
+
+    def _maybe_handle_variant_generation_request(
+        self,
+        message: str,
+        *,
+        attachments: list[dict[str, Any]] | None = None,
+        session_id: str | None = None,
+        store_response: bool = True,
+    ) -> str | None:
+        if 'run_problem_variant_agent' not in self._tools:
+            return None
+        if not self._looks_like_variant_generation_request(message, attachments):
+            return None
+
+        normalized = str(message or '').strip()
+        image_paths = [
+            str(item.get('absolute_path') or '')
+            for item in (attachments or [])
+            if item.get('kind') == 'image' and str(item.get('absolute_path') or '').strip()
+        ]
+        inline_problem = ''
+        if self._looks_like_solve_verify_request(normalized, attachments):
+            inline_source = normalized
+            for splitter in (' for ', ' For ', '针对', '围绕'):
+                if splitter in inline_source:
+                    inline_source = inline_source.rsplit(splitter, 1)[-1].strip()
+            equation_matches = re.findall(r'([A-Za-z0-9_()^*+\-/\s]+=[A-Za-z0-9_()^*+\-/\s]+)', inline_source)
+            if equation_matches:
+                equation = max((item.strip(' .,:;') for item in equation_matches), key=len)
+                if equation:
+                    inline_problem = f'Solve {equation}'
+        if image_paths:
+            problem_text = self._recent_problem_statement(session_id, normalized)
+        elif inline_problem:
+            problem_text = inline_problem
+        elif self._looks_like_solve_verify_request(normalized, attachments) and len(normalized) > 24:
+            problem_text = normalized
+        else:
+            problem_text = self._recent_problem_statement(session_id, normalized)
+        if not str(problem_text or '').strip():
+            problem_text = normalized
+
+        self._mark_turn_route('variant_generation')
+        logger.info('[VariantGen] session=%s message=%s', session_id or '', normalized[:120])
+        try:
+            result = self._invoke_tool(
+                'run_problem_variant_agent',
+                {
+                    'problem_text': problem_text,
+                    'variant_request': normalized,
+                    'supporting_images': ','.join(image_paths),
+                },
+            )
+        except Exception:
+            logger.exception('[VariantGen] tool failed')
+            return None
+
+        payload = self._tool_response_json(result)
+        variant_path = str(payload.get('VariantSet_md_path') or '').strip()
+        status = str(payload.get('status') or '').strip()
+        variant_count = payload.get('variant_count')
+        response = ''
+        if variant_path and Path(variant_path).exists():
+            response = Path(variant_path).read_text(encoding='utf-8').strip()
+        else:
+            response = 'Generated a math variant set.'
+        if variant_count and 'Variant count:' not in response:
+            response = response + f'\n\nVariant count: {variant_count}'
+        if status and 'Status:' not in response:
+            response = response + f'\nStatus: {status}'
+
+        if store_response:
+            self.memory.add_message('assistant', response, session_id=session_id)
+        return response
+
+    def _looks_like_weakness_diagnosis_request(
+
+        self,
+        message: str,
+        attachments: list[dict[str, Any]] | None = None,
+    ) -> bool:
+        normalized = str(message or '').strip()
+        if not normalized:
+            return False
+        if build_resource_query_context(normalized) is not None:
+            return False
+        lowered = normalized.lower()
+        has_keyword = any(term in normalized for term in _WEAKNESS_DIAG_TERMS)
+        has_english_hint = any(token in lowered for token in ('weakness', 'wrong step', 'missing step', 'error cause', 'incomplete solution', 'diagnose'))
+        has_attachment = any(item.get('kind') in ('image', 'pdf') for item in (attachments or []))
+        if not (has_keyword or has_english_hint):
+            return False
+        return bool(has_attachment or len(normalized) < 160 or 'student' in lowered or 'solution' in lowered)
+
+    def _maybe_handle_weakness_diagnosis_request(
+        self,
+        message: str,
+        *,
+        attachments: list[dict[str, Any]] | None = None,
+        session_id: str | None = None,
+        store_response: bool = True,
+    ) -> str | None:
+        if 'run_math_weakness_diagnosis_agent' not in self._tools:
+            return None
+        if not self._looks_like_weakness_diagnosis_request(message, attachments):
+            return None
+
+        normalized = str(message or '').strip()
+        image_paths = [
+            str(item.get('absolute_path') or '')
+            for item in (attachments or [])
+            if item.get('kind') == 'image' and str(item.get('absolute_path') or '').strip()
+        ]
+        excerpt = self._recent_conversation_excerpt(
+            session_id,
+            current_message=message,
+            limit=8,
+        )
+        if image_paths:
+            problem_text = normalized
+        elif len(normalized) < 80:
+            problem_text = self._recent_problem_statement(session_id, normalized)
+        else:
+            problem_text = normalized
+
+        self._mark_turn_route('weakness_diagnosis')
+        logger.info('[WeaknessDiag] session=%s message=%s', session_id or '', normalized[:120])
+        try:
+            result = self._invoke_tool(
+                'run_math_weakness_diagnosis_agent',
+                {
+                    'problem_text': problem_text,
+                    'error_description': normalized,
+                    'conversation_excerpt': excerpt,
+                    'supporting_images': ','.join(image_paths),
+                },
+            )
+        except Exception:
+            logger.exception('[WeaknessDiag] tool failed')
+            return None
+
+        payload = self._tool_response_json(result)
+        feedback_path = str(payload.get('TeacherFeedback_md_path') or '').strip()
+        status = str(payload.get('status') or '').strip()
+        response = ''
+        if feedback_path and Path(feedback_path).exists():
+            response = Path(feedback_path).read_text(encoding='utf-8').strip()
+            if status and 'Status:' not in response:
+                response = response + f'\n\nStatus: {status}'
+        else:
+            primary = str(payload.get('primary_weakness') or '').strip()
+            response = f'Primary weakness: {primary or "[not provided]"}'
+            if status:
+                response += f'\nStatus: {status}'
+
+        if store_response:
+            self.memory.add_message('assistant', response, session_id=session_id)
+        return response
 
     def _persist_resource_lookup_report(
         self,
@@ -545,6 +1754,7 @@ class ScholarAgent:
         if "tavily_search" not in self._tools:
             return None
 
+        self._mark_turn_route("resource_lookup")
         logger.info(
             "[Resource Lookup] session=%s query=%s",
             session_id or "",
@@ -960,12 +2170,20 @@ class ScholarAgent:
             if cmd_result is not None:
                 return cmd_result
 
+        attachments = self._normalize_attachments(kwargs.get("attachments"))
+        self._begin_turn_trace(
+            message,
+            session_id=session_id,
+            attachments=attachments,
+        )
+
         # Run pre-reply hooks
         for hook in self._hooks:
             if hasattr(hook, "pre_reply"):
                 message = hook.pre_reply(message)
 
         # ReAct reasoning loop
+        kwargs["attachments"] = attachments
         response = self._reasoning(message, session_id=session_id, **kwargs)
 
         # Run post-reply hooks
@@ -973,6 +2191,7 @@ class ScholarAgent:
             if hasattr(hook, "post_reply"):
                 hook.post_reply(message, response)
 
+        self._finish_turn_trace(response, status="ok")
         return response
 
     def _reasoning(
@@ -998,6 +2217,15 @@ class ScholarAgent:
         # Add message to memory
         self.memory.add_message("user", message, session_id=session_id)
 
+        exam_pipeline_response = self._maybe_handle_exam_pipeline_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=True,
+        )
+        if exam_pipeline_response is not None:
+            return exam_pipeline_response
+
         resource_response = self._maybe_handle_resource_lookup_request(
             message,
             session_id=session_id,
@@ -1005,6 +2233,42 @@ class ScholarAgent:
         )
         if resource_response is not None:
             return resource_response
+
+        guided_explanation_response = self._maybe_handle_guided_explanation_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=True,
+        )
+        if guided_explanation_response is not None:
+            return guided_explanation_response
+
+        variant_generation_response = self._maybe_handle_variant_generation_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=True,
+        )
+        if variant_generation_response is not None:
+            return variant_generation_response
+
+        weakness_diag_response = self._maybe_handle_weakness_diagnosis_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=True,
+        )
+        if weakness_diag_response is not None:
+            return weakness_diag_response
+
+        solve_verify_response = self._maybe_handle_solve_verify_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=True,
+        )
+        if solve_verify_response is not None:
+            return solve_verify_response
 
         # Build messages for the model
         messages = self._build_messages(
@@ -1249,6 +2513,7 @@ class ScholarAgent:
                 skills=self._skill_docs,
             )
             self._last_skill_debug = selection_debug
+            self._record_selected_skills(selection_debug, selected_skills)
             skill_hint = build_skill_context_prompt(
                 query=user_message or "",
                 skills=self._skill_docs,
@@ -1571,7 +2836,50 @@ class ScholarAgent:
             return
 
         attachments = self._normalize_attachments(kwargs.get("attachments"))
+        self._begin_turn_trace(
+            message,
+            session_id=session_id,
+            attachments=attachments,
+        )
         self.memory.add_message("user", message, session_id=session_id)
+
+
+
+        if self._can_handle_exam_pipeline_request(message, attachments):
+            exam_bundle = self._maybe_handle_exam_pipeline_request(
+                message,
+                attachments=attachments,
+                session_id=session_id,
+                store_response=True,
+                return_bundle=True,
+            )
+            if exam_bundle is not None:
+                if isinstance(exam_bundle, str):
+                    final_response = exam_bundle
+                    self._finish_turn_trace(final_response, status="ok")
+                    yield {"type": "done", "content": final_response}
+                    for hook in self._hooks:
+                        if hasattr(hook, "post_reply"):
+                            hook.post_reply(message, final_response)
+                    return
+                stage_messages = [str(item).strip() for item in (exam_bundle.get("stage_messages") or []) if str(item).strip()]
+                final_response = str(exam_bundle.get("combined_response") or "").strip()
+                if not stage_messages and final_response:
+                    stage_messages = [final_response]
+                for stage_message in stage_messages[:-1]:
+                    yield {"type": "stage_message", "content": stage_message}
+                done_stage_messages = stage_messages[-1:] if stage_messages else []
+                self._finish_turn_trace(final_response or (done_stage_messages[0] if done_stage_messages else ""), status=str(exam_bundle.get("status") or "ok"))
+                yield {
+                    "type": "done",
+                    "content": final_response or (done_stage_messages[0] if done_stage_messages else ""),
+                    "stage_messages": done_stage_messages,
+                    "suppress_emit": True,
+                }
+                for hook in self._hooks:
+                    if hasattr(hook, "post_reply"):
+                        hook.post_reply(message, final_response or (done_stage_messages[0] if done_stage_messages else ""))
+                return
 
         resource_response = self._maybe_handle_resource_lookup_request(
             message,
@@ -1584,11 +2892,92 @@ class ScholarAgent:
                 resource_response,
                 session_id=session_id,
             )
+            self._finish_turn_trace(resource_response, status="ok")
             yield {"type": "content", "content": resource_response}
             yield {"type": "done", "content": resource_response}
             for hook in self._hooks:
                 if hasattr(hook, "post_reply"):
                     hook.post_reply(message, resource_response)
+            return
+
+        guided_explanation_response = self._maybe_handle_guided_explanation_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=False,
+        )
+        if guided_explanation_response is not None:
+            self.memory.add_message(
+                "assistant",
+                guided_explanation_response,
+                session_id=session_id,
+            )
+            self._finish_turn_trace(guided_explanation_response, status="ok")
+            yield {"type": "content", "content": guided_explanation_response}
+            yield {"type": "done", "content": guided_explanation_response}
+            for hook in self._hooks:
+                if hasattr(hook, "post_reply"):
+                    hook.post_reply(message, guided_explanation_response)
+            return
+
+        variant_generation_response = self._maybe_handle_variant_generation_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=False,
+        )
+        if variant_generation_response is not None:
+            self.memory.add_message(
+                "assistant",
+                variant_generation_response,
+                session_id=session_id,
+            )
+            self._finish_turn_trace(variant_generation_response, status="ok")
+            yield {"type": "content", "content": variant_generation_response}
+            yield {"type": "done", "content": variant_generation_response}
+            for hook in self._hooks:
+                if hasattr(hook, "post_reply"):
+                    hook.post_reply(message, variant_generation_response)
+            return
+
+        weakness_diag_response = self._maybe_handle_weakness_diagnosis_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=False,
+        )
+        if weakness_diag_response is not None:
+            self.memory.add_message(
+                "assistant",
+                weakness_diag_response,
+                session_id=session_id,
+            )
+            self._finish_turn_trace(weakness_diag_response, status="ok")
+            yield {"type": "content", "content": weakness_diag_response}
+            yield {"type": "done", "content": weakness_diag_response}
+            for hook in self._hooks:
+                if hasattr(hook, "post_reply"):
+                    hook.post_reply(message, weakness_diag_response)
+            return
+
+        solve_verify_response = self._maybe_handle_solve_verify_request(
+            message,
+            attachments=attachments,
+            session_id=session_id,
+            store_response=False,
+        )
+        if solve_verify_response is not None:
+            self.memory.add_message(
+                "assistant",
+                solve_verify_response,
+                session_id=session_id,
+            )
+            self._finish_turn_trace(solve_verify_response, status="ok")
+            yield {"type": "content", "content": solve_verify_response}
+            yield {"type": "done", "content": solve_verify_response}
+            for hook in self._hooks:
+                if hasattr(hook, "post_reply"):
+                    hook.post_reply(message, solve_verify_response)
             return
 
         messages = self._build_messages(
@@ -1951,6 +3340,7 @@ class ScholarAgent:
                     err,
                     session_id=session_id,
                 )
+                self._finish_turn_trace(err, status="error")
                 yield {"type": "error", "content": err}
                 return
 
@@ -1967,6 +3357,7 @@ class ScholarAgent:
             full_content,
             session_id=session_id,
         )
+        self._finish_turn_trace(full_content, status="ok")
         yield {"type": "done", "content": full_content}
 
         # Run post-reply hooks
@@ -1975,3 +3366,21 @@ class ScholarAgent:
                 hook.post_reply(message, full_content)
 
 
+# === SIMPLE_EXAM_PIPELINE_OVERRIDE_20260315 ===
+from .exam_pipeline_v2 import (
+    can_handle_exam_pipeline_request as _simple_can_handle_exam_pipeline_request,
+    format_stage_one as _simple_format_exam_pipeline_stage_one,
+    format_stage_three as _simple_format_exam_pipeline_stage_three,
+    format_stage_two as _simple_format_exam_pipeline_stage_two,
+    looks_like_exam_pipeline_request as _simple_looks_like_exam_pipeline_request,
+    maybe_handle_exam_pipeline_request as _simple_maybe_handle_exam_pipeline_request,
+    prepare_exam_pipeline_context as _simple_prepare_exam_pipeline_context,
+)
+
+ScholarAgent._looks_like_exam_pipeline_request = _simple_looks_like_exam_pipeline_request
+ScholarAgent._can_handle_exam_pipeline_request = _simple_can_handle_exam_pipeline_request
+ScholarAgent._prepare_exam_pipeline_context = _simple_prepare_exam_pipeline_context
+ScholarAgent._format_exam_pipeline_stage_one = _simple_format_exam_pipeline_stage_one
+ScholarAgent._format_exam_pipeline_stage_two = _simple_format_exam_pipeline_stage_two
+ScholarAgent._format_exam_pipeline_stage_three = _simple_format_exam_pipeline_stage_three
+ScholarAgent._maybe_handle_exam_pipeline_request = _simple_maybe_handle_exam_pipeline_request

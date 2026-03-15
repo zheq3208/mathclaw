@@ -1,0 +1,31 @@
+{
+  "session_id": "dashscope-image-check",
+  "title": "New Research Chat",
+  "created_at": 1773421944.1171932,
+  "updated_at": 1773421961.9937522,
+  "messages": [
+    {
+      "role": "user",
+      "content": "???????????????????",
+      "timestamp": 1773421944.1173747,
+      "metadata": {
+        "attachments": [
+          {
+            "name": "logo.png",
+            "kind": "image",
+            "mime_type": "image/png",
+            "size": 1921323,
+            "absolute_path": "/root/.researchclaw/uploads/chat/dashscope-image-check/fe502d67abdc/cfbd8c7da83e-logo.png",
+            "relative_path": "dashscope-image-check/fe502d67abdc/cfbd8c7da83e-logo.png",
+            "download_url": "/api/agent/attachments/file?path=dashscope-image-check/fe502d67abdc/cfbd8c7da83e-logo.png"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "这是一幅充满魔幻色彩的插画，中心是一个立体的三角形符号，三个顶点各有一个金色的球体，背景是布满星星的蓝色星云。这个徽章被动态交织的金蓝色丝带环绕，营造出一种动感和能量感。整个画面沐浴在明亮而神秘的光辉中，点缀着闪烁的星星和漂浮的球体，暗示着一个强大、神秘或神圣的神器。背景从中心的亮光渐变为边缘的黑暗，突出了发光徽章作为焦点。",
+      "timestamp": 1773421961.9937484
+    }
+  ]
+}

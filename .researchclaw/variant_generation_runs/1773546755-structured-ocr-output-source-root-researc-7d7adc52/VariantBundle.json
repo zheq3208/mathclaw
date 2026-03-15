@@ -1,0 +1,147 @@
+{
+  "case_brief": {
+    "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773546505803`\n\n第 I 卷(选择题 共 58 分)\n\n一、选择题:本题共 8 小题,每小题 5 分,共 40 分.在每小题给出的四个选项中,只有一项是符合题",
+    "problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773546505803`\n\n第 I 卷(选择题 共 58 分)\n\n一、选择题:本题共 8 小题,每小题 5 分,共 40 分.在每小题给出的四个选项中,只有一项是符合题",
+    "source_problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773546505803`\n\n第 I 卷(选择题 共 58 分)\n\n一、选择题:本题共 8 小题,每小题 5 分,共 40 分.在每小题给出的四个选项中,只有一项是符合题",
+    "variant_request": "Generate three follow-up variants for this question: one isomorphic, one easier, and one harder. Prioritize the historical weakness memory snapshot and the current solve/verify evidence.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "this question: one isomorphic, one easier, and one harder",
+    "difficulty_score": 3.45,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false,
+    "memory_context": {
+      "student_id": "__global__",
+      "variant_source": "current_problem",
+      "targeted_knowledge_point": "linear_equation",
+      "targeted_weaknesses": [
+        "incomplete_reasoning",
+        "linear_equation procedural execution",
+        "step documentation"
+      ],
+      "active_knowledge_point_count": 5
+    }
+  },
+  "variant_set_title": "Linear Equation Practice Variants",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "解方程:5x - 2 = 18\nA) x = 3\nB) x = 4\nC) x = 5\nD) x = 6",
+      "changes": [
+        "Replaced coefficients and constants (4x+3=19 → 5x-2=18) while maintaining one-step solution structure",
+        "Adjusted multiple-choice options to match new solution"
+      ],
+      "intent": "Reinforce procedural execution of linear equation solving with identical structure but different numbers to prevent rote memorization",
+      "difficulty_goal": "same",
+      "coach_note": "Focus on consistent step documentation: emphasize adding 2 first, then dividing by 5. Check for sign errors in the subtraction step.",
+      "answer_outline": [
+        "Add 2 to both sides: 5x = 20",
+        "Divide both sides by 5: x = 4"
+      ],
+      "difficulty_report": {
+        "score": 4.1,
+        "band": "hard",
+        "question_type": "equation",
+        "reference": {
+          "score": 3.45,
+          "band": "medium",
+          "relation": "harder"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "??? S + 7 = 12",
+      "changes": [
+        "Adjusted the equation form while preserving inverse-operation practice."
+      ],
+      "intent": "reduced_prerequisite_load",
+      "difficulty_goal": "easier",
+      "coach_note": "this question: one isomorphic, one easier, and one harder",
+      "answer_outline": [
+        "Simplify the equation.",
+        "Isolate the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 1.7,
+        "band": "easy",
+        "question_type": "equation",
+        "reference": {
+          "score": 3.45,
+          "band": "medium",
+          "relation": "easier"
+        }
+      },
+      "source": "fallback"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "解方程:3x + 7 = 2x + 12\nA) x = 3\nB) x = 4\nC) x = 5\nD) x = 6",
+      "changes": [
+        "Introduced variables on both sides requiring two-step solution",
+        "Added constant terms on both sides to increase procedural complexity"
+      ],
+      "intent": "Develop step documentation skills by requiring multiple operations and combining like terms, targeting incomplete reasoning",
+      "difficulty_goal": "harder",
+      "coach_note": "Stress the importance of writing each step clearly. Watch for common errors: forgetting to subtract 2x from both sides or mishandling signs when moving terms.",
+      "answer_outline": [
+        "Subtract 2x from both sides: x + 7 = 12",
+        "Subtract 7 from both sides: x = 5"
+      ],
+      "difficulty_report": {
+        "score": 4.1,
+        "band": "hard",
+        "question_type": "equation",
+        "reference": {
+          "score": 3.45,
+          "band": "medium",
+          "relation": "harder"
+        }
+      },
+      "source": "qwen"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "harder",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "easier",
+      "difficulty_band": "easy",
+      "notes": [
+        "difficulty_or_structure_mismatch:harder"
+      ]
+    },
+    {
+      "variant_type": "harder",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "harder",
+      "difficulty_band": "hard",
+      "notes": []
+    }
+  ],
+  "design_notes": [
+    "All variants maintain multiple-choice format to match original problem structure",
+    "Easier variant targets procedural execution gaps with minimal cognitive load",
+    "Harder variant addresses step documentation weakness through increased operational steps",
+    "Isomorphic variant preserves core knowledge point while varying surface features",
+    "Numerical values chosen to ensure integer solutions matching multiple-choice options"
+  ]
+}

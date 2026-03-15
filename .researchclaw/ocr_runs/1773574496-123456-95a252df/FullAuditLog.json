@@ -1,0 +1,342 @@
+{
+  "source": "/root/autodl-tmp/123456.png",
+  "stage1": {
+    "source": "/root/autodl-tmp/123456.png",
+    "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773574496-123456-95a252df",
+    "page_index": 0,
+    "page_width": 800,
+    "page_height": 1067,
+    "image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773574496-123456-95a252df/pages/page-001.png",
+    "boxes": [
+      {
+        "id": "section_title",
+        "type": "section_title",
+        "bbox": [
+          140,
+          225,
+          800,
+          245
+        ],
+        "summary": "一、选择题（本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的）"
+      },
+      {
+        "id": "q1_stem",
+        "type": "question_stem",
+        "bbox": [
+          140,
+          280,
+          800,
+          320
+        ],
+        "summary": "1.某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t²-5t²，则当t=3s时该质点的瞬时速度为"
+      },
+      {
+        "id": "q1_options",
+        "type": "options",
+        "bbox": [
+          140,
+          320,
+          800,
+          340
+        ],
+        "summary": "A.9m/s B.24m/s C.48m/s D.54m/s"
+      },
+      {
+        "id": "q2_stem",
+        "type": "question_stem",
+        "bbox": [
+          140,
+          360,
+          800,
+          400
+        ],
+        "summary": "2.已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有"
+      },
+      {
+        "id": "q2_options",
+        "type": "options",
+        "bbox": [
+          140,
+          400,
+          800,
+          420
+        ],
+        "summary": "A.36种 B.48种 C.60种 D.72种"
+      },
+      {
+        "id": "q3_stem",
+        "type": "question_stem",
+        "bbox": [
+          140,
+          440,
+          800,
+          480
+        ],
+        "summary": "3.已知函数f(x)=e^x -a lnx 在区间(0,1)上单调递减，则a的最小值为"
+      },
+      {
+        "id": "q3_options",
+        "type": "options",
+        "bbox": [
+          140,
+          480,
+          800,
+          500
+        ],
+        "summary": "A.e² B.e C.1/e D.-1/e²"
+      },
+      {
+        "id": "q4_stem",
+        "type": "question_stem",
+        "bbox": [
+          140,
+          520,
+          800,
+          560
+        ],
+        "summary": "4.若C_m^m = C_{m+2}^m，则C_3^3 + C_4^3 + ... + C_m^3的值为"
+      },
+      {
+        "id": "q4_options",
+        "type": "options",
+        "bbox": [
+          140,
+          560,
+          800,
+          580
+        ],
+        "summary": "A.83 B.119 C.164 D.219"
+      }
+    ],
+    "raw_payload": {
+      "boxes": [
+        {
+          "bbox": [
+            140,
+            225,
+            850,
+            245
+          ],
+          "id": "section_title",
+          "summary": "一、选择题（本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的）",
+          "type": "section_title"
+        },
+        {
+          "bbox": [
+            140,
+            280,
+            850,
+            320
+          ],
+          "id": "q1_stem",
+          "summary": "1.某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t²-5t²，则当t=3s时该质点的瞬时速度为",
+          "type": "question_stem"
+        },
+        {
+          "bbox": [
+            140,
+            320,
+            850,
+            340
+          ],
+          "id": "q1_options",
+          "summary": "A.9m/s B.24m/s C.48m/s D.54m/s",
+          "type": "options"
+        },
+        {
+          "bbox": [
+            140,
+            360,
+            850,
+            400
+          ],
+          "id": "q2_stem",
+          "summary": "2.已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有",
+          "type": "question_stem"
+        },
+        {
+          "bbox": [
+            140,
+            400,
+            850,
+            420
+          ],
+          "id": "q2_options",
+          "summary": "A.36种 B.48种 C.60种 D.72种",
+          "type": "options"
+        },
+        {
+          "bbox": [
+            140,
+            440,
+            850,
+            480
+          ],
+          "id": "q3_stem",
+          "summary": "3.已知函数f(x)=e^x -a lnx 在区间(0,1)上单调递减，则a的最小值为",
+          "type": "question_stem"
+        },
+        {
+          "bbox": [
+            140,
+            480,
+            850,
+            500
+          ],
+          "id": "q3_options",
+          "summary": "A.e² B.e C.1/e D.-1/e²",
+          "type": "options"
+        },
+        {
+          "bbox": [
+            140,
+            520,
+            850,
+            560
+          ],
+          "id": "q4_stem",
+          "summary": "4.若C_m^m = C_{m+2}^m，则C_3^3 + C_4^3 + ... + C_m^3的值为",
+          "type": "question_stem"
+        },
+        {
+          "bbox": [
+            140,
+            560,
+            850,
+            580
+          ],
+          "id": "q4_options",
+          "summary": "A.83 B.119 C.164 D.219",
+          "type": "options"
+        }
+      ]
+    }
+  },
+  "stage2": {
+    "page_summary": "一、选择题（本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的）",
+    "questions": [
+      {
+        "bbox_ref_ids": [
+          "q1_stem",
+          "q1_options"
+        ],
+        "figure_note": "",
+        "options": [
+          "A.9m/s",
+          "B.24m/s",
+          "C.48m/s",
+          "D.54m/s"
+        ],
+        "question_no": "1",
+        "question_text": "某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t²-5t²，则当t=3s时该质点的瞬时速度为"
+      },
+      {
+        "bbox_ref_ids": [
+          "q2_stem",
+          "q2_options"
+        ],
+        "figure_note": "",
+        "options": [
+          "A.36种",
+          "B.48种",
+          "C.60种",
+          "D.72种"
+        ],
+        "question_no": "2",
+        "question_text": "已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有"
+      },
+      {
+        "bbox_ref_ids": [
+          "q3_stem",
+          "q3_options"
+        ],
+        "figure_note": "",
+        "options": [
+          "A.e²",
+          "B.e",
+          "C.1/e",
+          "D.-1/e²"
+        ],
+        "question_no": "3",
+        "question_text": "已知函数f(x)=e^x -a lnx 在区间(0,1)上单调递减，则a的最小值为"
+      },
+      {
+        "bbox_ref_ids": [
+          "q4_stem",
+          "q4_options"
+        ],
+        "figure_note": "",
+        "options": [
+          "A.83",
+          "B.119",
+          "C.164",
+          "D.219"
+        ],
+        "question_no": "4",
+        "question_text": "若C_m^m = C_{m+2}^m，则C_3^3 + C_4^3 + ... + C_m^3的值为"
+      }
+    ]
+  },
+  "questions": [
+    {
+      "question_no": "1",
+      "question_text": "某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t²-5t²，则当t=3s时该质点的瞬时速度为",
+      "options": [
+        "A.9m/s",
+        "B.24m/s",
+        "C.48m/s",
+        "D.54m/s"
+      ],
+      "figure_note": "",
+      "bbox_ref_ids": [
+        "q1_stem",
+        "q1_options"
+      ]
+    },
+    {
+      "question_no": "2",
+      "question_text": "已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有",
+      "options": [
+        "A.36种",
+        "B.48种",
+        "C.60种",
+        "D.72种"
+      ],
+      "figure_note": "",
+      "bbox_ref_ids": [
+        "q2_stem",
+        "q2_options"
+      ]
+    },
+    {
+      "question_no": "3",
+      "question_text": "已知函数f(x)=e^x -a lnx 在区间(0,1)上单调递减，则a的最小值为",
+      "options": [
+        "A.e²",
+        "B.e",
+        "C.1/e",
+        "D.-1/e²"
+      ],
+      "figure_note": "",
+      "bbox_ref_ids": [
+        "q3_stem",
+        "q3_options"
+      ]
+    },
+    {
+      "question_no": "4",
+      "question_text": "若C_m^m = C_{m+2}^m，则C_3^3 + C_4^3 + ... + C_m^3的值为",
+      "options": [
+        "A.83",
+        "B.119",
+        "C.164",
+        "D.219"
+      ],
+      "figure_note": "",
+      "bbox_ref_ids": [
+        "q4_stem",
+        "q4_options"
+      ]
+    }
+  ]
+}

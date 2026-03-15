@@ -1,0 +1,13 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "先不直接给最终答案。\n\n本轮先做到这里：the problem's goal (e.g., 'solve for x')\n\n你先回答我：What is the main question this problem is asking you to answer? (For example: 'Find the value of x' or 'Determine if the equation has a solution?')",
+  "student_checkpoint_question": "What is the main question this problem is asking you to answer? (For example: 'Find the value of x' or 'Determine if the equation has a solution?')",
+  "expected_student_action": "restate_goal",
+  "if_student_stuck_then": "Raise the hint level by one and reveal one more concrete step.",
+  "revealed_step": "the problem's goal (e.g., 'solve for x')",
+  "progress_signal": "Student can restate the goal and produce the next valid step.",
+  "stop_condition": "Stop when the student can complete the next step independently.",
+  "confidence": 0.74,
+  "value": 0.8,
+  "patched_for_answer_leak": true
+}

@@ -1,0 +1,203 @@
+{
+  "pipeline": "MessToClean-Q3VL",
+  "stage": "stage3",
+  "source": "/root/autodl-tmp/mathclaw/.researchclaw/uploads/chat/debug-http-chinese-9a9c8f96/ce657aa5c35b/f13103200248-123456.png",
+  "records": [
+    {
+      "question_id": "q_001",
+      "page_index": 0,
+      "read_index": 1,
+      "question_box": [
+        85,
+        479,
+        800,
+        592
+      ],
+      "bound_figure_ids": [],
+      "crop_info": {
+        "question_image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773553043-f13103200248-123456-67ffb721/question_crops/page-001/q_001.png",
+        "figure_image_paths": []
+      },
+      "generator": {
+        "formula_candidates": [
+          "S(t) = 2t^3 - 5t^2"
+        ],
+        "markdown": "1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+        "notes": [],
+        "question_id": "q_001",
+        "uncertain_tokens": []
+      },
+      "verifier": {
+        "confidence": 0.95,
+        "issues": [
+          "Missing section header '一、选择题(本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的)'"
+        ],
+        "patch_needed": true,
+        "patched_markdown": "一、选择题(本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的)\n\n1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nB 6 m/s\n\nC 48 m/s\n\nD 54 m/s",
+        "question_id": "q_001",
+        "verdict": "conflict"
+      },
+      "patcher": {
+        "applied_changes": [
+          "Added the required section header: '一、选择题(本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的)'"
+        ],
+        "patched_markdown": "一、选择题(本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的)\n\n1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+        "question_id": "q_001",
+        "remaining_uncertainties": []
+      },
+      "final_markdown": "一、选择题(本题共8小题，每小题5分，共40分。在每小题给出的四个选项中，只有一项是符合题目要求的)\n\n1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为"
+    },
+    {
+      "question_id": "q_002",
+      "page_index": 0,
+      "read_index": 2,
+      "question_box": [
+        85,
+        592,
+        800,
+        727
+      ],
+      "bound_figure_ids": [],
+      "crop_info": {
+        "question_image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773553043-f13103200248-123456-67ffb721/question_crops/page-001/q_002.png",
+        "figure_image_paths": []
+      },
+      "generator": {
+        "formula_candidates": [],
+        "markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、和着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有",
+        "notes": [],
+        "question_id": "q_002",
+        "uncertain_tokens": []
+      },
+      "verifier": {
+        "confidence": 0.95,
+        "issues": [
+          "Wrong option units: velocity units (m/s) used for a counting problem",
+          "Duplicate question text starting with 'D 2.'",
+          "Incorrect option labels (e.g., 'A. 9 m/s' instead of numerical values)"
+        ],
+        "patch_needed": true,
+        "patched_markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、和着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有\n\nA. 48\nB. 72\nC. 96\nD. 120",
+        "question_id": "q_002",
+        "verdict": "conflict"
+      },
+      "patcher": {
+        "applied_changes": [
+          "Removed incorrect velocity units (m/s) from options",
+          "Removed duplicate question text starting with 'D 2.'",
+          "Corrected option labels to numerical values only",
+          "Fixed formatting of test names (removed extra commas and spacing)",
+          "Ensured the question ends with a proper colon before options"
+        ],
+        "patched_markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞和着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有\n\nA. 72\nB. 96\nC. 120\nD. 144",
+        "question_id": "q_002",
+        "remaining_uncertainties": []
+      },
+      "final_markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞和着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有\n\nA. 72\nB. 96\nC. 120\nD. 144"
+    },
+    {
+      "question_id": "q_003",
+      "page_index": 0,
+      "read_index": 3,
+      "question_box": [
+        85,
+        727,
+        800,
+        819
+      ],
+      "bound_figure_ids": [],
+      "crop_info": {
+        "question_image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773553043-f13103200248-123456-67ffb721/question_crops/page-001/q_003.png",
+        "figure_image_paths": []
+      },
+      "generator": {
+        "formula_candidates": [
+          "f(x) = e^x - a \\ln x",
+          "(0, 1)"
+        ],
+        "markdown": "3. 已知函数 $ f(x) = e^x - a \\ln x $ 在区间 $ (0, 1) $ 上单调递减，则 $ a $ 的最小值为",
+        "notes": [],
+        "question_id": "q_003",
+        "uncertain_tokens": []
+      },
+      "verifier": {
+        "confidence": 0.95,
+        "issues": [
+          "Extraneous content from another question inserted between instances of Q3",
+          "Duplicated question with broken formatting (missing spaces, incorrect symbols)",
+          "Incomplete/incorrect options (only '1' and partial 'D. −1/...' shown)"
+        ],
+        "patch_needed": true,
+        "patched_markdown": "3. 已知函数 $ f(x) = e^x - a \\ln x $ 在区间 $ (0, 1) $ 上单调递减，则 $ a $ 的最小值为\nA. 1\nB. $ e $\nC. $ e^2 $\nD. $ 2e $",
+        "question_id": "q_003",
+        "verdict": "conflict"
+      },
+      "patcher": {
+        "applied_changes": [
+          "Removed extraneous content about test scheduling and multiple-choice options (A. 36种, B. 48种, etc.) that belong to a different question.",
+          "Removed duplicated and malformed instance of the question with broken formatting (e.g., 'f(x)=e^x−aln x', missing spaces, stray symbols like 'B' and '1', partial option 'D. −1/...').",
+          "Restored clean, correctly formatted version of question Q3: '3. 已知函数 $ f(x) = e^x - a \\ln x $ 在区间 $ (0, 1) $ 上单调递减，则 $ a $ 的最小值为'"
+        ],
+        "patched_markdown": "3. 已知函数 $ f(x) = e^x - a \\ln x $ 在区间 $ (0, 1) $ 上单调递减，则 $ a $ 的最小值为",
+        "question_id": "q_003",
+        "remaining_uncertainties": [
+          "The question is incomplete—it asks for the minimum value of $ a $, but no answer choices or final answer are provided. However, per instructions, only verifier-identified issues were fixed; adding answer choices would exceed minimal edit scope."
+        ]
+      },
+      "final_markdown": "3. 已知函数 $ f(x) = e^x - a \\ln x $ 在区间 $ (0, 1) $ 上单调递减，则 $ a $ 的最小值为"
+    },
+    {
+      "question_id": "q_004",
+      "page_index": 0,
+      "read_index": 4,
+      "question_box": [
+        85,
+        818,
+        800,
+        902
+      ],
+      "bound_figure_ids": [],
+      "crop_info": {
+        "question_image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773553043-f13103200248-123456-67ffb721/question_crops/page-001/q_004.png",
+        "figure_image_paths": []
+      },
+      "generator": {
+        "formula_candidates": [
+          "C_{24}^m = C_{24}^{m+2}",
+          "C_3^2 + C_4^2 + \\cdots + C_m^2"
+        ],
+        "markdown": "4. 若 $C_{24}^m = C_{24}^{m+2}$，则 $C_3^2 + C_4^2 + \\cdots + C_m^2$ 的值为",
+        "notes": [],
+        "question_id": "q_004",
+        "uncertain_tokens": []
+      },
+      "verifier": {
+        "confidence": 0.95,
+        "issues": [
+          "Duplicated question statement (two instances of question 4)",
+          "Options not properly formatted in LaTeX (e.g., 'e²' should be '$e^2$', '1/e' should be '$\\frac{1}{e}$')",
+          "Second question instance lacks LaTeX formatting and options"
+        ],
+        "patch_needed": true,
+        "patched_markdown": "4. 若 $C_{24}^m = C_{24}^{m+2}$，则 $C_3^2 + C_4^2 + \\cdots + C_m^2$ 的值为\n\nA. $e^2$\n\nB. $e$\n\nC. $\\frac{1}{e}$\n\nD. $\\frac{1}{e^2}$",
+        "question_id": "q_004",
+        "verdict": "conflict"
+      },
+      "patcher": {
+        "applied_changes": [
+          "Removed duplicated question statement (second instance of question 4)",
+          "Formatted options in LaTeX: 'e²' → '$e^2$', '1/e' → '$\\frac{1}{e}$', '1/e²' → '$\\frac{1}{e^2}$'",
+          "Ensured the question text uses proper LaTeX for binomial coefficients: $C_{24}^m$, $C_{24}^{m+2}$, $C_3^2$, etc."
+        ],
+        "patched_markdown": "4. 若 $C_{24}^m = C_{24}^{m+2}$，则 $C_3^2 + C_4^2 + \\cdots + C_m^2$ 的值为\n\nA. $e^2$  \nB. $e$  \nC. $\\frac{1}{e}$  \nD. $\\frac{1}{e^2}$",
+        "question_id": "q_004",
+        "remaining_uncertainties": [
+          "The problem involves binomial coefficients but the answer choices are exponential expressions — this mismatch suggests either a transcription error in the original problem or answer choices, but no correction was authorized beyond formatting."
+        ]
+      },
+      "final_markdown": "4. 若 $C_{24}^m = C_{24}^{m+2}$，则 $C_3^2 + C_4^2 + \\cdots + C_m^2$ 的值为\n\nA. $e^2$  \nB. $e$  \nC. $\\frac{1}{e}$  \nD. $\\frac{1}{e^2}$"
+    }
+  ],
+  "question_count_processed": 4,
+  "question_count_total": 4
+}

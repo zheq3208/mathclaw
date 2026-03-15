@@ -1,0 +1,27 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "teacher_focus": "The structure of linear equations and the importance of identifying the target variable before solving",
+  "immediate_goal": "To have the student recognize the target variable and the goal of the problem",
+  "diagnostic_focus": [
+    "Whether the student can identify the variable in the equation",
+    "Whether the student understands the goal of solving the equation"
+  ],
+  "misconceptions_to_probe": [
+    "Skipping the step of identifying the variable",
+    "Assuming the variable is always x without checking"
+  ],
+  "must_avoid": [
+    "Revealing the solution steps",
+    "Giving the final answer"
+  ],
+  "allowed_reveal": "That the problem is a linear equation and that we are solving for a specific variable",
+  "first_question": "What variable are we solving for in this problem?",
+  "checkpoint_rubric": [
+    "Student identifies the variable being solved for (e.g., x, y, etc.)",
+    "Student states that the goal is to find the value of that variable"
+  ],
+  "escalation_rule": "If the student does not correctly identify the variable, ask them to read the problem statement and point out the variable",
+  "allow_full_solution": false,
+  "confidence": 0.8
+}

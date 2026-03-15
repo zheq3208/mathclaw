@@ -1,0 +1,119 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+  "planner": {
+    "value": 0.9999999999999999,
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "givens": [],
+    "target": "某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "question_type": "geometry",
+    "candidate_methods": [
+      "direct symbolic solving",
+      "sanity-check route"
+    ],
+    "exact_check_targets": {
+      "equation": "S(t) = 2t**3 - 5t**2",
+      "expressions": [
+        "S",
+        "t",
+        "S(t) = 2t^3 - 5t^2",
+        "t = 3 \\, \\text{s}",
+        "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为"
+      ],
+      "answer_format": "numeric or symbolic"
+    },
+    "risks": [],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": true
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "S(t) = 2*t**3 - 5*t**2",
+      "variable": "x",
+      "solutions": []
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "",
+        "verification": {
+          "status": "uncertain",
+          "equation": "S(t) = 2*t**3 - 5*t**2",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "solver_b",
+        "final_answer": "",
+        "verification": {
+          "status": "uncertain",
+          "equation": "S(t) = 2*t**3 - 5*t**2",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      },
+      {
+        "solver_role": "solver_b",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [],
+    "recommended_winner": "solver_a",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "24",
+    "final_expression": "v(t) = S'(t) = 6t^2 - 10t, \\quad v(3) = 6\\cdot9 - 10\\cdot3 = 54 - 30 = 24",
+    "concise_solution_markdown": "瞬时速度是位移对时间的导数：\n\n$$\nv(t) = \\frac{dS}{dt} = \\frac{d}{dt}(2t^3 - 5t^2) = 6t^2 - 10t\n$$\n\n代入 $ t = 3 $：\n\n$$\nv(3) = 6(3)^2 - 10(3) = 54 - 30 = 24 \\, \\text{m/s}\n$$",
+    "verification_summary": [
+      "位移函数 $ S(t) = 2t^3 - 5t^2 $ 正确",
+      "导数计算 $ S'(t) = 6t^2 - 10t $ 正确",
+      "代入 $ t = 3 $ 得 $ v(3) = 24 $ m/s，与选择题选项 B 一致（见试卷图片）"
+    ],
+    "unresolved_risks": [
+      "原始 solver 输出为空，未提供推理过程，需人工补全验证",
+      "planner 错误标记为 geometry 类型，实际为微积分/运动学问题"
+    ],
+    "recommended_follow_up": "确认考生答题卡上第1题选B（24 m/s），并更新 solver 模块以支持导数求解与物理量单位处理"
+  }
+}

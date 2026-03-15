@@ -1,0 +1,12 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "这是一道一元一次方程的题目。在开始解题前，请先确认：题目要求我们求解的变量是什么？",
+  "student_checkpoint_question": "题目要求我们求解的变量是什么？",
+  "expected_student_action": "学生应明确指出题目中要求解的变量（例如：x）",
+  "if_student_stuck_then": "如果学生无法正确识别变量，请引导其仔细阅读题目并指出具体变量",
+  "revealed_step": "这是一道一元一次方程题目，我们需要求解一个特定的变量",
+  "progress_signal": "当学生正确识别出目标变量时，表示已达成本阶段目标",
+  "stop_condition": "当学生回答出具体变量后，本阶段结束",
+  "confidence": 0.8,
+  "patched_for_answer_leak": false
+}

@@ -1,0 +1,145 @@
+{
+  "case_brief": {
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "source_problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "variant_request": "请围绕这道题生成三道后续练习:一道同构题、一道降难题、一道升难题,并优先结合历史薄弱点记忆与当前求解验证证据.",
+    "requested_count": 3,
+    "question_type": "geometry",
+    "chapter": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "这道题生成三道后续练习:一道同构题、一道降难题、一道升难题,并优先结合历史薄弱点记忆与当前求解验证证据",
+    "difficulty_score": 4.5,
+    "difficulty_band": "hard",
+    "method_tags": [],
+    "requires_visual_reasoning": true,
+    "memory_context": {
+      "student_id": "__global__",
+      "variant_source": "current_problem",
+      "targeted_knowledge_point": "geometry",
+      "targeted_weaknesses": [
+        "reading_or_prompt_misread",
+        "sign_error",
+        "calculation_or_careless_error"
+      ],
+      "active_knowledge_point_count": 6
+    }
+  },
+  "variant_set_title": "导数在运动学中的应用变式训练",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)的关系为 $ S(t) = 3t^3 - 4t^2 $,则当 $ t = 2 \\, \\text{s} $ 时该质点的瞬时速度为",
+      "changes": [
+        "调整位移函数系数与时间点",
+        "保留三次多项式结构"
+      ],
+      "intent": "巩固导数求瞬时速度的核心方法，强化符号处理与计算步骤",
+      "difficulty_goal": "same",
+      "coach_note": "注意导数运算中系数与指数的对应关系，避免符号错误",
+      "answer_outline": [
+        "对 $ S(t) $ 求导得 $ v(t) = 9t^2 - 8t $",
+        "代入 $ t = 2 $ 计算得 $ v(2) = 20 \\, \\text{m/s} $"
+      ],
+      "difficulty_report": {
+        "score": 4.2,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.5,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)的关系为 $ S(t) = t^2 - 3t $,则当 $ t = 1 \\, \\text{s} $ 时该质点的瞬时速度为",
+      "changes": [
+        "将三次函数降为二次函数",
+        "简化系数与时间点"
+      ],
+      "intent": "降低计算复杂度，聚焦导数基本运算与符号处理",
+      "difficulty_goal": "easier",
+      "coach_note": "重点检查一次项导数的符号变化",
+      "answer_outline": [
+        "对 $ S(t) $ 求导得 $ v(t) = 2t - 3 $",
+        "代入 $ t = 1 $ 计算得 $ v(1) = -1 \\, \\text{m/s} $"
+      ],
+      "difficulty_report": {
+        "score": 4.0,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.5,
+          "band": "hard",
+          "relation": "easier"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "解方程 2t^2 - 7t + 3 = 0，并检查每个根是否满足原方程",
+      "changes": [
+        "Used a non-monic quadratic and added a verification step."
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "这道题生成三道后续练习:一道同构题、一道降难题、一道升难题,并优先结合历史薄弱点记忆与当前求解验证证据",
+      "answer_outline": [
+        "Identify the factor or equation form.",
+        "Solve for the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 2.2,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 4.5,
+          "band": "hard",
+          "relation": "easier"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "easier",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "easier",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:easier"
+      ]
+    }
+  ],
+  "design_notes": [
+    "针对历史薄弱点'符号错误'，在同构题中保留负系数项",
+    "降难题通过二次函数减少计算步骤，避免粗心错误",
+    "升难题增加方程求解环节，强化导数与实际运动的关联分析"
+  ]
+}

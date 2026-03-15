@@ -1,0 +1,47 @@
+[
+  {
+    "solver_role": "Solver A",
+    "method": "algebraic manipulation (isolate x)",
+    "reasoning_outline": [
+      "2x + 3 = 7",
+      "2x = 7 - 3",
+      "2x = 4",
+      "x = 4 / 2",
+      "x = 2"
+    ],
+    "key_steps": [
+      "2x = 7 - 3",
+      "2x = 4",
+      "x = 4 / 2"
+    ],
+    "final_answer": "x = 2",
+    "final_expression": "2",
+    "assumptions": [
+      "Equation is correctly transcribed as 2x + 3 = 7",
+      "Standard algebraic operations apply"
+    ],
+    "confidence": 1.0
+  },
+  {
+    "solver_role": "Solver B",
+    "method": "algebraic manipulation and substitution verification",
+    "reasoning_outline": [
+      "Verify student's answer by substitution: 2*5+3 = 13, which does not equal 7, so x=5 is incorrect.",
+      "Solve the equation by isolating x: subtract 3 from both sides to get 2x = 4, then divide by 2 to get x = 2.",
+      "Verify the solution by substitution: 2*2+3 = 4+3 = 7, which matches the right-hand side."
+    ],
+    "key_steps": [
+      "Substitute student's answer: 2*5+3 = 13 ≠ 7",
+      "Isolate x: 2x = 7 - 3 → 2x = 4",
+      "Solve for x: x = 4 / 2 → x = 2",
+      "Verify solution: 2*2+3 = 7"
+    ],
+    "final_answer": "x=2",
+    "final_expression": "2",
+    "assumptions": [
+      "The equation is correctly written as 2x + 3 = 7 with no OCR errors (e.g., 7 is not misread as 17).",
+      "The student's answer is provided as x=5, but the solution is derived independently."
+    ],
+    "confidence": 1.0
+  }
+]

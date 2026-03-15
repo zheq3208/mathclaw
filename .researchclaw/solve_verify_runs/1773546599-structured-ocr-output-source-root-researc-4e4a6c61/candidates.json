@@ -1,0 +1,37 @@
+[
+  {
+    "solver_role": "Solver A",
+    "method": "N/A (problem missing)",
+    "reasoning_outline": [
+      "The problem statement (equation and options) is missing from the provided OCR output."
+    ],
+    "key_steps": [],
+    "final_answer": "N/A",
+    "final_expression": "N/A",
+    "assumptions": [
+      "The equation and multiple choice options were not provided in the input."
+    ],
+    "confidence": 0.0
+  },
+  {
+    "solver_role": "Solver B",
+    "method": "Analysis of missing problem data",
+    "reasoning_outline": [
+      "The provided OCR output only contains the exam header and does not include the actual equation or multiple choice options.",
+      "Without the equation and options, equation-solving methods (algebraic, substitution, etc.) cannot be applied.",
+      "The planner_brief explicitly states the problem is missing, confirming data unavailability."
+    ],
+    "key_steps": [
+      "Verified OCR content: only exam header present, no mathematical content.",
+      "Checked planner_brief risks: confirmed 'actual problem (equation and options) is missing'.",
+      "Concluded solution impossible due to missing problem statement."
+    ],
+    "final_answer": "N/A",
+    "final_expression": "N/A",
+    "assumptions": [
+      "The problem statement (equation and options) is irrecoverable from given information.",
+      "No alternative interpretation of the exam header as an equation is valid."
+    ],
+    "confidence": 0.0
+  }
+]

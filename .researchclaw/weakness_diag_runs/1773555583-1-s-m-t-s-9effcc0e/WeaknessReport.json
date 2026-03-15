@@ -1,0 +1,174 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+  "case_brief": {
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "student_state": "???????????????",
+    "question_type": "geometry",
+    "chapter": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "target": "",
+    "observed_signals": [
+      "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+    ],
+    "diagnosis_focus": [
+      "?????",
+      "??????"
+    ],
+    "evidence_gaps": [
+      "?????????????"
+    ],
+    "needs_solution_bootstrap": false,
+    "difficulty_band": "hard",
+    "reference_answer": ""
+  },
+  "process": {
+    "primary_error_stage": "execution",
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "学生作答未展示明确的中间步骤"
+    ],
+    "evidence_items": [
+      "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+    ],
+    "likely_error_causes": [
+      "strategy_gap",
+      "incomplete_reasoning"
+    ],
+    "confidence": 0.3
+  },
+  "learning": {
+    "primary_weakness": "导数的物理意义理解（瞬时速度与位移导数的关系）",
+    "secondary_weaknesses": [
+      "sign_error",
+      "calculation_or_careless_error"
+    ],
+    "knowledge_points": [
+      "导数的物理意义"
+    ],
+    "prerequisite_gaps": [
+      "导数的定义",
+      "基本求导公式"
+    ],
+    "recommended_practice_focus": [
+      "理解瞬时速度是位移函数的导数",
+      "练习位移函数求导计算"
+    ],
+    "teacher_watchouts": [
+      "学生可能混淆平均速度与瞬时速度",
+      "未掌握导数的物理意义"
+    ],
+    "confidence": 0.4
+  },
+  "arbiter": {
+    "status": "review",
+    "problem_summary": "某质点沿直线运动,位移 S (单位:m)与时间 t (单位:s)之间的关系为 S(t) = 2t^3 - 5t^2 ,则当 t = 3 s 时该质点的瞬时速度为",
+    "primary_weakness": "导数的物理意义理解（瞬时速度与位移导数的关系）",
+    "secondary_weaknesses": [
+      "sign_error",
+      "calculation_or_careless_error",
+      "incomplete_reasoning",
+      "reading_or_prompt_misread"
+    ],
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "学生作答未展示明确的中间步骤"
+    ],
+    "evidence_items": [
+      "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+    ],
+    "chapter": "导数",
+    "question_type": "应用题",
+    "knowledge_points": [
+      "导数的物理意义"
+    ],
+    "prerequisite_gaps": [
+      "导数的定义",
+      "基本求导公式"
+    ],
+    "likely_error_causes": [
+      "strategy_gap",
+      "incomplete_reasoning"
+    ],
+    "recommended_practice_focus": [
+      "理解瞬时速度是位移函数的导数",
+      "练习位移函数求导计算"
+    ],
+    "teacher_feedback_markdown": "学生在解决瞬时速度问题时，需明确位移函数的导数即为瞬时速度。当前因缺少作答步骤，建议先确认学生是否理解导数的物理意义，再通过典型例题练习求导运算。重点关注学生是否能将物理情境与导数概念正确关联。",
+    "mastery_update_suggestion": {
+      "result": "incorrect",
+      "knowledge_points": [
+        "导数的物理意义"
+      ],
+      "note": "需强化导数在物理中的应用理解"
+    },
+    "confidence": 0.4
+  },
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-15T06:20:41.501949Z",
+    "event": {
+      "timestamp": "2026-03-15T06:20:41.501949Z",
+      "conversation_id": "smoke-chinese-e839058f",
+      "source": "weakness_diag",
+      "result": "incorrect",
+      "primary_weakness": "导数的物理意义理解（瞬时速度与位移导数的关系）",
+      "secondary_weaknesses": [
+        "sign_error",
+        "calculation_or_careless_error",
+        "incomplete_reasoning",
+        "reading_or_prompt_misread"
+      ],
+      "knowledge_points": [
+        "导数的物理意义"
+      ],
+      "prerequisite_gaps": [
+        "导数的定义",
+        "基本求导公式"
+      ],
+      "practice_focus": [
+        "理解瞬时速度是位移函数的导数",
+        "练习位移函数求导计算"
+      ],
+      "note": "需强化导数在物理中的应用理解",
+      "evidence": [
+        "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation",
+        "diagram_or_theorem_gap",
+        "reading_or_prompt_misread",
+        "sign_error",
+        "calculation_or_careless_error",
+        "导数的物理意义理解（瞬时速度与位移导数的关系）"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation",
+        "linear_equation",
+        "导数的物理意义",
+        "导数的计算与应用"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  }
+}

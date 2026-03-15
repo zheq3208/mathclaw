@@ -208,7 +208,7 @@ class AgentRunner:
         thread.start()
 
         while True:
-            # Check queue in a non-blocking way to keep the async loop alive
+            # Poll with timeout so long tool stages do not terminate the stream.
             try:
                 event = await asyncio.get_event_loop().run_in_executor(
                     None,
@@ -216,6 +216,10 @@ class AgentRunner:
                     True,
                     60.0,
                 )
+            except queue.Empty:
+                if thread.is_alive():
+                    continue
+                break
             except Exception:
                 break
             if event is None:

@@ -1,0 +1,146 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544101545`\n\n第 I 卷(选择题 共 58 分)",
+  "case_brief": {
+    "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544101545`\n\n第 I 卷(选择题 共 58 分)",
+    "student_state": "student answer and process need diagnosis",
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "target": "",
+    "observed_signals": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "diagnosis_focus": [
+      "incomplete process",
+      "prerequisite gap"
+    ],
+    "evidence_gaps": [
+      "Need more student steps."
+    ],
+    "needs_solution_bootstrap": false,
+    "difficulty_band": "medium",
+    "reference_answer": ""
+  },
+  "process": {
+    "primary_error_stage": "execution",
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "Student attempt does not show explicit intermediate steps."
+    ],
+    "evidence_items": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning"
+    ],
+    "confidence": 0.0
+  },
+  "learning": {
+    "primary_weakness": "incomplete_reasoning",
+    "secondary_weaknesses": [],
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [
+      "symbolic_manipulation"
+    ],
+    "recommended_practice_focus": [
+      "showing all intermediate steps when solving linear equations"
+    ],
+    "teacher_watchouts": [
+      "Ensure student is writing each step of the equation solving process"
+    ],
+    "confidence": 0.0
+  },
+  "arbiter": {
+    "status": "review",
+    "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544101545`\n\n第 I 卷(选择题 共 58 分)",
+    "primary_weakness": "incomplete_reasoning",
+    "secondary_weaknesses": [],
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "Student attempt does not show explicit intermediate steps."
+    ],
+    "evidence_items": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "chapter": "equations_and_inequalities",
+    "question_type": "equation",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [
+      "symbolic_manipulation"
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning"
+    ],
+    "recommended_practice_focus": [
+      "showing all intermediate steps when solving linear equations"
+    ],
+    "teacher_feedback_markdown": "The student's process for solving the linear equation is incomplete. They did not show any intermediate steps. Encourage the student to write out each step of the equation solving process, including the application of inverse operations and simplification. Focus on building the habit of showing all work to avoid errors and to facilitate checking.",
+    "mastery_update_suggestion": {
+      "result": "partial",
+      "knowledge_points": [
+        "linear_equation"
+      ],
+      "note": "Student did not show the solving process. Partial credit may be given if the final answer is correct, but the process is required for full credit."
+    },
+    "confidence": 0.0
+  },
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-15T03:13:04.860558Z",
+    "event": {
+      "timestamp": "2026-03-15T03:13:04.860558Z",
+      "conversation_id": "wecom:single:QianZhe",
+      "source": "weakness_diag",
+      "result": "partial",
+      "primary_weakness": "incomplete_reasoning",
+      "secondary_weaknesses": [],
+      "knowledge_points": [
+        "linear_equation"
+      ],
+      "prerequisite_gaps": [
+        "symbolic_manipulation"
+      ],
+      "practice_focus": [
+        "showing all intermediate steps when solving linear equations"
+      ],
+      "note": "Student did not show the solving process. Partial credit may be given if the final answer is correct, but the process is required for full credit.",
+      "evidence": [
+        "Student process is incomplete for diagnostic checking."
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation",
+        "diagram_or_theorem_gap"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation",
+        "linear_equation"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "case_brief": {
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 61 m/s \nC. 33 m/s \nD. 45 m/s",
+    "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 61 m/s \nC. 33 m/s \nD. 45 m/s",
+    "source_problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 61 m/s \nC. 33 m/s \nD. 45 m/s",
+    "variant_request": "Generate three follow-up variants for this question: one isomorphic, one easier, and one harder. Prioritize the diagnosed weak points.",
+    "requested_count": 3,
+    "question_type": "geometry",
+    "chapter": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "this question: one isomorphic, one easier, and one harder",
+    "difficulty_score": 4.7,
+    "difficulty_band": "hard",
+    "method_tags": [],
+    "requires_visual_reasoning": true,
+    "memory_context": {
+      "student_id": "__global__",
+      "variant_source": "current_problem",
+      "targeted_knowledge_point": "geometry",
+      "targeted_weaknesses": [
+        "incomplete_reasoning",
+        "diagram_or_theorem_gap"
+      ],
+      "active_knowledge_point_count": 4
+    }
+  },
+  "variant_set_title": "质点运动瞬时速度计算变式练习",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 3t^3 - 4t^2 $,则当 $ t = 2 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 12 m/s \nB. 16 m/s \nC. 20 m/s \nD. 24 m/s",
+      "changes": [
+        "调整多项式系数与求值时间，保持三次多项式结构及导数计算步骤"
+      ],
+      "intent": "通过调整参数强化导数应用的程序性熟练度",
+      "difficulty_goal": "same",
+      "coach_note": "聚焦于正确应用幂法则处理不同系数的三次函数",
+      "answer_outline": [
+        "v(t) = 9t^2 - 8t",
+        "v(2) = 36 - 16 = 20 m/s"
+      ],
+      "difficulty_report": {
+        "score": 4.7,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.7,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = t^2 - 3t $,则当 $ t = 2 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 0 m/s \nB. 1 m/s \nC. 2 m/s \nD. 3 m/s",
+      "changes": [
+        "简化为二次位移函数并减小系数，将导数复杂度降至线性表达式"
+      ],
+      "intent": "通过基础多项式建立位移与速度关系的核心概念理解",
+      "difficulty_goal": "easier",
+      "coach_note": "强调位移与速度间通过基本微分的关系",
+      "answer_outline": [
+        "v(t) = 2t - 3",
+        "v(2) = 4 - 3 = 1 m/s"
+      ],
+      "difficulty_report": {
+        "score": 4.7,
+        "band": "hard",
+        "question_type": "geometry",
+        "reference": {
+          "score": 4.7,
+          "band": "hard",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "??? 2t^2 - 7t + 3 = 0???????????",
+      "changes": [
+        "Used a non-monic quadratic and added a verification step."
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "this question: one isomorphic, one easier, and one harder",
+      "answer_outline": [
+        "Identify the factor or equation form.",
+        "Solve for the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 2.0,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 4.7,
+          "band": "hard",
+          "relation": "easier"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "geometry",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "hard",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "easier",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:about_the_same"
+      ]
+    }
+  ],
+  "design_notes": [
+    "所有变式均保持位移导数求瞬时速度的核心概念",
+    "简易变式将多项式降为二次以提升可及性",
+    "困难变式引入四次函数增加代数复杂度同时保持问题结构"
+  ]
+}

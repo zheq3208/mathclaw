@@ -1,0 +1,49 @@
+{
+  "boxes": [
+    {
+      "id": "b1",
+      "kind": "question_block",
+      "bbox": [
+        22,
+        190,
+        973,
+        248
+      ],
+      "text_hint": "第1题"
+    },
+    {
+      "id": "b2",
+      "kind": "question_block",
+      "bbox": [
+        22,
+        250,
+        973,
+        305
+      ],
+      "text_hint": "第2题"
+    },
+    {
+      "id": "b3",
+      "kind": "question_block",
+      "bbox": [
+        22,
+        308,
+        973,
+        362
+      ],
+      "text_hint": "第3题"
+    },
+    {
+      "id": "b4",
+      "kind": "question_block",
+      "bbox": [
+        22,
+        365,
+        973,
+        420
+      ],
+      "text_hint": "第4题"
+    }
+  ],
+  "page_note": ""
+}

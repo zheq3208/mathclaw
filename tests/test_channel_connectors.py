@@ -488,6 +488,51 @@ def test_wecom_send_falls_back_to_proactive_send_message():
     asyncio.run(_run())
 
 
+def test_wecom_suppresses_intermediate_thinking_and_tool_events():
+    async def _run() -> None:
+        channel = WecomChannel(
+            process=_noop_process,
+            enabled=False,
+            bot_id="",
+            secret="",
+        )
+        forwarded = []
+
+        async def _fake_send_message_content(to_handle, event, meta):
+            forwarded.append((to_handle, event, meta))
+
+        channel.send_message_content = _fake_send_message_content  # type: ignore[method-assign]
+
+        thinking_event = SimpleNamespace(
+            type="thinking",
+            data=SimpleNamespace(
+                content=[SimpleNamespace(type="thinking", text="internal")],
+            ),
+        )
+        tool_event = SimpleNamespace(
+            type="tool_result",
+            data=SimpleNamespace(
+                content=[SimpleNamespace(type="tool_output", output="ok")],
+            ),
+        )
+        final_event = SimpleNamespace(
+            type="content",
+            data=SimpleNamespace(
+                content=[SimpleNamespace(type="text", text="final answer")],
+            ),
+        )
+
+        await channel.on_event_message_completed({}, "wecom:chat:chat-1", thinking_event, {})
+        await channel.on_event_message_completed({}, "wecom:chat:chat-1", tool_event, {})
+        await channel.on_event_message_completed({}, "wecom:chat:chat-1", final_event, {"wecom_chat_id": "chat-1"})
+
+        assert len(forwarded) == 1
+        assert forwarded[0][0] == "wecom:chat:chat-1"
+        assert forwarded[0][1] is final_event
+
+    asyncio.run(_run())
+
+
 def test_wecom_routes_session_by_chat():
     channel = WecomChannel(
         process=_noop_process,

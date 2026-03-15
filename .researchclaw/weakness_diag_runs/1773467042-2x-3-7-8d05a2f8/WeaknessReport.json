@@ -1,0 +1,126 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "??? 2x + 3 = 7",
+  "case_brief": {
+    "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+    "student_state": "Student provided the answer x=5 with minimal or unclear work (only 'x=5?').",
+    "question_type": "algebraic equation solving",
+    "chapter": "Linear Equations",
+    "knowledge_points": [
+      "Solving linear equations",
+      "Inverse operations (subtraction and division)",
+      "Verifying solutions"
+    ],
+    "target": "Solve two-step linear equations correctly by applying inverse operations.",
+    "observed_signals": [
+      "Student answer (x=5) conflicts with the correct answer (x=2)",
+      "Student work is minimal and unclear, showing only the final answer with a question mark",
+      "Verification shows a conflict between proposed and expected solutions"
+    ],
+    "diagnosis_focus": [
+      "Possible misreading of the problem or signs (e.g., misreading 2x as 2+x or misreading the constant term)",
+      "Calculation error in the solving process (e.g., subtracting 3 from 7 to get 4, then dividing by 2 to get 2, but student got 5)",
+      "Lack of proper algebraic steps and verification"
+    ],
+    "evidence_gaps": [
+      "Specific error description not provided",
+      "Insufficient student work to identify the exact step of error"
+    ],
+    "needs_solution_bootstrap": true,
+    "difficulty_band": "beginner",
+    "reference_answer": "2"
+  },
+  "process": {
+    "primary_error_stage": "final_answer",
+    "wrong_answer": true,
+    "process_incomplete": false,
+    "missing_steps": [],
+    "evidence_items": [
+      "Student final answer conflicts with the verified answer or exact check.",
+      "Reference answer: 2"
+    ],
+    "likely_error_causes": [
+      "reading_or_prompt_misread",
+      "sign_error",
+      "calculation_or_careless_error",
+      "strategy_gap",
+      "symbolic_manipulation_gap"
+    ],
+    "confidence": 0.82
+  },
+  "learning": {
+    "primary_weakness": "reading_or_prompt_misread",
+    "secondary_weaknesses": [
+      "strategy_gap",
+      "symbolic_manipulation_gap"
+    ],
+    "knowledge_points": [
+      "solving_linear_equations",
+      "inverse_operations",
+      "verifying_solutions"
+    ],
+    "prerequisite_gaps": [
+      "symbolic_manipulation"
+    ],
+    "recommended_practice_focus": [
+      "step_by_step_solving_of_linear_equations",
+      "verifying_solutions",
+      "understanding_symbolic_representation"
+    ],
+    "teacher_watchouts": [
+      "students_skipping_steps",
+      "misinterpretation_of_symbolic_expressions",
+      "sign_errors_in_inverse_operations"
+    ],
+    "confidence": 0.8
+  },
+  "arbiter": {
+    "status": "diagnosed",
+    "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+    "primary_weakness": "reading_or_prompt_misread",
+    "secondary_weaknesses": [
+      "strategy_gap",
+      "symbolic_manipulation_gap"
+    ],
+    "wrong_answer": true,
+    "process_incomplete": false,
+    "missing_steps": [],
+    "evidence_items": [
+      "Student final answer (x=5) conflicts with verified correct answer (x=2)",
+      "Student provided only 'x=5?' with no clear algebraic steps",
+      "Verification confirms substitution of x=5 yields 2*5+3=13 ≠ 7"
+    ],
+    "chapter": "Linear Equations",
+    "question_type": "algebraic equation solving",
+    "knowledge_points": [
+      "Solving linear equations",
+      "Inverse operations (subtraction and division)",
+      "Verifying solutions"
+    ],
+    "prerequisite_gaps": [
+      "symbolic_manipulation"
+    ],
+    "likely_error_causes": [
+      "reading_or_prompt_misread",
+      "sign_error",
+      "calculation_or_careless_error",
+      "strategy_gap",
+      "symbolic_manipulation_gap"
+    ],
+    "recommended_practice_focus": [
+      "step_by_step_solving_of_linear_equations",
+      "verifying_solutions",
+      "understanding_symbolic_representation"
+    ],
+    "teacher_feedback_markdown": "The student’s answer x=5 is incorrect; the correct solution is x=2. The work shows minimal reasoning, suggesting possible misreading (e.g., interpreting 2x as 2+x or misreading the constant term), or skipping inverse operations. Encourage explicit step-by-step solving: subtract 3 first (2x = 4), then divide by 2 (x = 2). Always verify by plugging back in: 2(2)+3 = 7 ✓.",
+    "mastery_update_suggestion": {
+      "result": "incorrect",
+      "knowledge_points": [
+        "Solving linear equations",
+        "Inverse operations"
+      ],
+      "note": "Student applied incorrect arithmetic or misinterpreted the equation structure; needs reinforcement of symbolic meaning and verification."
+    },
+    "confidence": 0.82
+  }
+}

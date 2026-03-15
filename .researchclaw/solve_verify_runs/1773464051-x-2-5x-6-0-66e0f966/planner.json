@@ -1,0 +1,28 @@
+{
+  "problem_summary": "Solve the quadratic equation x^2 - 5x + 6 = 0 and state the nature of the roots.",
+  "givens": [
+    "x^2 - 5x + 6 = 0"
+  ],
+  "target": "Find the roots of the equation and state the nature of the roots (e.g., real and distinct, real and equal, or complex).",
+  "question_type": "equation",
+  "candidate_methods": [
+    "Factoring",
+    "Quadratic formula",
+    "Completing the square"
+  ],
+  "exact_check_targets": {
+    "equation": "x^2 - 5x + 6 = 0",
+    "expressions": [
+      "x = 2",
+      "x = 3",
+      "discriminant = 1 (positive)"
+    ],
+    "answer_format": "Roots: 2 and 3; Status: two distinct real roots"
+  },
+  "risks": [
+    "Ambiguity in '状态' (status) interpretation - must clarify as nature of roots",
+    "Potential OCR error if equation symbols are misread (e.g., 5x as 5x with different symbol)"
+  ],
+  "preferred_variable": "x",
+  "requires_visual_reasoning": false
+}

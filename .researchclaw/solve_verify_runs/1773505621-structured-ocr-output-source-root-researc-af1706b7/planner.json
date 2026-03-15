@@ -1,0 +1,32 @@
+{
+  "problem_summary": "High school math problem requiring calculation of instantaneous velocity from a displacement function, with potential OCR errors in the function's exponents and coefficients",
+  "givens": [
+    "Displacement function S(t) = 2t² - 5t² (likely OCR error; expected S(t) = 2t³ - 5t²)",
+    "Time t = 3 s",
+    "Multiple-choice options: A.9 m/s, B.24 m/s, C.48 m/s, D.54 m/s"
+  ],
+  "target": "Instantaneous velocity at t = 3 s",
+  "question_type": "calculus",
+  "candidate_methods": [
+    "Differentiate displacement function S(t) to obtain velocity function v(t)",
+    "Evaluate derivative at t = 3 s",
+    "Verify against multiple-choice options"
+  ],
+  "exact_check_targets": {
+    "equation": "v(t) = dS/dt",
+    "expressions": [
+      "Corrected S(t) = 2t³ - 5t²",
+      "v(t) = 6t² - 10t",
+      "v(3) = 6(9) - 10(3) = 24"
+    ],
+    "answer_format": "Single letter choice (A, B, C, D)"
+  },
+  "risks": [
+    "OCR misread exponents (e.g., t² instead of t³ in S(t))",
+    "Incorrect coefficient transcription (e.g., 2t² vs 2t³)",
+    "Misinterpretation of displacement function form due to poor image quality",
+    "Potential confusion between similar-looking symbols (e.g., 3 vs 2 in exponents)"
+  ],
+  "preferred_variable": "t",
+  "requires_visual_reasoning": true
+}

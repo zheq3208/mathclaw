@@ -1,0 +1,152 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773505389308`\n\n第 I 卷(选择题 共 58 分)\n\n选择题:本题共 8 小题,每小题 6 分,共 48 分.在每小题给出的四个选项中,只有一项是符合题意的.",
+  "case_brief": {
+    "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773505389308`\n\n第 I 卷(选择题 共 58 分)\n\n选择题:本题共 8 小题,每小题 6 分,共 48 分.在每小题给出的四个选项中,只有一项是符合题意的.",
+    "student_state": "student answer and process need diagnosis",
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "target": "",
+    "observed_signals": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "diagnosis_focus": [
+      "incomplete process",
+      "prerequisite gap"
+    ],
+    "evidence_gaps": [
+      "Need more student steps."
+    ],
+    "needs_solution_bootstrap": false,
+    "difficulty_band": "medium",
+    "reference_answer": ""
+  },
+  "process": {
+    "primary_error_stage": "unknown",
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "Student attempt does not show explicit intermediate steps."
+    ],
+    "evidence_items": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning"
+    ],
+    "confidence": 0.0
+  },
+  "learning": {
+    "primary_weakness": "linear_equation procedural execution",
+    "secondary_weaknesses": [
+      "step documentation"
+    ],
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [
+      "symbolic_manipulation"
+    ],
+    "recommended_practice_focus": [
+      "Demonstrate each algebraic manipulation step explicitly"
+    ],
+    "teacher_watchouts": [
+      "Verify student shows all intermediate steps for linear equation solutions"
+    ],
+    "confidence": 0.0
+  },
+  "arbiter": {
+    "status": "review",
+    "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773505389308`\n\n第 I 卷(选择题 共 58 分)\n\n选择题:本题共 8 小题,每小题 6 分,共 48 分.在每小题给出的四个选项中,只有一项是符合题意的.",
+    "primary_weakness": "linear_equation procedural execution",
+    "secondary_weaknesses": [
+      "step documentation"
+    ],
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "Student attempt does not show explicit intermediate steps."
+    ],
+    "evidence_items": [
+      "Student process is incomplete for diagnostic checking."
+    ],
+    "chapter": "equations_and_inequalities",
+    "question_type": "equation",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [
+      "symbolic_manipulation"
+    ],
+    "likely_error_causes": [
+      "incomplete_reasoning"
+    ],
+    "recommended_practice_focus": [
+      "Demonstrate each algebraic manipulation step explicitly"
+    ],
+    "teacher_feedback_markdown": "Student provided final answers without showing solution steps. To verify correctness and identify conceptual gaps, all intermediate algebraic steps must be documented. Focus on explicit symbolic manipulation for linear equation solutions.",
+    "mastery_update_suggestion": {
+      "result": "partial",
+      "knowledge_points": [
+        "linear_equation"
+      ],
+      "note": "Process incomplete; steps not shown for verification"
+    },
+    "confidence": 0.0
+  },
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-14T16:30:05.930989Z",
+    "event": {
+      "timestamp": "2026-03-14T16:30:05.930989Z",
+      "conversation_id": "wecom:single:QianZhe",
+      "source": "weakness_diag",
+      "result": "partial",
+      "primary_weakness": "linear_equation procedural execution",
+      "secondary_weaknesses": [
+        "step documentation"
+      ],
+      "knowledge_points": [
+        "linear_equation"
+      ],
+      "prerequisite_gaps": [
+        "symbolic_manipulation"
+      ],
+      "practice_focus": [
+        "Demonstrate each algebraic manipulation step explicitly"
+      ],
+      "note": "Process incomplete; steps not shown for verification",
+      "evidence": [
+        "Student process is incomplete for diagnostic checking."
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation",
+        "diagram_or_theorem_gap"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation",
+        "linear_equation"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  }
+}

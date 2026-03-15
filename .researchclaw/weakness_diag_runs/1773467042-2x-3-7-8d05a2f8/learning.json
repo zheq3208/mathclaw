@@ -1,0 +1,26 @@
+{
+  "primary_weakness": "reading_or_prompt_misread",
+  "secondary_weaknesses": [
+    "strategy_gap",
+    "symbolic_manipulation_gap"
+  ],
+  "knowledge_points": [
+    "solving_linear_equations",
+    "inverse_operations",
+    "verifying_solutions"
+  ],
+  "prerequisite_gaps": [
+    "symbolic_manipulation"
+  ],
+  "recommended_practice_focus": [
+    "step_by_step_solving_of_linear_equations",
+    "verifying_solutions",
+    "understanding_symbolic_representation"
+  ],
+  "teacher_watchouts": [
+    "students_skipping_steps",
+    "misinterpretation_of_symbolic_expressions",
+    "sign_errors_in_inverse_operations"
+  ],
+  "confidence": 0.8
+}

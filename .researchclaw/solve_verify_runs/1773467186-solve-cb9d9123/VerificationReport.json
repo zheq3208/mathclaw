@@ -1,0 +1,113 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "?????????????????????",
+  "planner": {
+    "problem_summary": "Problem text is unreadable (all question marks).",
+    "givens": [],
+    "target": "Unknown",
+    "question_type": "other",
+    "candidate_methods": [],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [],
+      "answer_format": ""
+    },
+    "risks": [
+      "OCR failure: problem text is unreadable (all question marks)"
+    ],
+    "preferred_variable": "N/A",
+    "requires_visual_reasoning": true
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "N/A",
+          "expected_solutions": [],
+          "proposed_solutions": [],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "Solver B",
+        "final_answer": "Problem text unreadable",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "N/A",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "Problem",
+            "text",
+            "unreadable"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "N/A",
+          "normalized_formula": "N/A",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      },
+      {
+        "solver_role": "Solver B",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [],
+    "recommended_winner": "solver_a",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "Problem text unreadable",
+    "final_expression": "N/A",
+    "concise_solution_markdown": "The input problem consists entirely of question marks, indicating a likely OCR failure or corrupted input. Without a legible problem statement, no meaningful solution can be derived.",
+    "verification_summary": [
+      "Both solvers acknowledge the problem is unreadable.",
+      "No expected solution or equation is available for verification.",
+      "Solver B provides a more transparent and justified response than solver_a."
+    ],
+    "unresolved_risks": [
+      "OCR failure: problem text is unreadable (all question marks)",
+      "Missing original problem context prevents any mathematical reasoning"
+    ],
+    "recommended_follow_up": "Re-upload or manually transcribe the original problem image/text to enable proper analysis."
+  }
+}

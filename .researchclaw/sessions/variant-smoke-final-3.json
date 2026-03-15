@@ -1,0 +1,18 @@
+{
+  "session_id": "variant-smoke-final-3",
+  "title": "New Research Chat",
+  "created_at": 1773484967.7262795,
+  "updated_at": 1773485032.348388,
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+      "timestamp": 1773484967.7267106
+    },
+    {
+      "role": "assistant",
+      "content": "# Quadratic Equation Practice\n\n- Source problem: Solve x^2 - 5x + 6 = 0\n- Target skill: [not specified]\n- Base difficulty: medium\n\n## Isomorphic\n\nSolve x^2 - 7x + 12 = 0\n\n- Intent: To practice the same factoring method with different numbers\n- Difficulty relation: about_the_same\n- Coach note: This problem is structurally identical to the original. Factor the quadratic and set each factor equal to zero.\n- Changes:\n  - Replaced the quadratic with another that factors into two distinct integer roots (3 and 4)\n- Answer outline:\n  - Factor: (x-3)(x-4)=0\n  - Solutions: x=3, x=4\n\n## Easier\n\nSolve x^2 - 3x + 2 = 0\n\n- Intent: To build confidence with a simpler quadratic equation that factors easily\n- Difficulty relation: about_the_same\n- Coach note: This quadratic has smaller numbers and is very straightforward to factor. Remember to check your solutions by plugging them back in.\n- Changes:\n  - Used smaller integer roots (1 and 2) to simplify the factoring process\n- Answer outline:\n  - Factor: (x-1)(x-2)=0\n  - Solutions: x=1, x=2\n\n## Harder\n\nSolve 2x^2 - 7x + 3 = 0, and verify both roots by substitution.\n\n- Intent: deeper_transfer_or_extra_constraint\n- Difficulty relation: about_the_same\n- Coach note: Keep the factoring idea, then check each root by substitution.\n- Changes:\n  - Used a non-monic quadratic and added a verification step.\n- Answer outline:\n  - Identify the factor or equation form.\n  - Solve for the variable.\n  - Check the result if asked.\n\nVariant count: 3\nStatus: generated",
+      "timestamp": 1773485032.3483803
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "teacher_focus": "Help the student recognize the equation's quadratic structure and that it can be solved by factoring",
+  "immediate_goal": "Student identifies the highest exponent and recognizes it as a quadratic equation",
+  "diagnostic_focus": [
+    "Does the student recognize the x^2 term as indicating a quadratic equation?",
+    "Does the student know quadratic equations typically have two solutions?"
+  ],
+  "misconceptions_to_probe": [
+    "Mistaking it for a linear equation due to prior knowledge focus",
+    "Not knowing factoring applies to quadratic equations"
+  ],
+  "must_avoid": [
+    "Mentioning factoring steps",
+    "Revealing the factors (x-2)(x-3)",
+    "Solving for x values"
+  ],
+  "allowed_reveal": "That this is a quadratic equation (degree 2) solvable by factoring",
+  "first_question": "What is the highest exponent on x in this equation, and what does that tell you about the type of equation?",
+  "checkpoint_rubric": [
+    "Highest exponent is 2",
+    "It is a quadratic equation",
+    "It has an x squared term"
+  ],
+  "escalation_rule": "If student doesn't identify exponent 2 or quadratic type, next move asks: 'What is the exponent on x in the first term x^2?'",
+  "allow_full_solution": false,
+  "confidence": 0.8
+}

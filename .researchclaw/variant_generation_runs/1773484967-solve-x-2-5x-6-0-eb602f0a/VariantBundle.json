@@ -1,0 +1,131 @@
+{
+  "case_brief": {
+    "problem_summary": "Solve x^2 - 5x + 6 = 0",
+    "problem_text": "Solve x^2 - 5x + 6 = 0",
+    "variant_request": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "",
+    "difficulty_score": 2.35,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false
+  },
+  "variant_set_title": "Quadratic Equation Practice",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Solve x^2 - 7x + 12 = 0",
+      "changes": [
+        "Replaced the quadratic with another that factors into two distinct integer roots (3 and 4)"
+      ],
+      "intent": "To practice the same factoring method with different numbers",
+      "difficulty_goal": "same",
+      "coach_note": "This problem is structurally identical to the original. Factor the quadratic and set each factor equal to zero.",
+      "answer_outline": [
+        "Factor: (x-3)(x-4)=0",
+        "Solutions: x=3, x=4"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Solve x^2 - 3x + 2 = 0",
+      "changes": [
+        "Used smaller integer roots (1 and 2) to simplify the factoring process"
+      ],
+      "intent": "To build confidence with a simpler quadratic equation that factors easily",
+      "difficulty_goal": "easier",
+      "coach_note": "This quadratic has smaller numbers and is very straightforward to factor. Remember to check your solutions by plugging them back in.",
+      "answer_outline": [
+        "Factor: (x-1)(x-2)=0",
+        "Solutions: x=1, x=2"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "Solve 2x^2 - 7x + 3 = 0, and verify both roots by substitution.",
+      "changes": [
+        "Used a non-monic quadratic and added a verification step."
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "Keep the factoring idea, then check each root by substitution.",
+      "answer_outline": [
+        "Identify the factor or equation form.",
+        "Solve for the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 2.65,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:about_the_same"
+      ]
+    }
+  ],
+  "design_notes": [
+    "The isomorphic variant maintains the same structure and difficulty level by changing the roots to 3 and 4.",
+    "The easier variant uses roots 1 and 2, which are smaller and more familiar to students.",
+    "The harder variant introduces a leading coefficient of 2, which requires an additional step in factoring."
+  ]
+}

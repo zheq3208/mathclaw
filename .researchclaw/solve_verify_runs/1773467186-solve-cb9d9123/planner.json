@@ -1,0 +1,17 @@
+{
+  "problem_summary": "Problem text is unreadable (all question marks).",
+  "givens": [],
+  "target": "Unknown",
+  "question_type": "other",
+  "candidate_methods": [],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [],
+    "answer_format": ""
+  },
+  "risks": [
+    "OCR failure: problem text is unreadable (all question marks)"
+  ],
+  "preferred_variable": "N/A",
+  "requires_visual_reasoning": true
+}

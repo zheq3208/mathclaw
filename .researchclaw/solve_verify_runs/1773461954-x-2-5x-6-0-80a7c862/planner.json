@@ -1,0 +1,25 @@
+{
+  "problem_summary": "Solve the quadratic equation x^2 - 5x + 6 = 0",
+  "givens": [
+    "x^2 - 5x + 6 = 0"
+  ],
+  "target": "The roots of the equation (values of x that satisfy the equation)",
+  "question_type": "equation",
+  "candidate_methods": [
+    "Factoring",
+    "Quadratic formula"
+  ],
+  "exact_check_targets": {
+    "equation": "x**2 - 5*x + 6 == 0",
+    "expressions": [
+      "x**2 - 5*x + 6"
+    ],
+    "answer_format": "x=value, x=value"
+  },
+  "risks": [
+    "OCR error in equation coefficients or constant term (e.g., '6' misread as '8')",
+    "Notation: implicit multiplication (e.g., 5x) might be misinterpreted as a single variable"
+  ],
+  "preferred_variable": "x",
+  "requires_visual_reasoning": false
+}

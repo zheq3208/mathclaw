@@ -1,0 +1,1 @@
+The student correctly computed the derivative $ S'(t) = 6t^2 - 10t $ and evaluated it at $ t=3 $ to get 24 m/s, but selected the incorrect option B (30 m/s). This indicates a possible answer selection error or conceptual confusion. Note: The problem is misclassified as 'geometry' in the curriculum when it actually requires calculus knowledge.

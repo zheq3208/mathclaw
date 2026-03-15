@@ -1,0 +1,27 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "solver_a",
+      "verdict": "pass",
+      "strengths": [
+        "matches exact verification"
+      ],
+      "issues": [],
+      "first_conflicting_step": ""
+    },
+    {
+      "solver_role": "solver_b",
+      "verdict": "pass",
+      "strengths": [
+        "matches exact verification"
+      ],
+      "issues": [],
+      "first_conflicting_step": ""
+    }
+  ],
+  "consensus_answer": "t=-1/3, t=0",
+  "consensus_expression": "t=-1/3, t=0",
+  "conflict_summary": [],
+  "recommended_winner": "solver_a",
+  "revision_needed": false
+}

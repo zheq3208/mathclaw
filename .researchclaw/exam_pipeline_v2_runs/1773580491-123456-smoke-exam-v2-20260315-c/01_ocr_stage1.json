@@ -1,0 +1,181 @@
+{
+  "boxes": [
+    {
+      "id": "b1",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        200,
+        100,
+        220
+      ],
+      "text_hint": "9 m/s"
+    },
+    {
+      "id": "b2",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        225,
+        100,
+        245
+      ],
+      "text_hint": "24 m/s"
+    },
+    {
+      "id": "b3",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        250,
+        100,
+        270
+      ],
+      "text_hint": "48 m/s"
+    },
+    {
+      "id": "b4",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        275,
+        100,
+        295
+      ],
+      "text_hint": "54 m/s"
+    },
+    {
+      "id": "b5",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        300,
+        100,
+        320
+      ],
+      "text_hint": "36 种"
+    },
+    {
+      "id": "b6",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        325,
+        100,
+        345
+      ],
+      "text_hint": "48 种"
+    },
+    {
+      "id": "b7",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        350,
+        100,
+        370
+      ],
+      "text_hint": "60 种"
+    },
+    {
+      "id": "b8",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        375,
+        100,
+        395
+      ],
+      "text_hint": "72 种"
+    },
+    {
+      "id": "b9",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        400,
+        100,
+        420
+      ],
+      "text_hint": "e²"
+    },
+    {
+      "id": "b10",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        425,
+        100,
+        445
+      ],
+      "text_hint": "e"
+    },
+    {
+      "id": "b11",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        450,
+        100,
+        470
+      ],
+      "text_hint": "1/e"
+    },
+    {
+      "id": "b12",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        475,
+        100,
+        495
+      ],
+      "text_hint": "-1/e²"
+    },
+    {
+      "id": "b13",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        500,
+        100,
+        520
+      ],
+      "text_hint": "83"
+    },
+    {
+      "id": "b14",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        525,
+        100,
+        545
+      ],
+      "text_hint": "119"
+    },
+    {
+      "id": "b15",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        550,
+        100,
+        570
+      ],
+      "text_hint": "164"
+    },
+    {
+      "id": "b16",
+      "kind": "answer_option",
+      "bbox": [
+        50,
+        575,
+        100,
+        595
+      ],
+      "text_hint": "219"
+    }
+  ],
+  "page_note": "Page 1 of 4"
+}

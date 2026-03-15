@@ -1,0 +1,153 @@
+{
+  "source": "/root/autodl-tmp/123456.png",
+  "stage1": {
+    "source": "/root/autodl-tmp/123456.png",
+    "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773576229-123456-788a29fa",
+    "page_index": 0,
+    "page_width": 800,
+    "page_height": 1067,
+    "image_path": "/root/autodl-tmp/mathclaw/.researchclaw/ocr_runs/1773576229-123456-788a29fa/pages/page-001.png",
+    "boxes": [
+      {
+        "id": "section_i",
+        "type": "section_header",
+        "bbox": [
+          300,
+          350,
+          700,
+          375
+        ],
+        "summary": "第I卷（选择题 共58分）"
+      },
+      {
+        "id": "q_title",
+        "type": "question_section",
+        "bbox": [
+          150,
+          380,
+          800,
+          410
+        ],
+        "summary": "选择题标题"
+      },
+      {
+        "id": "q1",
+        "type": "question",
+        "bbox": [
+          50,
+          420,
+          800,
+          500
+        ],
+        "summary": "第1题"
+      },
+      {
+        "id": "q2",
+        "type": "question",
+        "bbox": [
+          50,
+          510,
+          800,
+          590
+        ],
+        "summary": "第2题"
+      },
+      {
+        "id": "q3",
+        "type": "question",
+        "bbox": [
+          50,
+          600,
+          800,
+          680
+        ],
+        "summary": "第3题"
+      },
+      {
+        "id": "q4",
+        "type": "question",
+        "bbox": [
+          50,
+          690,
+          800,
+          770
+        ],
+        "summary": "第4题"
+      }
+    ],
+    "raw_payload": {
+      "boxes": [
+        {
+          "bbox": [
+            300,
+            350,
+            700,
+            375
+          ],
+          "id": "section_i",
+          "summary": "第I卷（选择题 共58分）",
+          "type": "section_header"
+        },
+        {
+          "bbox": [
+            150,
+            380,
+            800,
+            410
+          ],
+          "id": "q_title",
+          "summary": "选择题标题",
+          "type": "question_section"
+        },
+        {
+          "bbox": [
+            50,
+            420,
+            900,
+            500
+          ],
+          "id": "q1",
+          "summary": "第1题",
+          "type": "question"
+        },
+        {
+          "bbox": [
+            50,
+            510,
+            900,
+            590
+          ],
+          "id": "q2",
+          "summary": "第2题",
+          "type": "question"
+        },
+        {
+          "bbox": [
+            50,
+            600,
+            900,
+            680
+          ],
+          "id": "q3",
+          "summary": "第3题",
+          "type": "question"
+        },
+        {
+          "bbox": [
+            50,
+            690,
+            900,
+            770
+          ],
+          "id": "q4",
+          "summary": "第4题",
+          "type": "question"
+        }
+      ]
+    }
+  },
+  "stage2": {
+    "value": 0.0
+  },
+  "questions": []
+}

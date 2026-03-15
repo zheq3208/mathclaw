@@ -1,0 +1,26 @@
+{
+  "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773505389308`\n\n第 I 卷(选择题 共 58 分)\n\n选择题:本题共 8 小题,每小题 6 分,共 48 分.在每小题给出的四个选项中,只有一项是符合题意的.",
+  "question_type": "equation",
+  "chapter": "equations_and_inequalities",
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "integer_operations",
+    "symbolic_manipulation"
+  ],
+  "likely_error_causes": [],
+  "primary_weakness": "linear_equation procedural execution",
+  "student_attempt_summary": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately; provide the first useful hint.",
+  "latest_student_reply": "",
+  "learning_goal": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately; provide the first useful hint.",
+  "hint_level": 1,
+  "requested_full_solution": false,
+  "attempts_without_progress": 0,
+  "reference_answer": "",
+  "verification_available": true,
+  "requires_visual_reasoning": true,
+  "method_tags": [],
+  "conversation_excerpt": "批改我的试卷"
+}

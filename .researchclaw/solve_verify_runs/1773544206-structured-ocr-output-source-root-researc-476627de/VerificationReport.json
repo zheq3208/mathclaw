@@ -1,0 +1,119 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544101545`\n\n第 I 卷(选择题 共 58 分)",
+  "planner": {
+    "value": 0.0,
+    "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544101545`\n\n第 I 卷(选择题 共 58 分)",
+    "givens": [],
+    "target": "第 I 卷(选择题 共 58 分)",
+    "question_type": "equation",
+    "candidate_methods": [
+      "direct symbolic solving",
+      "sanity-check route"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "Source: `/root/.researchclaw/media/unknown_file_1773544101545`"
+      ],
+      "answer_format": "numeric or symbolic"
+    },
+    "risks": [],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "Solver A",
+        "final_answer": "58",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "58"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "58",
+          "normalized_formula": "58",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "Solver B",
+        "final_answer": "58",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "58"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "58",
+          "normalized_formula": "58",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "Solver A",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      },
+      {
+        "solver_role": "Solver B",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [],
+    "recommended_winner": "Solver A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "58",
+    "final_expression": "58",
+    "concise_solution_markdown": "The problem explicitly states '第 I 卷(选择题 共 58 分)', meaning Volume I (Multiple Choice) is worth 58 points. The value 58 is directly extracted from the text with no computation required.",
+    "verification_summary": [
+      "Both solvers correctly identify '58' as the numeric value in '共 58 分'.",
+      "No equation or unknown variable is present; the task is textual extraction.",
+      "Tool checks report 'uncertain' due to lack of expected solution for comparison, not due to error."
+    ],
+    "unresolved_risks": [
+      "No ground-truth answer provided for automated verification.",
+      "OCR accuracy assumed but not independently verified."
+    ],
+    "recommended_follow_up": "Confirm the original exam document or provide a reference answer to resolve verification uncertainty."
+  }
+}

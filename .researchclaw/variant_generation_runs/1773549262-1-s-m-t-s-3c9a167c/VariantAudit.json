@@ -1,0 +1,20 @@
+{
+  "pipeline": "VariantGen-Q3VL",
+  "memory_context": {
+    "student_id": "__global__",
+    "variant_source": "current_problem",
+    "targeted_knowledge_point": "geometry",
+    "targeted_weaknesses": [
+      "reading_or_prompt_misread",
+      "sign_error",
+      "calculation_or_careless_error"
+    ],
+    "active_knowledge_point_count": 5
+  },
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/variant_generation_runs/1773549262-1-s-m-t-s-3c9a167c",
+  "model": "qwen3-vl-plus",
+  "status": "generated",
+  "variant_count": 3,
+  "VariantSet_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/variant_generation_runs/1773549262-1-s-m-t-s-3c9a167c/VariantSet.md",
+  "VariantBundle_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/variant_generation_runs/1773549262-1-s-m-t-s-3c9a167c/VariantBundle.json"
+}

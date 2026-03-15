@@ -1,0 +1,21 @@
+{
+  "verification_compare": {},
+  "verification_status": "review",
+  "wrong_answer": false,
+  "process_incomplete": true,
+  "missing_steps": [
+    "Student attempt does not show explicit intermediate steps."
+  ],
+  "likely_error_causes": [
+    "reading_or_prompt_misread",
+    "sign_error",
+    "calculation_or_careless_error",
+    "strategy_gap",
+    "incomplete_reasoning",
+    "diagram_or_theorem_gap"
+  ],
+  "evidence_items": [
+    "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+  ],
+  "method_tags": []
+}

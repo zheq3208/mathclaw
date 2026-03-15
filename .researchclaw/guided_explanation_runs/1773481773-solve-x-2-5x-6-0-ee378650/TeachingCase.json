@@ -1,0 +1,26 @@
+{
+  "problem_summary": "Solve x^2 - 5x + 6 = 0",
+  "question_type": "equation",
+  "chapter": "equations_and_inequalities",
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "integer_operations",
+    "symbolic_manipulation"
+  ],
+  "likely_error_causes": [],
+  "primary_weakness": "",
+  "student_attempt_summary": "Give me a hint step by step, not the full answer",
+  "latest_student_reply": "",
+  "learning_goal": "Give me a hint step by step, not the full answer",
+  "hint_level": 1,
+  "requested_full_solution": false,
+  "attempts_without_progress": 0,
+  "reference_answer": "",
+  "verification_available": false,
+  "requires_visual_reasoning": false,
+  "method_tags": [],
+  "conversation_excerpt": ""
+}

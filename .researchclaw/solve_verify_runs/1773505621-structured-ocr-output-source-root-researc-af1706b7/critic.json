@@ -1,0 +1,29 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "solver_a",
+      "verdict": "review",
+      "strengths": [],
+      "issues": [
+        "no_expected_solution_available"
+      ],
+      "first_conflicting_step": "no_expected_solution_available"
+    },
+    {
+      "solver_role": "solver_b",
+      "verdict": "review",
+      "strengths": [],
+      "issues": [
+        "no_expected_solution_available"
+      ],
+      "first_conflicting_step": "no_expected_solution_available"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "'Symbol' object is not callable"
+  ],
+  "recommended_winner": "solver_a",
+  "revision_needed": true
+}

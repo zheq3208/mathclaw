@@ -1,0 +1,12 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "同学们，今天我们来看这道关于质点运动的题目。题目给出位移函数S(t)=2t³-5t²，要求t=3秒时的瞬时速度。首先，大家回忆一下，平均速度是位移变化量除以时间变化量，但瞬时速度描述的是某一时刻的运动快慢。想想看，数学上如何精确表示‘某一时刻’的变化率？试着联系之前学过的导数概念，位移函数S(t)的瞬时速度应该对应什么运算？",
+  "student_checkpoint_question": "位移函数S(t)的瞬时速度在数学上对应什么运算？",
+  "expected_student_action": "学生应能指出瞬时速度是位移函数的导数，并尝试写出速度函数v(t)的表达式",
+  "if_student_stuck_then": "若学生未明确关联导数，可提示：'瞬时速度是位移对时间的导数，想想导数的物理意义是什么？'",
+  "revealed_step": "可以提示导数表示变化率，但不展开具体计算过程",
+  "progress_signal": "学生能正确指出瞬时速度是位移函数的导数",
+  "stop_condition": "当学生能正确写出速度函数v(t)的表达式时，进入下一步",
+  "confidence": 0.8,
+  "patched_for_answer_leak": false
+}

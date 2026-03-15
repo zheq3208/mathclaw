@@ -1,0 +1,144 @@
+{
+  "case_brief": {
+    "problem_summary": "Practice target: linear_equation. Solve 2x + 3 = 11 and show each algebraic step. Focus on: linear_equation procedural execution, step documentation.",
+    "problem_text": "Practice target: linear_equation. Solve 2x + 3 = 11 and show each algebraic step. Focus on: linear_equation procedural execution, step documentation.",
+    "source_problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773505389308`\n\n第 I 卷(选择题 共 58 分)\n\n选择题:本题共 8 小题,每小题 6 分,共 48 分.在每小题给出的四个选项中,只有一项是符合题意的.",
+    "variant_request": "Generate three follow-up variants for this question: one isomorphic, one easier, and one harder. Prioritize the diagnosed weak points.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "this question: one isomorphic, one easier, and one harder",
+    "difficulty_score": 2.85,
+    "difficulty_band": "medium",
+    "method_tags": [
+      "equation_solving"
+    ],
+    "requires_visual_reasoning": true,
+    "memory_context": {
+      "student_id": "__global__",
+      "variant_source": "global_memory",
+      "targeted_knowledge_point": "linear_equation",
+      "targeted_weaknesses": [
+        "linear_equation procedural execution",
+        "step documentation"
+      ],
+      "active_knowledge_point_count": 5
+    }
+  },
+  "variant_set_title": "Linear Equation Practice Variants",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Practice target: linear_equation. Solve 5x + 2 = 17 and show each algebraic step. Focus on: linear_equation procedural execution, step documentation.",
+      "changes": [
+        "Changed coefficients and constants to different integers while maintaining the two-step solution structure"
+      ],
+      "intent": "Reinforce procedural execution with equivalent structural complexity",
+      "difficulty_goal": "same",
+      "coach_note": "Emphasize consistent step documentation as in the original problem.",
+      "answer_outline": [
+        "Subtract 2 from both sides: 5x = 15",
+        "Divide both sides by 5: x = 3"
+      ],
+      "difficulty_report": {
+        "score": 2.85,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.85,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Practice target: linear_equation. Solve 2x + 2 = 6 and show each algebraic step. Focus on: linear_equation procedural execution, step documentation.",
+      "changes": [
+        "Simplified constants and coefficients to smaller integers for more straightforward arithmetic"
+      ],
+      "intent": "Build confidence with simpler arithmetic while maintaining solution structure",
+      "difficulty_goal": "easier",
+      "coach_note": "Focus on clear step labeling with basic operations.",
+      "answer_outline": [
+        "Subtract 2 from both sides: 2x = 4",
+        "Divide both sides by 2: x = 2"
+      ],
+      "difficulty_report": {
+        "score": 2.85,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.85,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "Solve 2(P - 3) + 5 = 17, and verify both roots by substitution.",
+      "changes": [
+        "Adjusted the equation form while preserving inverse-operation practice."
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "this question: one isomorphic, one easier, and one harder",
+      "answer_outline": [
+        "Simplify the equation.",
+        "Isolate the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 2.55,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.85,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": [
+        "difficulty_or_structure_mismatch:about_the_same"
+      ]
+    }
+  ],
+  "design_notes": [
+    "All variants maintain focus on step documentation as per original problem's weak points",
+    "Easier variant reduces arithmetic complexity to reinforce foundational steps",
+    "Harder variant introduces fractional coefficients to extend procedural application"
+  ]
+}

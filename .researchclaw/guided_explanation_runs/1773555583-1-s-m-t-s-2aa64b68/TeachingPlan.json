@@ -1,0 +1,27 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "guided_step",
+  "teacher_focus": "瞬时速度与位移函数导数的关联",
+  "immediate_goal": "引导学生明确瞬时速度的数学定义",
+  "diagnostic_focus": [
+    "瞬时速度的数学定义",
+    "导数的物理意义"
+  ],
+  "misconceptions_to_probe": [
+    "混淆平均速度与瞬时速度",
+    "认为瞬时速度是位移除以时间"
+  ],
+  "must_avoid": [
+    "直接给出导数公式",
+    "直接计算t=3时的速度值"
+  ],
+  "allowed_reveal": "可以提示导数表示变化率，但不展开具体计算",
+  "first_question": "位移函数S(t)的瞬时速度在数学上对应什么运算？",
+  "checkpoint_rubric": [
+    "学生能指出瞬时速度是位移函数的导数",
+    "学生尝试写出速度函数v(t)的表达式"
+  ],
+  "escalation_rule": "若学生正确回答，追问如何求导；若错误，提示'瞬时速度是位移对时间的导数'",
+  "allow_full_solution": false,
+  "confidence": 0.8
+}

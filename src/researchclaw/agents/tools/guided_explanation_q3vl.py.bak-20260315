@@ -1,0 +1,773 @@
+"""Guided explanation agent system for math tutoring using Qwen3-VL-Plus."""
+
+from __future__ import annotations
+
+import json
+import re
+import time
+import uuid
+from pathlib import Path
+from typing import Any
+
+from ...constant import WORKING_DIR
+from .math_learning import map_problem_to_curriculum
+from .math_utils import build_method_tags, dedupe_list, map_problem_structure, normalize_problem_text
+from .solve_verify_q3vl import (
+    _call_qwen_json,
+    _load_solver_config,
+    _resolve_supporting_images,
+)
+
+_DEFAULT_GUIDE_MODEL = "qwen3-vl-plus"
+
+_PLAN_SCHEMA = {
+    "hint_level": 1,
+    "teaching_mode": "notice|breakthrough_hint|guided_step|full_solution",
+    "teacher_focus": "str",
+    "immediate_goal": "str",
+    "diagnostic_focus": ["str"],
+    "misconceptions_to_probe": ["str"],
+    "must_avoid": ["str"],
+    "allowed_reveal": "str",
+    "first_question": "str",
+    "checkpoint_rubric": ["str"],
+    "escalation_rule": "str",
+    "allow_full_solution": True,
+    "confidence": 0.0,
+}
+
+_TURN_SCHEMA = {
+    "hint_level": 1,
+    "teacher_response_markdown": "str",
+    "student_checkpoint_question": "str",
+    "expected_student_action": "str",
+    "if_student_stuck_then": "str",
+    "revealed_step": "str",
+    "progress_signal": "str",
+    "stop_condition": "str",
+    "confidence": 0.0,
+}
+
+_PLAN_PROMPT = """
+你是数学教学系统中的“讲解策略规划器”。
+请先决定这一轮应该给到第几层提示、聚焦哪个误区、先问学生什么问题。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- 优先引导，不要直接给答案。
+- 如果有历史薄弱点或当前错因，要优先围绕这些信息设计提示。
+- 当证据不足时，先追问第一处缺失步骤。
+""".strip()
+
+_TURN_PROMPT = """
+你是数学教学系统中的“讲解撰写器”。
+请根据教学计划只写一轮给学生看的中文引导内容。
+要求：
+- 只返回一个 JSON 对象。
+- 所有自然语言字段必须使用简体中文。
+- 语气自然，像老师面对学生讲题，不要写英文标签。
+- 除非提示层级已经允许，否则不要直接透露最终答案。
+- teacher_response_markdown 必须是可以直接发给学生的中文内容。
+""".strip()
+
+
+def _resolve_source_path(source: str) -> Path:
+    path = Path(str(source or "")).expanduser()
+    if path.is_absolute():
+        return path
+    return Path(WORKING_DIR) / path
+
+
+def _guided_runs_dir() -> Path:
+    path = Path(WORKING_DIR) / "guided_explanation_runs"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _slugify(text: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", str(text or "").strip()).strip("-")
+    return slug.lower() or "guide"
+
+
+def _new_run_dir(seed_text: str) -> Path:
+    stem = _slugify(seed_text[:48])
+    run_dir = _guided_runs_dir() / f"{int(time.time())}-{stem}-{uuid.uuid4().hex[:8]}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+
+def _write_json(path: Path, payload: Any) -> str:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return str(path)
+
+
+def _coerce_list(value: Any) -> list[str]:
+    if isinstance(value, list):
+        return [str(item).strip() for item in value if str(item).strip()]
+    if isinstance(value, str) and value.strip():
+        return [value.strip()]
+    return []
+
+
+def _trim_text(text: str, limit: int = 320) -> str:
+    value = str(text or "").strip()
+    if len(value) <= limit:
+        return value
+    return value[: limit - 3].rstrip() + "..."
+
+
+def _load_json_input(value: Any) -> dict[str, Any]:
+    if isinstance(value, dict):
+        return value
+    if not value:
+        return {}
+    text = str(value).strip()
+    if not text:
+        return {}
+    path = _resolve_source_path(text)
+    if path.exists() and path.is_file():
+        try:
+            return json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    try:
+        payload = json.loads(text)
+    except Exception:
+        return {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def _normalized_answer(text: str) -> str:
+    return re.sub(r"\s+", "", normalize_problem_text(text)).lower()
+
+
+def _extract_answer_from_context(text: str) -> str:
+    value = str(text or '').strip()
+    if not value:
+        return ''
+    patterns = (
+        r'(?:final[_ ]answer|answer)\s*[:?]?\s*([^\n]+)',
+        r'(?:x|y)\s*=\s*([^,?;?\n]+)',
+    )
+    for pattern in patterns:
+        match = re.search(pattern, value, re.IGNORECASE)
+        if match:
+            return str(match.group(1) or '').strip()[:160]
+    return ''
+
+
+def _requested_full_solution(text: str) -> bool:
+    lowered = normalize_problem_text(text).lower()
+    negative_terms = (
+        "不要直接给答案",
+        "别直接给答案",
+        "先提示我",
+        "只给提示",
+        "引导我",
+        "一步一步",
+        "hint only",
+        "don't give the answer",
+        "not the full answer",
+    )
+    if any(term in lowered for term in negative_terms):
+        return False
+    full_terms = (
+        "直接给答案",
+        "完整讲解",
+        "完整解答",
+        "详细解答",
+        "完整过程",
+        "详细过程",
+        "完整步骤",
+        "全部步骤",
+        "full solution",
+        "full answer",
+        "worked solution",
+    )
+    return any(term in lowered for term in full_terms)
+
+
+def _infer_requested_hint_level(
+    *,
+    requested_hint_level: int,
+    learning_goal: str,
+    latest_student_reply: str,
+    conversation_excerpt: str,
+) -> int:
+    if requested_hint_level:
+        return max(1, min(int(requested_hint_level), 4))
+    combined = "\n".join(
+        part for part in [learning_goal, latest_student_reply, conversation_excerpt] if str(part or "").strip()
+    )
+    lowered = normalize_problem_text(combined).lower()
+    if any(
+        term in lowered
+        for term in (
+            "提示",
+            "引导",
+            "先别给答案",
+            "不要直接给答案",
+            "只给提示",
+            "hint",
+            "guide me",
+            "一步一步",
+            "step by step",
+            "苏格拉底",
+            "socratic",
+        )
+    ):
+        return 1
+    if _requested_full_solution(combined):
+        return 4
+    if any(term in lowered for term in ("中间步骤", "部分步骤", "下一步", "给一步", "one step")):
+        return 3
+    if any(term in lowered for term in ("思路", "方向", "突破口", "提示一下", "idea")):
+        return 2
+    if any(term in lowered for term in ("不会", "不懂", "卡住了", "stuck", "confused")):
+        return 2
+    return 1
+
+
+def _infer_attempts_without_progress(conversation_excerpt: str, latest_student_reply: str) -> int:
+    text = "\n".join(part for part in [conversation_excerpt, latest_student_reply] if str(part or "").strip())
+    lowered = normalize_problem_text(text).lower()
+    score = 0
+    for token in ("不会", "不懂", "没思路", "还是不会", "卡住了", "stuck", "confused", "still don't know"):
+        if token in lowered:
+            score += 1
+    return max(0, min(score, 4))
+
+
+def _looks_like_progress(text: str) -> bool:
+    lowered = normalize_problem_text(text).lower()
+    if not lowered:
+        return False
+    return any(
+        token in lowered
+        for token in ("因为", "所以", "我觉得", "可以先", "下一步", "because", "therefore", "then", "先算", "推出")
+    )
+
+
+def _build_case_brief(
+    *,
+    problem_text: str,
+    student_attempt: str,
+    learning_goal: str,
+    requested_hint_level: int,
+    latest_student_reply: str,
+    conversation_excerpt: str,
+    grade_hint: str,
+    verification_report: str,
+    weakness_report: str,
+    supporting_images: str,
+) -> dict[str, Any]:
+    normalized_problem = normalize_problem_text(problem_text or conversation_excerpt)
+    verification_payload = _load_json_input(verification_report)
+    weakness_payload = _load_json_input(weakness_report)
+    curriculum = map_problem_to_curriculum(normalized_problem, grade_hint)
+    structure = map_problem_structure(normalized_problem)
+    weakness_arbiter = (
+        weakness_payload.get("arbiter")
+        if isinstance(weakness_payload.get("arbiter"), dict)
+        else weakness_payload
+        if isinstance(weakness_payload, dict)
+        else {}
+    )
+    verification_arbiter = (
+        verification_payload.get("arbiter")
+        if isinstance(verification_payload.get("arbiter"), dict)
+        else {}
+    )
+    reference_answer = str(verification_arbiter.get("final_answer") or "").strip() or _extract_answer_from_context(conversation_excerpt)
+    hint_level = _infer_requested_hint_level(
+        requested_hint_level=requested_hint_level,
+        learning_goal=learning_goal,
+        latest_student_reply=latest_student_reply,
+        conversation_excerpt=conversation_excerpt,
+    )
+    knowledge_points = dedupe_list(
+        _coerce_list(weakness_arbiter.get("knowledge_points"))
+        + _coerce_list(curriculum.get("knowledge_points"))
+    )
+    prerequisite_gaps = dedupe_list(
+        _coerce_list(weakness_arbiter.get("prerequisite_gaps"))
+        + _coerce_list(curriculum.get("prerequisites"))
+    )
+    likely_error_causes = dedupe_list(
+        _coerce_list(weakness_arbiter.get("likely_error_causes"))
+    )
+    current_student_text = _trim_text(student_attempt or latest_student_reply or learning_goal)
+    attempts_without_progress = _infer_attempts_without_progress(conversation_excerpt, latest_student_reply or student_attempt)
+    return {
+        "problem_summary": _trim_text(normalized_problem, 260),
+        "question_type": str(curriculum.get("question_type") or structure.get("question_type") or "unknown").strip(),
+        "chapter": str(curriculum.get("chapter") or "").strip(),
+        "knowledge_points": knowledge_points,
+        "prerequisite_gaps": prerequisite_gaps,
+        "likely_error_causes": likely_error_causes,
+        "primary_weakness": str(weakness_arbiter.get("primary_weakness") or "").strip(),
+        "student_attempt_summary": current_student_text,
+        "latest_student_reply": _trim_text(latest_student_reply, 200),
+        "learning_goal": _trim_text(learning_goal, 200),
+        "hint_level": hint_level,
+        "requested_full_solution": bool(hint_level >= 4 or _requested_full_solution(learning_goal)),
+        "attempts_without_progress": attempts_without_progress,
+        "reference_answer": reference_answer,
+        "verification_available": bool(reference_answer or verification_payload),
+        "requires_visual_reasoning": bool(_resolve_supporting_images(supporting_images)) or str(curriculum.get("question_type") or "") in {"geometry", "proof"},
+        "method_tags": build_method_tags(f"{normalized_problem}\n{student_attempt}\n{latest_student_reply}"),
+        "conversation_excerpt": _trim_text(conversation_excerpt, 1200),
+    }
+
+
+def _fallback_plan(case_brief: dict[str, Any]) -> dict[str, Any]:
+    level = max(1, min(int(case_brief.get("hint_level") or 1), 4))
+    knowledge = (_coerce_list(case_brief.get("knowledge_points")) or ["核心知识点"])[0]
+    primary_weakness = str(case_brief.get("primary_weakness") or "").strip()
+    if level == 1:
+        mode = "notice"
+        teacher_focus = f"先帮助学生重新审题，并圈出与 {knowledge} 相关的已知条件。"
+        allowed_reveal = "只提醒目标与已知，不给算式答案。"
+        question = "这道题最终要求你求什么，已知条件里最关键的是哪一条？"
+    elif level == 2:
+        mode = "breakthrough_hint"
+        teacher_focus = f"指出突破口，让学生先想到 {knowledge} 的入口。"
+        allowed_reveal = f"只提示突破口，可以提到 {knowledge}，但不展开完整推导。"
+        question = f"如果只说突破口，这题最先要联想到 {knowledge} 的哪一步？"
+    elif level == 3:
+        mode = "guided_step"
+        teacher_focus = "允许给出第一步或一个中间步骤，但仍不直接交最终答案。"
+        allowed_reveal = "可以给出第一步列式、变形或构造，但不要给最终答案。"
+        question = "如果我只允许你先写第一步，你会先列什么式子或做什么变形？"
+    else:
+        mode = "full_solution"
+        teacher_focus = "学生已经允许完整讲解，可以给结构化全解并解释关键理由。"
+        allowed_reveal = "允许完整讲解，但要保留关键理由与检查点。"
+        question = "看完整讲解后，你能复述关键突破口是什么吗？"
+    diagnostic_focus = dedupe_list(
+        [primary_weakness] if primary_weakness else []
+        + _coerce_list(case_brief.get("likely_error_causes"))
+        + (["incomplete_reasoning"] if int(case_brief.get("attempts_without_progress") or 0) > 0 else [])
+    )
+    return {
+        "hint_level": level,
+        "teaching_mode": mode,
+        "teacher_focus": teacher_focus,
+        "immediate_goal": "让学生先完成当前层级下的下一步，而不是直接拿到答案。",
+        "diagnostic_focus": diagnostic_focus or ["first_missing_step"],
+        "misconceptions_to_probe": _coerce_list(case_brief.get("likely_error_causes"))[:3],
+        "must_avoid": [
+            "Do not dump the ???? before the student engages." if level < 4 else "Do not skip the reasoning checkpoints.",
+            "Do not use long monologues when one checkpoint question is enough.",
+        ],
+        "allowed_reveal": allowed_reveal,
+        "first_question": question,
+        "checkpoint_rubric": [
+            "Can the student restate the target?",
+            "Can the student identify the first useful setup?",
+            "Can the student produce the next valid step independently?",
+        ],
+        "escalation_rule": "If the student remains stuck after two attempts, raise the hint level by one.",
+        "allow_full_solution": bool(level >= 4),
+        "confidence": 0.72 if case_brief.get("problem_summary") else 0.4,
+    }
+
+
+def _build_plan_prompt(case_brief: dict[str, Any]) -> str:
+    return "\n".join(
+        [
+            "case_brief:",
+            json.dumps(case_brief, ensure_ascii=False),
+            "",
+            f"请严格返回一个 JSON 对象，字段结构必须匹配：{_PLAN_SCHEMA}",
+        ]
+    )
+
+
+def build_guided_explanation_case(
+    problem_text: str,
+    student_attempt: str = "",
+    learning_goal: str = "",
+    requested_hint_level: int = 0,
+    latest_student_reply: str = "",
+    conversation_excerpt: str = "",
+    grade_hint: str = "",
+    verification_report: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+) -> dict[str, Any]:
+    return _build_case_brief(
+        problem_text=problem_text,
+        student_attempt=student_attempt,
+        learning_goal=learning_goal,
+        requested_hint_level=requested_hint_level,
+        latest_student_reply=latest_student_reply,
+        conversation_excerpt=conversation_excerpt,
+        grade_hint=grade_hint,
+        verification_report=verification_report,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+    )
+
+
+def draft_guided_explanation_plan(
+    problem_text: str,
+    student_attempt: str = "",
+    learning_goal: str = "",
+    requested_hint_level: int = 0,
+    latest_student_reply: str = "",
+    conversation_excerpt: str = "",
+    grade_hint: str = "",
+    verification_report: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+) -> dict[str, Any]:
+    cfg = _load_solver_config()
+    case_brief = build_guided_explanation_case(
+        problem_text=problem_text,
+        student_attempt=student_attempt,
+        learning_goal=learning_goal,
+        requested_hint_level=requested_hint_level,
+        latest_student_reply=latest_student_reply,
+        conversation_excerpt=conversation_excerpt,
+        grade_hint=grade_hint,
+        verification_report=verification_report,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+    )
+    teaching_plan = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_PLAN_PROMPT,
+        user_prompt=_build_plan_prompt(case_brief),
+        enable_thinking=cfg.get("planner_enable_thinking", True),
+        supporting_images=_resolve_supporting_images(supporting_images),
+    )
+    return {
+        "case_brief": case_brief,
+        "teaching_plan": teaching_plan,
+    }
+
+
+def _merge_candidate_with_fallback(candidate: dict[str, Any], fallback: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(fallback)
+    if isinstance(candidate, dict):
+        for key, value in candidate.items():
+            if value in (None, "", [], {}):
+                continue
+            merged[key] = value
+    for key, value in fallback.items():
+        if key not in merged or merged.get(key) in (None, "", [], {}):
+            merged[key] = value
+    return merged
+
+
+def _fallback_turn(case_brief: dict[str, Any], teaching_plan: dict[str, Any]) -> dict[str, Any]:
+    level = max(1, min(int(teaching_plan.get("hint_level") or case_brief.get("hint_level") or 1), 4))
+    focus = str(teaching_plan.get("teacher_focus") or "").strip()
+    question = str(teaching_plan.get("first_question") or "").strip()
+    allowed_reveal = str(teaching_plan.get("allowed_reveal") or "").strip()
+    if level == 1:
+        response = (
+            "\u5148\u522b\u6025\u7740\u7b97\u6700\u7ec8\u7b54\u6848\u3002\n\n"
+            f"\u5148\u505a\u4e00\u4ef6\u4e8b\uff1a{focus or '\u91cd\u65b0\u5ba1\u9898\uff0c\u660e\u786e\u76ee\u6807\u548c\u5df2\u77e5\u3002'}\n\n"
+            f"\u4f60\u5148\u56de\u7b54\u6211\uff1a{question or '\u8fd9\u9053\u9898\u5230\u5e95\u8981\u6c42\u4ec0\u4e48\uff1f'}"
+        )
+        expected = "restate_goal"
+        revealed = ""
+    elif level == 2:
+        response = (
+            "\u5148\u6293\u7a81\u7834\u53e3\uff0c\u4e0d\u6025\u7740\u5f80\u540e\u63a8\u5b8c\u6574\u8fc7\u7a0b\u3002\n\n"
+            f"\u672c\u8f6e\u53ea\u63d0\u793a\u5230\u8fd9\u91cc\uff1a{allowed_reveal or focus or '\u5148\u627e\u6700\u5173\u952e\u7684\u5173\u7cfb\u6216\u516c\u5f0f\u3002'}\n\n"
+            f"\u4f60\u5148\u8bd5\u7740\u56de\u7b54\uff1a{question or '\u8fd9\u9898\u6700\u5148\u8be5\u60f3\u5230\u54ea\u4e00\u6b65\uff1f'}"
+        )
+        expected = "identify_breakthrough"
+        revealed = ""
+    elif level == 3:
+        response = (
+            "\u6211\u53ea\u7ed9\u4f60\u7b2c\u4e00\u6b65\uff0c\u4e0d\u76f4\u63a5\u628a\u6574\u9898\u8bb2\u5b8c\u3002\n\n"
+            f"\u53ef\u5148\u8fd9\u6837\u505a\uff1a{allowed_reveal or '\u5148\u628a\u9898\u76ee\u6761\u4ef6\u6574\u7406\u6210\u4e00\u4e2a\u53ef\u8ba1\u7b97\u7684\u5f0f\u5b50\u3002'}\n\n"
+            f"\u63a5\u4e0b\u6765\u4f60\u6765\u8865\uff1a{question or '\u5199\u51fa\u7b2c\u4e00\u6b65\u5217\u5f0f\u6216\u53d8\u5f62\u3002'}"
+        )
+        expected = "write_first_step"
+        revealed = allowed_reveal or "\u5148\u7ed9\u51fa\u7b2c\u4e00\u6b65\u5217\u5f0f\u6216\u53d8\u5f62\u3002"
+    else:
+        response = (
+            "\u4e0b\u9762\u7ed9\u4f60\u5b8c\u6574\u8bb2\u89e3\uff0c\u4f46\u4f60\u8981\u76ef\u4f4f\u6bcf\u4e00\u6b65\u4e3a\u4ec0\u4e48\u6210\u7acb\u3002\n\n"
+            f"\u5148\u770b\u4e3b\u7ebf\uff1a{focus or '\u6309\u6807\u51c6\u89e3\u6cd5\u4ece\u76ee\u6807\u5012\u63a8\u3002'}\n\n"
+            "\u5b8c\u6574\u6b65\u9aa4\uff1a\n"
+            f"1. {allowed_reveal or '\u5148\u5efa\u7acb\u6b63\u786e\u7684\u5f0f\u5b50\u6216\u56fe\u5f62\u5173\u7cfb\u3002'}\n"
+            "2. \u518d\u987a\u7740\u6761\u4ef6\u5b8c\u6210\u63a8\u5bfc\u3002\n"
+            "3. \u6700\u540e\u56de\u5230\u9898\u76ee\u8981\u6c42\u68c0\u67e5\u7b54\u6848\u683c\u5f0f\u3002"
+        )
+        expected = "review_full_solution"
+        revealed = allowed_reveal or "\u5b8c\u6574\u8bb2\u89e3\u5df2\u5141\u8bb8\u3002"
+    return {
+        "hint_level": level,
+        "teacher_response_markdown": response,
+        "student_checkpoint_question": question or "\u4f60\u51c6\u5907\u5148\u505a\u54ea\u4e00\u6b65\uff1f",
+        "expected_student_action": expected,
+        "if_student_stuck_then": "Raise the hint level by one and reveal one more concrete step.",
+        "revealed_step": revealed,
+        "progress_signal": "Student can restate the goal and produce the next valid step.",
+        "stop_condition": "Stop when the student can complete the next step independently.",
+        "confidence": 0.74 if focus or question else 0.5,
+    }
+
+def _build_turn_prompt(case_brief: dict[str, Any], teaching_plan: dict[str, Any]) -> str:
+    return "\n".join(
+        [
+            "case_brief:",
+            json.dumps(case_brief, ensure_ascii=False),
+            "",
+            "teaching_plan:",
+            json.dumps(teaching_plan, ensure_ascii=False),
+            "",
+            f"请严格返回一个 JSON 对象，字段结构必须匹配：{_TURN_SCHEMA}",
+        ]
+    )
+
+
+def _response_leaks_final_answer(response_text: str, reference_answer: str, hint_level: int) -> bool:
+    if int(hint_level) >= 4:
+        return False
+    normalized_response = normalize_problem_text(response_text).lower()
+    if any(token in normalized_response for token in ("\u7b54\u6848\u662f", "\u6700\u7ec8\u7b54\u6848", "\u56e0\u6b64\u7b54\u6848\u662f", "\u76f4\u63a5\u5f97\u5230\u7b54\u6848")):
+        return True
+    normalized_reference = _normalized_answer(reference_answer)
+    if normalized_reference and normalized_reference in _normalized_answer(response_text):
+        return True
+    if int(hint_level) <= 2 and re.search(r"\b[xya]\s*=", normalized_response):
+        return True
+    return False
+
+def _patch_turn_if_needed(case_brief: dict[str, Any], teaching_plan: dict[str, Any], tutor_turn: dict[str, Any]) -> dict[str, Any]:
+    patched = dict(tutor_turn)
+    response_text = str(patched.get("teacher_response_markdown") or "").strip()
+    hint_level = int(patched.get("hint_level") or teaching_plan.get("hint_level") or case_brief.get("hint_level") or 1)
+    if not _response_leaks_final_answer(response_text, str(case_brief.get("reference_answer") or ""), hint_level):
+        patched["patched_for_answer_leak"] = False
+        return patched
+    safe_question = str(teaching_plan.get("first_question") or patched.get("student_checkpoint_question") or "\u4f60\u5148\u8bf4\u8bf4\u8fd9\u9053\u9898\u8981\u4f60\u6c42\u4ec0\u4e48\u3002")
+    safe_focus = str(teaching_plan.get("allowed_reveal") or teaching_plan.get("teacher_focus") or "\u5148\u805a\u7126\u4e0b\u4e00\u6b65\uff0c\u4e0d\u76f4\u63a5\u7ed9\u7b54\u6848\u3002")
+    patched["teacher_response_markdown"] = (
+        "\u5148\u4e0d\u76f4\u63a5\u7ed9\u6700\u7ec8\u7b54\u6848\u3002\n\n"
+        f"\u672c\u8f6e\u5148\u505a\u5230\u8fd9\u91cc\uff1a{safe_focus}\n\n"
+        f"\u4f60\u5148\u56de\u7b54\u6211\uff1a{safe_question}"
+    )
+    patched["student_checkpoint_question"] = safe_question
+    patched["revealed_step"] = str(teaching_plan.get("allowed_reveal") or "").strip()
+    patched["patched_for_answer_leak"] = True
+    return patched
+
+def compose_guided_explanation_turn(
+    problem_text: str,
+    student_attempt: str = "",
+    learning_goal: str = "",
+    requested_hint_level: int = 0,
+    latest_student_reply: str = "",
+    conversation_excerpt: str = "",
+    grade_hint: str = "",
+    verification_report: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+) -> dict[str, Any]:
+    cfg = _load_solver_config()
+    drafted = draft_guided_explanation_plan(
+        problem_text=problem_text,
+        student_attempt=student_attempt,
+        learning_goal=learning_goal,
+        requested_hint_level=requested_hint_level,
+        latest_student_reply=latest_student_reply,
+        conversation_excerpt=conversation_excerpt,
+        grade_hint=grade_hint,
+        verification_report=verification_report,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+    )
+    case_brief = drafted["case_brief"]
+    teaching_plan = _merge_candidate_with_fallback(
+        drafted.get("teaching_plan", {}),
+        _fallback_plan(case_brief),
+    )
+    tutor_turn_candidate = _call_qwen_json(
+        cfg=cfg,
+        system_prompt=_TURN_PROMPT,
+        user_prompt=_build_turn_prompt(case_brief, teaching_plan),
+        enable_thinking=cfg.get("solver_enable_thinking", True),
+        supporting_images=_resolve_supporting_images(supporting_images),
+    )
+    tutor_turn = _merge_candidate_with_fallback(
+        tutor_turn_candidate,
+        _fallback_turn(case_brief, teaching_plan),
+    )
+    tutor_turn = _patch_turn_if_needed(case_brief, teaching_plan, tutor_turn)
+    return {
+        "case_brief": case_brief,
+        "teaching_plan": teaching_plan,
+        "tutor_turn": tutor_turn,
+    }
+
+
+def _choose_hint_level_reason(
+    *,
+    current_level: int,
+    attempts: int,
+    requested_full_solution: bool,
+    student_progress: str,
+    student_reply: str,
+) -> tuple[int, str]:
+    if requested_full_solution:
+        return 4, "student_requested_full_solution"
+    if _looks_like_progress(student_progress) or _looks_like_progress(student_reply):
+        return current_level, "student_is_making_progress"
+    if attempts >= 2 and current_level < 4:
+        return current_level + 1, "multiple_attempts_without_progress"
+    return current_level, "hold_current_hint_level"
+
+
+def run_guided_explanation_agent(
+    problem_text: str,
+    student_attempt: str = "",
+    learning_goal: str = "",
+    requested_hint_level: int = 0,
+    latest_student_reply: str = "",
+    conversation_excerpt: str = "",
+    grade_hint: str = "",
+    verification_report: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+) -> dict[str, Any]:
+    cfg = _load_solver_config()
+    run_dir = _new_run_dir(problem_text or learning_goal or conversation_excerpt or "guided")
+    composed = compose_guided_explanation_turn(
+        problem_text=problem_text,
+        student_attempt=student_attempt,
+        learning_goal=learning_goal,
+        requested_hint_level=requested_hint_level,
+        latest_student_reply=latest_student_reply,
+        conversation_excerpt=conversation_excerpt,
+        grade_hint=grade_hint,
+        verification_report=verification_report,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+    )
+    case_brief = composed["case_brief"]
+    teaching_plan = composed["teaching_plan"]
+    tutor_turn = composed["tutor_turn"]
+
+    teacher_reply = str(tutor_turn.get("teacher_response_markdown") or "").strip()
+    teacher_reply_path = run_dir / "TeacherReply.md"
+    teacher_reply_path.write_text(teacher_reply, encoding="utf-8")
+
+    teaching_plan_path = run_dir / "TeachingPlan.json"
+    tutor_turn_path = run_dir / "TutorTurn.json"
+    case_brief_path = run_dir / "TeachingCase.json"
+    _write_json(teaching_plan_path, teaching_plan)
+    _write_json(tutor_turn_path, tutor_turn)
+    _write_json(case_brief_path, case_brief)
+
+    audit = {
+        "pipeline": "GuidedExplain-Q3VL",
+        "run_dir": str(run_dir),
+        "model": cfg.get("model_name", _DEFAULT_GUIDE_MODEL),
+        "status": "guided",
+        "hint_level": int(tutor_turn.get("hint_level") or teaching_plan.get("hint_level") or case_brief.get("hint_level") or 1),
+        "teaching_mode": str(teaching_plan.get("teaching_mode") or "notice"),
+        "patched_for_answer_leak": bool(tutor_turn.get("patched_for_answer_leak")),
+        "TeacherReply_md_path": str(teacher_reply_path),
+        "TeachingCase_json_path": str(case_brief_path),
+        "TeachingPlan_json_path": str(teaching_plan_path),
+        "TutorTurn_json_path": str(tutor_turn_path),
+    }
+    audit_path = run_dir / "TeachingAudit.json"
+    _write_json(audit_path, audit)
+    audit["TeachingAudit_json_path"] = str(audit_path)
+    return audit
+
+
+def plan_guided_explanation(
+    problem_text: str,
+    student_attempt: str = "",
+    learning_goal: str = "",
+    hint_level: int = 1,
+    conversation_excerpt: str = "",
+    verification_report: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+) -> dict[str, Any]:
+    drafted = draft_guided_explanation_plan(
+        problem_text=problem_text,
+        student_attempt=student_attempt,
+        learning_goal=learning_goal,
+        requested_hint_level=hint_level,
+        latest_student_reply="",
+        conversation_excerpt=conversation_excerpt,
+        verification_report=verification_report,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+    )
+    case_brief = drafted["case_brief"]
+    teaching_plan = _merge_candidate_with_fallback(drafted.get("teaching_plan", {}), _fallback_plan(case_brief))
+    return {
+        "hint_level": int(teaching_plan.get("hint_level") or hint_level or 1),
+        "question_type": str(case_brief.get("question_type") or "").strip(),
+        "teacher_focus": str(teaching_plan.get("teacher_focus") or "").strip(),
+        "next_message_template": str(teaching_plan.get("first_question") or teaching_plan.get("teacher_focus") or "").strip(),
+        "student_attempt_summary": str(case_brief.get("student_attempt_summary") or "").strip(),
+        "learning_goal": str(case_brief.get("learning_goal") or "").strip(),
+        "avoid": " ".join(_coerce_list(teaching_plan.get("must_avoid"))),
+    }
+
+
+def generate_socratic_turn(
+    problem_text: str,
+    student_attempt: str = "",
+    latest_student_reply: str = "",
+    hint_level: int = 1,
+    conversation_excerpt: str = "",
+    verification_report: str = "",
+    weakness_report: str = "",
+    supporting_images: str = "",
+) -> dict[str, Any]:
+    composed = compose_guided_explanation_turn(
+        problem_text=problem_text,
+        student_attempt=student_attempt,
+        learning_goal=latest_student_reply,
+        requested_hint_level=hint_level,
+        latest_student_reply=latest_student_reply,
+        conversation_excerpt=conversation_excerpt,
+        verification_report=verification_report,
+        weakness_report=weakness_report,
+        supporting_images=supporting_images,
+    )
+    tutor_turn = composed["tutor_turn"]
+    return {
+        "hint_level": int(tutor_turn.get("hint_level") or hint_level or 1),
+        "question": str(tutor_turn.get("student_checkpoint_question") or "").strip(),
+        "expected_student_action": str(tutor_turn.get("expected_student_action") or "").strip(),
+        "student_attempt": student_attempt.strip(),
+        "latest_student_reply": latest_student_reply.strip(),
+    }
+
+
+def choose_hint_level(
+    current_level: int = 1,
+    attempts: int = 0,
+    requested_full_solution: bool = False,
+    student_progress: str = "",
+    student_reply: str = "",
+) -> dict[str, Any]:
+    current = max(1, min(int(current_level), 4))
+    next_level, reason = _choose_hint_level_reason(
+        current_level=current,
+        attempts=max(0, int(attempts)),
+        requested_full_solution=bool(requested_full_solution),
+        student_progress=student_progress,
+        student_reply=student_reply,
+    )
+    return {
+        "current_level": current,
+        "next_level": max(1, min(int(next_level), 4)),
+        "reason": reason,
+    }

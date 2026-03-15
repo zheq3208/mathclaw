@@ -1,0 +1,127 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "解方程 x^2 - 5x + 6 = 0",
+  "planner": {
+    "value": 0.0,
+    "problem_summary": "解方程 x^2 - 5x + 6 = 0",
+    "givens": [],
+    "target": "方程 x^2 - 5x + 6 = 0",
+    "question_type": "equation",
+    "candidate_methods": [
+      "direct symbolic solving",
+      "sanity-check route"
+    ],
+    "exact_check_targets": {
+      "equation": "x**2 - 5x + 6 = 0",
+      "expressions": [
+        "解方程 x^2 - 5x + 6 = 0"
+      ],
+      "answer_format": "numeric or symbolic"
+    },
+    "risks": [],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "x**2 - 5*x + 6 = 0",
+      "variable": "x",
+      "solutions": [
+        "2",
+        "3"
+      ]
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "x=2, x=3",
+        "verification": {
+          "status": "pass",
+          "equation": "x**2 - 5*x + 6 = 0",
+          "variable": "x",
+          "expected_solutions": [
+            "2",
+            "3"
+          ],
+          "proposed_solutions": [
+            "2",
+            "3"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "x=2, x=3",
+          "normalized_formula": "x=2, x=3",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "solver_b",
+        "final_answer": "x=2, x=3",
+        "verification": {
+          "status": "pass",
+          "equation": "x**2 - 5*x + 6 = 0",
+          "variable": "x",
+          "expected_solutions": [
+            "2",
+            "3"
+          ],
+          "proposed_solutions": [
+            "2",
+            "3"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "x=2, x=3",
+          "normalized_formula": "x=2, x=3",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "pass",
+        "strengths": [
+          "matches exact verification"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      },
+      {
+        "solver_role": "solver_b",
+        "verdict": "pass",
+        "strengths": [
+          "matches exact verification"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      }
+    ],
+    "consensus_answer": "x=2, x=3",
+    "consensus_expression": "x=2, x=3",
+    "conflict_summary": [],
+    "recommended_winner": "solver_a",
+    "revision_needed": false
+  },
+  "arbiter": {
+    "status": "pass",
+    "final_answer": "x=2, x=3",
+    "final_expression": "x=2, x=3",
+    "concise_solution_markdown": "方程 $x^2 - 5x + 6 = 0$ 可因式分解为 $(x-2)(x-3)=0$，故解为 $x=2$ 或 $x=3$。",
+    "verification_summary": [
+      "工具验证确认方程 $x^2 - 5x + 6 = 0$ 的解为 $x=2$ 和 $x=3$",
+      "两位候选解法均输出相同正确答案",
+      "无公式格式或逻辑错误"
+    ],
+    "unresolved_risks": [],
+    "recommended_follow_up": "无进一步操作需要"
+  }
+}

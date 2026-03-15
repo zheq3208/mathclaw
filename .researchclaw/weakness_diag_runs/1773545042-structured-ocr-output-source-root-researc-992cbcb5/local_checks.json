@@ -1,0 +1,16 @@
+{
+  "verification_compare": {},
+  "verification_status": "review",
+  "wrong_answer": false,
+  "process_incomplete": true,
+  "missing_steps": [
+    "Student attempt does not show explicit intermediate steps."
+  ],
+  "likely_error_causes": [
+    "incomplete_reasoning"
+  ],
+  "evidence_items": [
+    "Student process is incomplete for diagnostic checking."
+  ],
+  "method_tags": []
+}

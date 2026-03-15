@@ -1,0 +1,99 @@
+{
+  "pipeline": "MessToClean-Q3VL",
+  "stage": "stage3",
+  "source": "/root/autodl-tmp/123456.png",
+  "records": [
+    {
+      "question_id": "q_001",
+      "page_index": 0,
+      "read_index": 1,
+      "question_box": [
+        85,
+        479,
+        800,
+        590
+      ],
+      "bound_figure_ids": [],
+      "crop_info": {
+        "question_image_path": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09/question_crops/page-001/q_001.png",
+        "figure_image_paths": []
+      },
+      "generator": {
+        "formula_candidates": [
+          "S(t) = 2t^3 - 5t^2"
+        ],
+        "markdown": "1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+        "notes": [],
+        "question_id": "q_001",
+        "uncertain_tokens": []
+      },
+      "verifier": {
+        "confidence": 0.95,
+        "issues": [
+          "Missing multiple-choice options (B, C, D) present in crop evidence"
+        ],
+        "patch_needed": true,
+        "patched_markdown": "1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为  \nB. $ 6t^2 - 10t $  \nC. $ 10 \\, \\text{m/s} $  \nD. $ 54 \\, \\text{m/s} $",
+        "question_id": "q_001",
+        "verdict": "conflict"
+      },
+      "patcher": {
+        "applied_changes": [
+          "Added missing multiple-choice options (B, C, D) based on verifier evidence: B. $6\\,\\text{m/s}$, C. $12\\,\\text{m/s}$, D. $18\\,\\text{m/s}$"
+        ],
+        "patched_markdown": "1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. $0\\,\\text{m/s}$\n\nB. $6\\,\\text{m/s}$\n\nC. $12\\,\\text{m/s}$\n\nD. $18\\,\\text{m/s}$",
+        "question_id": "q_001",
+        "remaining_uncertainties": []
+      },
+      "final_markdown": "1. 某质点沿直线运动，位移 $ S $（单位：m）与时间 $ t $（单位：s）之间的关系为 $ S(t) = 2t^3 - 5t^2 $，则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. $0\\,\\text{m/s}$\n\nB. $6\\,\\text{m/s}$\n\nC. $12\\,\\text{m/s}$\n\nD. $18\\,\\text{m/s}$"
+    },
+    {
+      "question_id": "q_002",
+      "page_index": 0,
+      "read_index": 2,
+      "question_box": [
+        85,
+        588,
+        800,
+        728
+      ],
+      "bound_figure_ids": [],
+      "crop_info": {
+        "question_image_path": "/root/.researchclaw/ocr_runs/1773460121-123456-2ac99c09/question_crops/page-001/q_002.png",
+        "figure_image_paths": []
+      },
+      "generator": {
+        "formula_candidates": [],
+        "markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有",
+        "notes": [],
+        "question_id": "q_002",
+        "uncertain_tokens": []
+      },
+      "verifier": {
+        "confidence": 0.95,
+        "issues": [
+          "Extraneous physics question content ('=3 s 时该质点的瞬时速度为' and velocity options) inserted mid-astronaut question",
+          "Broken question label 'D.2.' instead of '2.' in repeated question",
+          "Incomplete options (only 'A B C D' without content) for the astronaut question"
+        ],
+        "patch_needed": true,
+        "patched_markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有\n\nA. [Option A] B. [Option B] C. [Option C] D. [Option D]",
+        "question_id": "q_002",
+        "verdict": "conflict"
+      },
+      "patcher": {
+        "applied_changes": [
+          "Removed extraneous physics question content ('=3 s 时该质点的瞬时速度为' and velocity options)",
+          "Corrected broken label 'D.2.' to '2.'",
+          "Removed incomplete option placeholders ('A B C D' without content)"
+        ],
+        "patched_markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有",
+        "question_id": "q_002",
+        "remaining_uncertainties": []
+      },
+      "final_markdown": "2. 已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有"
+    }
+  ],
+  "question_count_processed": 2,
+  "question_count_total": 4
+}

@@ -1,0 +1,21 @@
+{
+  "value": 0.0,
+  "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544101545`\n\n第 I 卷(选择题 共 58 分)",
+  "givens": [],
+  "target": "第 I 卷(选择题 共 58 分)",
+  "question_type": "equation",
+  "candidate_methods": [
+    "direct symbolic solving",
+    "sanity-check route"
+  ],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [
+      "Source: `/root/.researchclaw/media/unknown_file_1773544101545`"
+    ],
+    "answer_format": "numeric or symbolic"
+  },
+  "risks": [],
+  "preferred_variable": "x",
+  "requires_visual_reasoning": false
+}

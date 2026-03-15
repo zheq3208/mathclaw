@@ -1,0 +1,26 @@
+{
+  "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 21 m/s \nB. 61 m/s \nC. 33 m/s \nD. 45 m/s",
+  "question_type": "geometry",
+  "chapter": "geometry",
+  "knowledge_points": [
+    "geometry"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "angle_basics",
+    "length_and_area"
+  ],
+  "likely_error_causes": [],
+  "primary_weakness": "incomplete_reasoning",
+  "student_attempt_summary": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately; provide the first useful hint.",
+  "latest_student_reply": "",
+  "learning_goal": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately; provide the first useful hint.",
+  "hint_level": 1,
+  "requested_full_solution": false,
+  "attempts_without_progress": 0,
+  "reference_answer": "",
+  "verification_available": true,
+  "requires_visual_reasoning": true,
+  "method_tags": [],
+  "conversation_excerpt": "Run a full pipeline chain test on this exam image: pipeline OCR solve verify weakness guided variants."
+}

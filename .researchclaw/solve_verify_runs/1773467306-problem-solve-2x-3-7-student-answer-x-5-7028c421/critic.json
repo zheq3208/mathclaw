@@ -1,0 +1,29 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "Solver A",
+      "verdict": "review",
+      "strengths": [],
+      "issues": [
+        "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+        "no_expected_solution_available"
+      ],
+      "first_conflicting_step": "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+    },
+    {
+      "solver_role": "Solver B",
+      "verdict": "review",
+      "strengths": [],
+      "issues": [
+        "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+        "no_expected_solution_available"
+      ],
+      "first_conflicting_step": "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [],
+  "recommended_winner": "Solver A",
+  "revision_needed": true
+}

@@ -1,0 +1,62 @@
+{
+  "session_id": "smoke-exam-20260315-f",
+  "title": "New Research Chat",
+  "created_at": 1773576596.2046819,
+  "updated_at": 1773576780.4999146,
+  "messages": [
+    {
+      "role": "user",
+      "content": "??????",
+      "timestamp": 1773576596.205107,
+      "metadata": {
+        "attachments": [
+          {
+            "name": "123456.png",
+            "kind": "image",
+            "mime_type": "image/png",
+            "size": 0,
+            "absolute_path": "/root/autodl-tmp/123456.png",
+            "relative_path": "../123456.png",
+            "download_url": ""
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "这次已经收到截图，但还没有稳定识别出题目内容。请把目标题目单独裁剪后再发一次。",
+      "timestamp": 1773576780.4999068,
+      "metadata": {
+        "turn_trace": {
+          "message": "??????",
+          "session_id": "smoke-exam-20260315-f",
+          "attachments": [
+            {
+              "name": "123456.png",
+              "kind": "image",
+              "relative_path": "../123456.png"
+            }
+          ],
+          "route": "exam_pipeline",
+          "selected_skills": [],
+          "used_skills": [
+            "ocr_document_processor"
+          ],
+          "used_tools": [
+            "extract_math_document"
+          ],
+          "used_mcp": [],
+          "artifacts": [
+            "ocr_runs/1773576596-123456-402ee88b",
+            "ocr_runs/1773576596-123456-402ee88b/Structured.md",
+            "ocr_runs/1773576596-123456-402ee88b/FullAuditLog.json",
+            "ocr_runs/1773576596-123456-402ee88b/stage1_box_evidence.json"
+          ],
+          "status": "ok",
+          "response_preview": "这次已经收到截图，但还没有稳定识别出题目内容。请把目标题目单独裁剪后再发一次。"
+        },
+        "trace_file": "/root/autodl-tmp/mathclaw/.researchclaw/turn_traces/smoke-exam-20260315-f.jsonl"
+      }
+    }
+  ]
+}

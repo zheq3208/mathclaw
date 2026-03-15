@@ -28,6 +28,19 @@ _EVERY_PATTERN = re.compile(
 HEARTBEAT_TARGET_LAST = "last"
 
 
+def _normalize_heartbeat_query(raw_text: str) -> str:
+    """Drop blank lines and comment-only lines from HEARTBEAT.md."""
+    lines: list[str] = []
+    for line in str(raw_text or "").splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("#"):
+            continue
+        lines.append(line.rstrip())
+    return "\n".join(lines).strip()
+
+
 def parse_heartbeat_every(every: str) -> int:
     """Parse interval string (e.g. '30m', '1h') to total seconds.
 
@@ -112,6 +125,10 @@ async def run_heartbeat_once(
     # Try to get heartbeat config
     hb_config = _get_heartbeat_config_safe()
 
+    if hb_config and not bool(getattr(hb_config, "enabled", False)):
+        logger.debug("heartbeat skipped: disabled in config")
+        return
+
     if hb_config and not _in_active_hours(
         getattr(hb_config, "active_hours", None),
     ):
@@ -124,7 +141,9 @@ async def run_heartbeat_once(
         logger.debug("heartbeat skipped: no HEARTBEAT.md file found")
         return
 
-    query_text = path.read_text(encoding="utf-8").strip()
+    query_text = _normalize_heartbeat_query(
+        path.read_text(encoding="utf-8"),
+    )
     if not query_text:
         logger.debug("heartbeat skipped: empty query file")
         return

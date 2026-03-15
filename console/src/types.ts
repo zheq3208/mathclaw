@@ -1,4 +1,4 @@
-﻿export type ChatAttachmentKind = "image" | "pdf";
+export type ChatAttachmentKind = "image" | "pdf";
 
 export type ChatAttachment = {
   id: string;
@@ -187,4 +187,48 @@ export type WorkspaceFileContent = {
   size?: number;
   modified_at?: string;
   content: string;
+};
+
+
+export type MemoryEntry = {
+  name: string;
+  status?: string;
+  severity?: number;
+  risk_score?: number;
+  count?: number;
+  history_count?: number;
+  mastery_streak?: number;
+  last_result?: string;
+  last_seen_at?: string;
+  updated_at?: string;
+  mastered_at?: string;
+  knowledge_points?: string[];
+  prerequisite_gaps?: string[];
+  practice_focus?: string[];
+  recent_notes?: string[];
+  weakness_links?: string[];
+  sources?: string[];
+};
+
+export type MemoryOverview = {
+  memory_path?: string;
+  student_id?: string;
+  student_ids?: string[];
+  active_weaknesses?: MemoryEntry[];
+  active_knowledge_points?: MemoryEntry[];
+  mastered_weaknesses?: MemoryEntry[];
+  mastered_knowledge_points?: MemoryEntry[];
+  memory?: {
+    recent_events?: Array<Record<string, unknown>>;
+    practice_focus?: string[];
+  };
+  summary?: {
+    active_weakness_count?: number;
+    active_knowledge_point_count?: number;
+    mastered_weakness_count?: number;
+    mastered_knowledge_point_count?: number;
+    recent_event_count?: number;
+  };
+  updated_at?: string;
+  students?: Record<string, unknown>;
 };

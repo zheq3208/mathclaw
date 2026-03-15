@@ -1,0 +1,28 @@
+{
+  "session_id": "78a7e017-1747-4f10-a62e-ebe9763c1bf3",
+  "title": "New Research Chat",
+  "created_at": 1773231455.7775135,
+  "updated_at": 1773236841.9902513,
+  "messages": [
+    {
+      "role": "user",
+      "content": "你有什么skill和mcp",
+      "timestamp": 1773231455.7779098
+    },
+    {
+      "role": "assistant",
+      "content": "## 🛠️ 我的技能和 MCP 工具\n\n### 📚 **研究专用技能（已启用）**\n\n#### 1. **文献检索与管理**\n- **arxiv** - 高级 arXiv 论文搜索、下载和监控\n- **citation_network** - 引用网络探索，发现相关工作\n- **literature_review** - 生成结构化文献综述\n- **paper_summarizer** - 多层次论文摘要\n- **semantic_scholar_search** - Semantic Scholar 搜索（通过 MCP 工具）\n\n#### 2. **实验与数据分析**\n- **experiment_tracker** - 记录和跟踪研究实验\n- **figure_generator** - 创建出版物质量的图表\n- **data_describe/data_query/plot_chart** - 数据分析工具（通过 MCP）\n- **log_experiment/list_experiments/compare_experiments** - 实验管理工具（通过 MCP）\n\n#### 3. **文档处理**\n- **pdf** - 读取、创建、编辑、合并、拆分和分析 PDF 文档\n- **docx** - 创建、读取和编辑 Word 文档\n- **pptx** - 创建、编辑和分析 PowerPoint 演示文稿\n- **xlsx** - 创建、编辑和分析 Excel 电子表格\n- **latex_template/latex_compile_check** - LaTeX 模板和编译检查（通过 MCP）\n\n#### 4. **笔记与知识管理**\n- **research_notes** - 结构化笔记记录，支持标签和搜索\n- **create_note/search_notes/list_note_tags** - 研究笔记工具（通过 MCP）\n- **file_reader** - 读取、预览和总结基于文本的文件\n\n#### 5. **通信与监控**\n- **himalaya** - 通过 himalaya CLI 管理电子邮件\n- **news** - 获取和总结最新研究新闻\n- **cron** - 创建和管理定时任务\n- **browser_visible** - 启动可见浏览器进行交互式任务\n\n### 🔧 **MCP 工具（Model Context Protocol）**\n\n我通过 MCP 协议集成了以下研究专用工具：\n\n#### 文献搜索工具\n- `arxiv_search` - 搜索 arXiv 学术论文\n- `semantic_scholar_search` - 搜索 Semantic Scholar 论文\n- `find_related_papers` - 通过引用网络探索相关论文\n\n#### 文献处理工具\n- `read_paper` - 读取和提取 PDF 论文内容\n- `summarize_paper` - 不同详细程度的论文摘要\n- `generate_review_outline` - 生成结构化文献综述大纲\n\n#### 参考文献管理\n- `bibtex_search` - 搜索本地 BibTeX 库\n- `bibtex_add_entry` - 添加 BibTeX 条目到参考文献库\n- `bibtex_export` - 导出参考文献\n\n#### 数据分析工具\n- `data_describe` - 加载和描述数据文件\n- `data_query` - 使用 pandas 表达式查询数据\n- `plot_chart` - 创建出版物质量的图表\n\n#### 实验管理工具\n- `log_experiment` - 记录研究实验\n- `list_experiments` - 列出记录的实验\n- `compare_experiments` - 比较多个实验\n\n#### 笔记管理工具\n- `create_note` - 创建结构化研究笔记\n- `search_notes` - 搜索研究笔记\n- `list_note_tags` - 列出所有笔记标签\n\n#### 定时任务管理\n- `cron_list_jobs/cron_create_job/cron_delete_job` 等 - 完整的定时任务管理\n\n### 🎯 **核心优势**\n\n1. **研究流程全覆盖** - 从文献检索到论文发表的完整支持\n2. **学术标准工具** - 支持 LaTeX、BibTeX 等学术标准格式\n3. **数据科学集成** - 内置 Python 数据分析能力\n4. **自动化监控** - 定时检查文献更新、实验进度等\n5. **知识管理** - 结构化笔记和记忆系统\n\n### 💡 **使用建议**\n\n如果你想开始使用这些工具，可以：\n1. **搜索文献** - 告诉我你的研究领域，我帮你搜索最新论文\n2. **分析数据** - 提供数据文件，我帮你分析和可视化\n3. **记录实验** - 开始一个新的实验记录\n4. **撰写文档** - 生成论文模板或撰写报告\n\n你想从哪个工具开始尝试呢？",
+      "timestamp": 1773231495.15962
+    },
+    {
+      "role": "user",
+      "content": "https://github.com/HKUDS/nanobot看一下这个库是干什么的",
+      "timestamp": 1773236806.2863197
+    },
+    {
+      "role": "assistant",
+      "content": "让我直接查看仓库的 README 内容。从网页抓取的内容已经包含了主要信息，我来为你总结一下：\n\n## 🐈 nanobot 项目分析\n\n### 📋 项目概述\n**nanobot** 是香港大学数据科学实验室（HKUDS）开发的一个**超轻量级个人AI助手**，灵感来源于 OpenClaw。\n\n### 🎯 核心特点\n\n#### 1. **超轻量级设计**\n- **代码量极小**：核心代理代码仅约 4,000 行\n- **相比优势**：比 Clawdbot 代码量少 99%\n- **实时验证**：可通过 `bash core_agent_lines.sh` 随时验证代码行数\n\n#### 2. **研究友好**\n- **代码清晰**：易于理解、修改和扩展\n- **架构简洁**：适合研究和教学使用\n- **快速迭代**：低资源占用，启动速度快\n\n#### 3. **多平台支持**\n支持多种聊天平台：\n- **Telegram**（推荐）\n- **Discord**\n- **WhatsApp**\n- **飞书（Feishu）**\n- **钉钉（DingTalk）**\n- **Slack**\n- **QQ**\n- **企业微信（Wecom）**\n- **Email**\n- **Matrix（Element）**\n\n### 🛠️ 技术特性\n\n#### 1. **模型支持广泛**\n- **OpenRouter**（推荐，支持所有模型）\n- **Anthropic Claude**\n- **OpenAI GPT**\n- **DeepSeek**\n- **MiniMax**\n- **智谱GLM**\n- **月之暗面Kimi**\n- **火山引擎**\n- **阿里云通义千问**\n- **本地模型**（Ollama、vLLM）\n\n#### 2. **MCP 支持**\n- **Model Context Protocol** 集成\n- 可连接外部工具服务器\n- 支持 Stdio 和 HTTP 两种传输模式\n\n#### 3. **核心功能**\n- **24/7 实时市场分析**\n- **全栈软件开发**\n- **智能日常管理**\n- **个人知识助手**\n- **定时任务（Cron）**\n- **心跳机制（Heartbeat）**\n\n### 📊 项目架构\n\n```\nnanobot/\n├── agent/          # 🧠 核心代理逻辑\n├── skills/         # 🎯 内置技能\n├── channels/       # 📱 聊天渠道集成\n├── bus/            # 🚌 消息路由\n├── cron/           # ⏰ 定时任务\n├── heartbeat/      # 💓 主动唤醒\n├── providers/      # 🤖 LLM 提供商\n└── config/         # ⚙️ 配置管理\n```\n\n### 🚀 快速开始\n\n```bash\n# 从源码安装（推荐开发使用）\ngit clone https://github.com/HKUDS/nanobot.git\ncd nanobot\npip install -e .\n\n# 使用 uv 安装（稳定版）\nuv tool install nanobot-ai\n\n# 从 PyPI 安装\npip install nanobot-ai\n\n# 初始化配置\nnanobot onboard\n\n# 开始聊天\nnanobot agent\n```\n\n### 🎯 适用场景\n\n1. **学术研究**：轻量级 AI 助手框架研究\n2. **个人助手**：日常任务管理和自动化\n3. **开发测试**：快速原型开发和测试\n4. **教学演示**：AI 助手架构教学\n\n### 🔍 项目亮点\n\n1. **极简设计**：专注于核心功能，避免过度工程化\n2. **易于扩展**：清晰的模块化架构\n3. **社区活跃**：频繁更新，积极维护\n4. **文档完善**：详细的配置和使用指南\n5. **安全性**：内置访问控制和沙箱机制\n\n### 📈 项目状态\n- **Stars**: 32.4k ⭐\n- **Forks**: 5.3k\n- **最新版本**: v0.1.4.post4（2026-03-08）\n- **许可证**: MIT\n- **主要语言**: Python（97.2%）\n\n### 💡 总结\n\n**nanobot** 是一个**面向研究和开发的轻量级 AI 助手框架**，特别适合：\n- 想要了解 AI 助手内部工作原理的研究人员\n- 需要快速部署个人助手的开发者\n- 希望进行 AI 助手定制和扩展的技术爱好者\n\n它的设计哲学是 **\"小而美\"**，通过极简的代码实现核心功能，同时保持了良好的可扩展性和易用性。\n\n你对这个项目的哪个方面特别感兴趣？我可以为你提供更详细的信息。",
+      "timestamp": 1773236841.9902503
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "jobs": [
+    {
+      "dispatch": {
+        "channel": "console",
+        "meta": {},
+        "mode": "final",
+        "target": {
+          "session_id": "main",
+          "user_id": "main"
+        },
+        "type": "channel"
+      },
+      "enabled": true,
+      "id": "566793ab-1cae-4e43-b629-bd5a8dd3049c",
+      "meta": {},
+      "name": "11111",
+      "request": {
+        "channel": "console",
+        "input": [
+          {
+            "content": [
+              {
+                "text": "1111111",
+                "type": "text"
+              }
+            ],
+            "role": "user",
+            "type": "message"
+          }
+        ],
+        "session_id": "main",
+        "user_id": "main"
+      },
+      "runtime": {
+        "max_concurrency": 1,
+        "misfire_grace_seconds": 60,
+        "timeout_seconds": 120
+      },
+      "schedule": {
+        "cron": "0 21 * * *",
+        "timezone": "Asia/Shanghai",
+        "type": "cron"
+      },
+      "task_type": "agent",
+      "text": null
+    }
+  ],
+  "version": 1
+}

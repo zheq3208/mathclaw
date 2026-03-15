@@ -1,0 +1,34 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "正确识别题目信息缺失",
+        "推理步骤完整"
+      ],
+      "issues": [
+        "final_answer包含全角标点，可能混淆解析"
+      ],
+      "first_conflicting_step": "生成final_answer时使用了全角逗号"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "pass",
+      "strengths": [
+        "准确引用planner信息",
+        "输出简洁规范"
+      ],
+      "issues": [],
+      "first_conflicting_step": "无"
+    }
+  ],
+  "consensus_answer": "无法批改试卷，缺少题目内容及学生答案",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "冲突源于求解器A的输出格式问题，而非结论错误",
+    "核心结论稳定：无法批改因信息缺失"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}

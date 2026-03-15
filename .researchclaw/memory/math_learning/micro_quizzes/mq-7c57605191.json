@@ -1,0 +1,67 @@
+{
+  "quiz_id": "mq-7c57605191",
+  "student_id": "codex-smoke",
+  "problem_text": "已知 2x + 3 = 7,求 x 的值.",
+  "question_type": "equation",
+  "knowledge_point": "linear_equation",
+  "difficulty": "medium",
+  "generated_at": "2026-03-13T04:50:23.412360Z",
+  "estimated_minutes": 3,
+  "items": [
+    {
+      "item_id": "q1",
+      "prompt": "????2x + 7 = 13",
+      "skill_focus": "linear_equation",
+      "expected_format": "x = value",
+      "estimated_minutes": 1
+    },
+    {
+      "item_id": "q2",
+      "prompt": "? x = 4 ??2x + 7 ??????",
+      "skill_focus": "substitution",
+      "expected_format": "number",
+      "estimated_minutes": 1
+    },
+    {
+      "item_id": "q3",
+      "prompt": "???2(x + 3) - 2x",
+      "skill_focus": "expression_simplification",
+      "expected_format": "number or simplified expression",
+      "estimated_minutes": 1
+    }
+  ],
+  "answer_key": [
+    {
+      "item_id": "q1",
+      "answer": "3",
+      "accepted_answers": [
+        "3",
+        "x=3",
+        "x = 3"
+      ],
+      "expected_number": 3.0,
+      "check_type": "numeric",
+      "rationale": "Solve the linear equation by isolating x."
+    },
+    {
+      "item_id": "q2",
+      "answer": "15",
+      "accepted_answers": [
+        "15"
+      ],
+      "expected_number": 15.0,
+      "check_type": "numeric",
+      "rationale": "Substitute the given x value into the expression."
+    },
+    {
+      "item_id": "q3",
+      "answer": "6",
+      "accepted_answers": [
+        "6"
+      ],
+      "expected_number": 6.0,
+      "check_type": "numeric",
+      "rationale": "Distribute and combine like terms."
+    }
+  ]
+}

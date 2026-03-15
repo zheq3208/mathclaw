@@ -1,0 +1,23 @@
+{
+  "primary_weakness": "Calculus concept: derivative as instantaneous velocity",
+  "secondary_weaknesses": [
+    "Arithmetic verification in derivative evaluation"
+  ],
+  "knowledge_points": [
+    "derivatives",
+    "kinematics"
+  ],
+  "prerequisite_gaps": [
+    "calculus_foundations",
+    "function_differentiation"
+  ],
+  "recommended_practice_focus": [
+    "Relating displacement functions to velocity via derivatives",
+    "Verifying derivative calculations step-by-step"
+  ],
+  "teacher_watchouts": [
+    "Misclassification of calculus problem as geometry in curriculum",
+    "Students confusing displacement with velocity calculations"
+  ],
+  "confidence": 0.7
+}

@@ -1,0 +1,19 @@
+{
+  "primary_weakness": "symbolic_manipulation_gap",
+  "secondary_weaknesses": [],
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "integer_operations",
+    "symbolic_manipulation"
+  ],
+  "recommended_practice_focus": [
+    "linear_equation"
+  ],
+  "teacher_watchouts": [
+    "Ask the student to restate the target and show the first algebraic step."
+  ],
+  "confidence": 0.78
+}

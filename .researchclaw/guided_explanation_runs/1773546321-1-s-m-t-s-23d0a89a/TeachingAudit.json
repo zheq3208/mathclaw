@@ -1,0 +1,13 @@
+{
+  "pipeline": "GuidedExplain-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/guided_explanation_runs/1773546321-1-s-m-t-s-23d0a89a",
+  "model": "qwen3-vl-plus",
+  "status": "guided",
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "patched_for_answer_leak": true,
+  "TeacherReply_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/guided_explanation_runs/1773546321-1-s-m-t-s-23d0a89a/TeacherReply.md",
+  "TeachingCase_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/guided_explanation_runs/1773546321-1-s-m-t-s-23d0a89a/TeachingCase.json",
+  "TeachingPlan_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/guided_explanation_runs/1773546321-1-s-m-t-s-23d0a89a/TeachingPlan.json",
+  "TutorTurn_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/guided_explanation_runs/1773546321-1-s-m-t-s-23d0a89a/TutorTurn.json"
+}

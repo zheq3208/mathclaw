@@ -1,0 +1,23 @@
+{
+  "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773505389308`\n\n第 I 卷(选择题 共 58 分)\n\n选择题:本题共 8 小题,每小题 6 分,共 48 分.在每小题给出的四个选项中,只有一项是符合题意的.",
+  "student_state": "student answer and process need diagnosis",
+  "question_type": "equation",
+  "chapter": "equations_and_inequalities",
+  "knowledge_points": [
+    "linear_equation"
+  ],
+  "target": "",
+  "observed_signals": [
+    "Student process is incomplete for diagnostic checking."
+  ],
+  "diagnosis_focus": [
+    "incomplete process",
+    "prerequisite gap"
+  ],
+  "evidence_gaps": [
+    "Need more student steps."
+  ],
+  "needs_solution_bootstrap": false,
+  "difficulty_band": "medium",
+  "reference_answer": ""
+}

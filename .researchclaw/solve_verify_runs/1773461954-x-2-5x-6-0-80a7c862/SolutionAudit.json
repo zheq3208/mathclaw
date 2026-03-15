@@ -1,0 +1,13 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "run_dir": "/root/.researchclaw/solve_verify_runs/1773461954-x-2-5x-6-0-80a7c862",
+  "model": "qwen3-vl-plus",
+  "candidate_count": 2,
+  "winner": "solver_a",
+  "status": "conflict",
+  "planner_path": "/root/.researchclaw/solve_verify_runs/1773461954-x-2-5x-6-0-80a7c862/planner.json",
+  "candidates_path": "/root/.researchclaw/solve_verify_runs/1773461954-x-2-5x-6-0-80a7c862/candidates.json",
+  "critic_path": "/root/.researchclaw/solve_verify_runs/1773461954-x-2-5x-6-0-80a7c862/critic.json",
+  "Solved_md_path": "/root/.researchclaw/solve_verify_runs/1773461954-x-2-5x-6-0-80a7c862/Solved.md",
+  "VerificationReport_json_path": "/root/.researchclaw/solve_verify_runs/1773461954-x-2-5x-6-0-80a7c862/VerificationReport.json"
+}

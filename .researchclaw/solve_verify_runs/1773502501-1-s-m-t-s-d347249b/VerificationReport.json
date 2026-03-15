@@ -1,0 +1,137 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为\n\nA. 24 m/s \nB. 30 m/s \nC. 48 m/s \nD. 54 m/s",
+  "planner": {
+    "problem_summary": "Find the instantaneous velocity at t = 3 s for a particle with displacement function S(t) = 2t^3 - 5t^2",
+    "givens": [
+      "S(t) = 2t^3 - 5t^2",
+      "t = 3 s"
+    ],
+    "target": "instantaneous velocity at t = 3 s",
+    "question_type": "calculus",
+    "candidate_methods": [
+      "differentiate displacement function to obtain velocity",
+      "evaluate derivative at t = 3"
+    ],
+    "exact_check_targets": {
+      "equation": "S(t) = 2t^3 - 5t^2",
+      "expressions": [
+        "dS/dt = 6t^2 - 10t",
+        "6*(3)^2 - 10*3 = 24"
+      ],
+      "answer_format": "m/s"
+    },
+    "risks": [
+      "OCR error in displacement function (e.g., sign or exponent mismatch)",
+      "Arithmetic error in derivative evaluation (e.g., miscalculating 6*9 or 10*3)",
+      "Confusing velocity (first derivative) with acceleration (second derivative)"
+    ],
+    "preferred_variable": "t",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "S(t) = 2*t**3 - 5*t**2",
+      "variable": "t",
+      "solutions": [
+        "0",
+        "5/4 - sqrt(33)/4",
+        "5/4 + sqrt(33)/4"
+      ]
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+        "verification": {
+          "status": "conflict",
+          "equation": "S(t) = 2*t**3 - 5*t**2",
+          "variable": "t",
+          "expected_solutions": [
+            "0",
+            "5/4 - sqrt(33)/4",
+            "5/4 + sqrt(33)/4"
+          ],
+          "proposed_solutions": [
+            "0",
+            "5/4"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+          "normalized_formula": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "solver_b",
+        "final_answer": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+        "verification": {
+          "status": "conflict",
+          "equation": "S(t) = 2*t**3 - 5*t**2",
+          "variable": "t",
+          "expected_solutions": [
+            "0",
+            "5/4 - sqrt(33)/4",
+            "5/4 + sqrt(33)/4"
+          ],
+          "proposed_solutions": [
+            "0",
+            "5/4"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+          "normalized_formula": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "conflict",
+        "strengths": [],
+        "issues": [],
+        "first_conflicting_step": ""
+      },
+      {
+        "solver_role": "solver_b",
+        "verdict": "conflict",
+        "strengths": [],
+        "issues": [],
+        "first_conflicting_step": ""
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [],
+    "recommended_winner": "solver_a",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "24 m/s",
+    "final_expression": "v(t) = S'(t) = 6t^2 - 10t, v(3) = 6*(3)^2 - 10*3 = 54 - 30 = 24",
+    "concise_solution_markdown": "Instantaneous velocity is the derivative of displacement: $ v(t) = \\frac{dS}{dt} = 6t^2 - 10t $. At $ t = 3 $, $ v(3) = 6\\cdot9 - 30 = 54 - 30 = 24 \\, \\text{m/s} $.",
+    "verification_summary": [
+      "Derivative of $ S(t) = 2t^3 - 5t^2 $ is correctly $ v(t) = 6t^2 - 10t $",
+      "Evaluation at $ t = 3 $: $ 6\\cdot9 = 54 $, $ 10\\cdot3 = 30 $, $ 54 - 30 = 24 $",
+      "Matches option A: 24 m/s",
+      "Both candidate solvers incorrectly returned roots of $ S(t)=0 $ instead of computing $ v(3) $"
+    ],
+    "unresolved_risks": [
+      "Candidates misinterpreted the problem as solving $ S(t)=0 $ rather than computing instantaneous velocity",
+      "No solver provided correct calculus-based reasoning"
+    ],
+    "recommended_follow_up": "Re-run with explicit instruction to compute derivative and evaluate at t=3; verify arithmetic."
+  }
+}

@@ -112,3 +112,8 @@ def test_build_tool_schemas_prefers_json_schema() -> None:
 
     assert schemas[0]["function"]["name"] == "search_exam_sources"
     assert schemas[0]["function"]["parameters"]["required"] == ["query"]
+
+
+def test_tool_response_json_accepts_dict() -> None:
+    payload = {"Solved_md_path": "/tmp/Solved.md", "status": "pass"}
+    assert ScholarAgent._tool_response_json(payload) == payload

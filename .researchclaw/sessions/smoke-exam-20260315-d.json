@@ -1,0 +1,87 @@
+{
+  "session_id": "smoke-exam-20260315-d",
+  "title": "New Research Chat",
+  "created_at": 1773574496.4984925,
+  "updated_at": 1773575426.8081465,
+  "messages": [
+    {
+      "role": "user",
+      "content": "??????",
+      "timestamp": 1773574496.499358,
+      "metadata": {
+        "attachments": [
+          {
+            "name": "123456.png",
+            "kind": "image",
+            "mime_type": "image/png",
+            "size": 0,
+            "absolute_path": "/root/autodl-tmp/123456.png",
+            "relative_path": "../123456.png",
+            "download_url": ""
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "这次已经完成求解、验证和薄弱点诊断，但还没有整理出可直接展示的内容。\n\n这次还没有稳定生成引导式讲解。\n\n这次还没有稳定生成变式题。",
+      "timestamp": 1773575426.8081422,
+      "metadata": {
+        "turn_trace": {
+          "message": "??????",
+          "session_id": "smoke-exam-20260315-d",
+          "attachments": [
+            {
+              "name": "123456.png",
+              "kind": "image",
+              "relative_path": "../123456.png"
+            }
+          ],
+          "route": "exam_pipeline",
+          "selected_skills": [],
+          "used_skills": [
+            "ocr_document_processor",
+            "math_solver_verifier",
+            "mastery_updater",
+            "weakness_diagnoser",
+            "guiding_users",
+            "variant_generator"
+          ],
+          "used_tools": [
+            "extract_math_document",
+            "run_math_solve_verify_agent",
+            "get_global_learning_memory",
+            "run_math_weakness_diagnosis_agent",
+            "run_guided_explanation_agent",
+            "run_problem_variant_agent"
+          ],
+          "used_mcp": [],
+          "artifacts": [
+            "ocr_runs/1773574496-123456-95a252df",
+            "ocr_runs/1773574496-123456-95a252df/Structured.md",
+            "ocr_runs/1773574496-123456-95a252df/FullAuditLog.json",
+            "ocr_runs/1773574496-123456-95a252df/stage1_box_evidence.json",
+            "solve_verify_runs/1773574670-1-s-m-t-s-s-t-2t-5t-18d12bcd",
+            "solve_verify_runs/1773574670-1-s-m-t-s-s-t-2t-5t-18d12bcd/Solved.md",
+            "solve_verify_runs/1773574670-1-s-m-t-s-s-t-2t-5t-18d12bcd/VerificationReport.json",
+            "solve_verify_runs/1773574670-1-s-m-t-s-s-t-2t-5t-18d12bcd/SolutionAudit.json",
+            "memory/math_learning/global_learning_memory.json",
+            "weakness_diag_runs/1773575334-1-s-m-t-s-s-t-2t-5t-43be2ce5",
+            "weakness_diag_runs/1773575334-1-s-m-t-s-s-t-2t-5t-43be2ce5/TeacherFeedback.md",
+            "weakness_diag_runs/1773575334-1-s-m-t-s-s-t-2t-5t-43be2ce5/WeaknessReport.json",
+            "guided_explanation_runs/1773575334-1-s-m-t-s-s-t-2t-5t-a9462269",
+            "guided_explanation_runs/1773575334-1-s-m-t-s-s-t-2t-5t-a9462269/TeacherReply.md",
+            "guided_explanation_runs/1773575334-1-s-m-t-s-s-t-2t-5t-a9462269/GuidedExplanation.json",
+            "variant_generation_runs/1773575334-1-s-m-t-s-s-t-2t-5t-748c84ad",
+            "variant_generation_runs/1773575334-1-s-m-t-s-s-t-2t-5t-748c84ad/VariantSet.md",
+            "variant_generation_runs/1773575334-1-s-m-t-s-s-t-2t-5t-748c84ad/VariantBundle.json",
+            "variant_generation_runs/1773575334-1-s-m-t-s-s-t-2t-5t-748c84ad/VariantAudit.json"
+          ],
+          "status": "ok",
+          "response_preview": "这次已经完成求解、验证和薄弱点诊断，但还没有整理出可直接展示的内容。\n\n这次还没有稳定生成引导式讲解。\n\n这次还没有稳定生成变式题。"
+        },
+        "trace_file": "/root/autodl-tmp/mathclaw/.researchclaw/turn_traces/smoke-exam-20260315-d.jsonl"
+      }
+    }
+  ]
+}

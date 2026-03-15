@@ -1,0 +1,28 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89",
+  "model": "qwen3-vl-plus",
+  "status": "diagnosed",
+  "primary_weakness": "symbolic_manipulation_gap",
+  "CaseBrief_json_path": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89/case_brief.json",
+  "LocalChecks_json_path": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89/local_checks.json",
+  "Process_json_path": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89/process.json",
+  "Learning_json_path": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89/learning.json",
+  "TeacherFeedback_md_path": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89/WeaknessReport.json",
+  "bootstrap_result": {
+    "pipeline": "SolveVerify-Q3VL",
+    "run_dir": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a",
+    "model": "qwen3-vl-plus",
+    "candidate_count": 2,
+    "winner": "solver_a",
+    "status": "review",
+    "planner_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/planner.json",
+    "candidates_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/candidates.json",
+    "critic_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/critic.json",
+    "Solved_md_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/Solved.md",
+    "VerificationReport_json_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/VerificationReport.json",
+    "SolutionAudit_json_path": "/root/.researchclaw/solve_verify_runs/1773467674-problem-solve-2x-3-7-b7f4607a/SolutionAudit.json"
+  },
+  "BootstrapVerification_json_path": "/root/.researchclaw/weakness_diag_runs/1773467674-problem-solve-2x-3-7-8e27ef89/bootstrap_verification.json"
+}

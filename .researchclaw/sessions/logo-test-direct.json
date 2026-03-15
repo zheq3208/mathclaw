@@ -1,0 +1,31 @@
+{
+  "session_id": "logo-test-direct",
+  "title": "New Research Chat",
+  "created_at": 1773286942.5989666,
+  "updated_at": 1773286949.5252972,
+  "messages": [
+    {
+      "role": "user",
+      "content": "????????",
+      "timestamp": 1773286942.599399,
+      "metadata": {
+        "attachments": [
+          {
+            "name": "logo.png",
+            "kind": "image",
+            "mime_type": "image/png",
+            "size": 1921323,
+            "absolute_path": "/root/autodl-tmp/mathclaw/logo.png",
+            "relative_path": "manual/logo.png",
+            "download_url": "/api/agent/attachments/file?path=manual/logo.png"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "I understand you want me to describe an image, but I'm currently using a text-only model that doesn't have vision capabilities. To describe the image you attached, I would need to switch to a vision-capable model like GPT-4o, Qwen-VL, or Gemini.\n\nHowever, I can help you with research-related tasks! Since you've already set up the ResearchClaw workspace with heartbeat tasks configured, would you like to:\n\n1. **Start a research task** - Tell me your research area or specific question\n2. **Test the heartbeat functionality** - I can show you how the periodic checks work\n3. **Work on a document** - Help with papers, reports, or presentations\n4. **Search for literature** - Find academic papers on a topic\n\nWhat would you like to work on?",
+      "timestamp": 1773286949.525294
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "case_brief": {
+    "problem_summary": "Solve x^2 - 5x + 6 = 0",
+    "problem_text": "Solve x^2 - 5x + 6 = 0",
+    "variant_request": "Generate isomorphic, easier, and harder follow-up practice variants.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "",
+    "difficulty_score": 2.35,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false
+  },
+  "variant_set_title": "Quadratic Equation Practice",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Solve x^2 - 7x + 12 = 0",
+      "changes": [
+        "Changed constant term from 6 to 12 and linear coefficient from -5 to -7 while maintaining integer roots (3 and 4)"
+      ],
+      "intent": "Practice factoring monic quadratics with integer roots using the same method as the original problem",
+      "difficulty_goal": "same",
+      "coach_note": "This problem follows the exact same factoring pattern as the original. Find two numbers that multiply to the constant term and add to the linear coefficient.",
+      "answer_outline": [
+        "Factor as (x-3)(x-4)=0",
+        "Set each factor equal to zero",
+        "Solutions: x=3, x=4"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Solve x^2 - 3x + 2 = 0",
+      "changes": [
+        "Used smaller coefficients (linear term -3, constant 2) with simpler integer roots (1 and 2)"
+      ],
+      "intent": "Practice factoring simpler monic quadratics with minimal calculation",
+      "difficulty_goal": "easier",
+      "coach_note": "This problem uses smaller numbers to reduce cognitive load while practicing the same factoring technique.",
+      "answer_outline": [
+        "Factor as (x-1)(x-2)=0",
+        "Set each factor equal to zero",
+        "Solutions: x=1, x=2"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "Solve 2x^2 - 5x + 2 = 0",
+      "changes": [
+        "Introduced non-monic quadratic (leading coefficient 2) requiring additional factoring steps"
+      ],
+      "intent": "Practice factoring quadratics with leading coefficients greater than 1",
+      "difficulty_goal": "harder",
+      "coach_note": "When the leading coefficient isn't 1, use the 'ac method' or trial-and-error to find factors. Verify by multiplying your factors.",
+      "answer_outline": [
+        "Factor as (2x-1)(x-2)=0",
+        "Set each factor equal to zero",
+        "Solutions: x=1/2, x=2"
+      ],
+      "difficulty_report": {
+        "score": 2.45,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    }
+  ],
+  "design_notes": [
+    "Original problem was misclassified as linear in knowledge points but is actually quadratic; variants maintain quadratic focus",
+    "Isomorphic variant preserves problem structure while changing root values",
+    "Easier variant reduces coefficient magnitude while keeping monic form",
+    "Harder variant introduces non-monic quadratic to increase complexity"
+  ]
+}

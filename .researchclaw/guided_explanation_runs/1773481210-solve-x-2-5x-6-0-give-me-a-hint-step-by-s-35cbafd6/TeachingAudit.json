@@ -1,0 +1,13 @@
+{
+  "pipeline": "GuidedExplain-Q3VL",
+  "run_dir": "/root/.researchclaw/guided_explanation_runs/1773481210-solve-x-2-5x-6-0-give-me-a-hint-step-by-s-35cbafd6",
+  "model": "qwen3-vl-plus",
+  "status": "guided",
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "patched_for_answer_leak": true,
+  "TeacherReply_md_path": "/root/.researchclaw/guided_explanation_runs/1773481210-solve-x-2-5x-6-0-give-me-a-hint-step-by-s-35cbafd6/TeacherReply.md",
+  "TeachingCase_json_path": "/root/.researchclaw/guided_explanation_runs/1773481210-solve-x-2-5x-6-0-give-me-a-hint-step-by-s-35cbafd6/TeachingCase.json",
+  "TeachingPlan_json_path": "/root/.researchclaw/guided_explanation_runs/1773481210-solve-x-2-5x-6-0-give-me-a-hint-step-by-s-35cbafd6/TeachingPlan.json",
+  "TutorTurn_json_path": "/root/.researchclaw/guided_explanation_runs/1773481210-solve-x-2-5x-6-0-give-me-a-hint-step-by-s-35cbafd6/TutorTurn.json"
+}

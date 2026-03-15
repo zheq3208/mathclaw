@@ -1,0 +1,13 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "??????????\n\n????????This is an equation with an x² term. We need to find values of x that make both sides equal.\n\n??????What does 'solving' this equation mean we're trying to find?",
+  "student_checkpoint_question": "What does 'solving' this equation mean we're trying to find?",
+  "expected_student_action": "restate_goal",
+  "if_student_stuck_then": "Raise the hint level by one and reveal one more concrete step.",
+  "revealed_step": "This is an equation with an x² term. We need to find values of x that make both sides equal.",
+  "progress_signal": "Student can restate the goal and produce the next valid step.",
+  "stop_condition": "Stop when the student can complete the next step independently.",
+  "confidence": 0.74,
+  "value": 0.8,
+  "patched_for_answer_leak": true
+}

@@ -1,0 +1,1 @@
+The student’s answer x=5 is incorrect; the correct solution is x=2. The work shows minimal reasoning, suggesting possible misreading (e.g., interpreting 2x as 2+x or misreading the constant term), or skipping inverse operations. Encourage explicit step-by-step solving: subtract 3 first (2x = 4), then divide by 2 (x = 2). Always verify by plugging back in: 2(2)+3 = 7 ✓.

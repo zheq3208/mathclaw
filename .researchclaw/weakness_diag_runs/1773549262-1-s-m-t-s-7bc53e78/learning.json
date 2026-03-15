@@ -1,0 +1,22 @@
+{
+  "primary_weakness": "incomplete_reasoning",
+  "secondary_weaknesses": [
+    "prerequisite_gap"
+  ],
+  "knowledge_points": [
+    "derivatives",
+    "instantaneous_velocity"
+  ],
+  "prerequisite_gaps": [
+    "calculus_foundations"
+  ],
+  "recommended_practice_focus": [
+    "showing_intermediate_steps",
+    "derivative_computation"
+  ],
+  "teacher_watchouts": [
+    "problem_statement_inconsistency",
+    "misclassified_question_type"
+  ],
+  "confidence": 0.2
+}

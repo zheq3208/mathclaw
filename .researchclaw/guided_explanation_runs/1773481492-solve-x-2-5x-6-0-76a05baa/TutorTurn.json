@@ -1,0 +1,13 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "??????????\n\n????????That this is a quadratic equation (degree 2) solvable by factoring\n\n??????What is the highest exponent on x in this equation, and what does that tell you about the type of equation?",
+  "student_checkpoint_question": "What is the highest exponent on x in this equation, and what does that tell you about the type of equation?",
+  "expected_student_action": "restate_goal",
+  "if_student_stuck_then": "Raise the hint level by one and reveal one more concrete step.",
+  "revealed_step": "That this is a quadratic equation (degree 2) solvable by factoring",
+  "progress_signal": "Student can restate the goal and produce the next valid step.",
+  "stop_condition": "Stop when the student can complete the next step independently.",
+  "confidence": 0.74,
+  "value": 0.8,
+  "patched_for_answer_leak": true
+}

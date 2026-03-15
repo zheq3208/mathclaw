@@ -1,0 +1,26 @@
+{
+  "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+  "question_type": "geometry",
+  "chapter": "geometry",
+  "knowledge_points": [
+    "geometry"
+  ],
+  "prerequisite_gaps": [
+    "arithmetic_operations",
+    "angle_basics",
+    "length_and_area"
+  ],
+  "likely_error_causes": [],
+  "primary_weakness": "",
+  "student_attempt_summary": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately. The explanation should account for the historical weakness memory snapshot and current verification evidence.",
+  "latest_student_reply": "",
+  "learning_goal": "Use guided teaching mode for this exam question. Do not reveal the final answer immediately. The explanation should account for the historical weakness memory snapshot and current verification evid...",
+  "hint_level": 1,
+  "requested_full_solution": false,
+  "attempts_without_progress": 4,
+  "reference_answer": "",
+  "verification_available": true,
+  "requires_visual_reasoning": true,
+  "method_tags": [],
+  "conversation_excerpt": "??????\n\nHistorical memory snapshot:\nHistorical weaknesses: incomplete_reasoning; Calculus concept: derivative as instantaneous velocity; Arithmetic verification in derivative evaluation\nHigh-risk knowledge points: linear_equation; derivatives; geometry\nCurrent practice focus: showing_intermediate_steps; derivative_computation; linear_equation"
+}

@@ -1,0 +1,1390 @@
+"""MessToClean-Q3VL OCR pipeline for degraded math exam pages."""
+
+from __future__ import annotations
+
+import base64
+import io
+import json
+import logging
+import math
+import mimetypes
+import re
+import statistics
+import time
+import uuid
+from collections import Counter, defaultdict
+from pathlib import Path
+from typing import Any, Iterable
+
+import fitz
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from openai import OpenAI
+from scipy.optimize import linear_sum_assignment
+
+from ...config.config import load_config
+from ...constant import WORKING_DIR
+
+logger = logging.getLogger(__name__)
+
+_ALLOWED_CLASSES = {"question", "figure", "partial"}
+_ALLOWED_QTYPES = {"MC", "SA", "LA", "unknown"}
+_DEFAULT_OCR_MODEL = "qwen3-vl-plus"
+_FALLBACK_VL_MODELS = ["qwen-vl-plus", "qwen2.5-vl-72b-instruct"]
+
+_STAGE1_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "boxes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "cls": {"type": "string", "enum": ["question", "figure", "partial"]},
+                    "qtype": {"type": "string", "enum": ["MC", "SA", "LA", "unknown"]},
+                    "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+                    "visibility_ratio_est": {"type": "number"},
+                    "confidence": {"type": "number"},
+                },
+                "required": ["cls", "bbox", "visibility_ratio_est", "confidence"],
+                "additionalProperties": False,
+            },
+        }
+    },
+    "required": ["boxes"],
+    "additionalProperties": False,
+}
+
+_STAGE3_GENERATOR_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "question_id": {"type": "string"},
+        "markdown": {"type": "string"},
+        "uncertain_tokens": {"type": "array", "items": {"type": "string"}},
+        "formula_candidates": {"type": "array", "items": {"type": "string"}},
+        "notes": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["question_id", "markdown"],
+    "additionalProperties": False,
+}
+
+_STAGE3_VERIFIER_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "question_id": {"type": "string"},
+        "verdict": {"type": "string", "enum": ["pass", "conflict", "review"]},
+        "confidence": {"type": "number"},
+        "issues": {"type": "array", "items": {"type": "string"}},
+        "patch_needed": {"type": "boolean"},
+        "patched_markdown": {"type": "string"},
+    },
+    "required": ["question_id", "verdict", "confidence", "issues", "patch_needed", "patched_markdown"],
+    "additionalProperties": False,
+}
+
+_STAGE3_PATCHER_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "question_id": {"type": "string"},
+        "patched_markdown": {"type": "string"},
+        "applied_changes": {"type": "array", "items": {"type": "string"}},
+        "remaining_uncertainties": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["question_id", "patched_markdown", "applied_changes", "remaining_uncertainties"],
+    "additionalProperties": False,
+}
+
+
+def _resolve_source_path(source: str) -> Path:
+    path = Path(str(source or "")).expanduser()
+    if path.is_absolute():
+        return path
+    return Path(WORKING_DIR) / path
+
+
+def _slugify(text: str) -> str:
+    slug = re.sub(r"[^a-zA-Z0-9]+", "-", str(text or "").strip()).strip("-")
+    return slug.lower() or "ocr"
+
+
+def _ocr_runs_dir() -> Path:
+    path = Path(WORKING_DIR) / "ocr_runs"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
+
+
+def _new_run_dir(source: str) -> Path:
+    stem = _slugify(Path(str(source or "input")).stem)
+    run_dir = _ocr_runs_dir() / f"{int(time.time())}-{stem}-{uuid.uuid4().hex[:8]}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+
+def _write_json(path: Path, payload: Any) -> str:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return str(path)
+
+
+def _clamp(value: float, low: float, high: float) -> float:
+    return max(low, min(high, float(value)))
+
+
+def _load_ocr_config() -> dict[str, Any]:
+    config = load_config()
+    agents = config.get("agents", {}) if isinstance(config, dict) else {}
+    defaults = agents.get("defaults", {}) if isinstance(agents, dict) else {}
+    ocr = defaults.get("ocr") if isinstance(defaults, dict) else None
+    if not isinstance(ocr, dict):
+        ocr = config.get("ocr") if isinstance(config, dict) else {}
+    if not isinstance(ocr, dict):
+        ocr = {}
+
+    fallback_models = list(ocr.get("fallback_models") or [])
+    return {
+        "api_key": str(ocr.get("api_key") or config.get("api_key") or "").strip(),
+        "base_url": str(ocr.get("base_url") or config.get("base_url") or "https://dashscope.aliyuncs.com/compatible-mode/v1").strip(),
+        "model_name": str(ocr.get("model_name") or _DEFAULT_OCR_MODEL).strip(),
+        "fallback_models": [str(name).strip() for name in fallback_models + _FALLBACK_VL_MODELS if str(name).strip()],
+        "temperature": float(ocr.get("temperature", 0.1) or 0.1),
+        "timeout_seconds": float(ocr.get("timeout_seconds", 120) or 120),
+        "dpi": int(ocr.get("dpi", 170) or 170),
+        "min_consensus_support": int(ocr.get("min_consensus_support", 2) or 2),
+        "high_confidence_keep": float(ocr.get("high_confidence_keep", 0.92) or 0.92),
+        "iou_threshold": float(ocr.get("iou_threshold", 0.55) or 0.55),
+        "max_refine_candidates": int(ocr.get("max_refine_candidates", 18) or 18),
+        "max_stage3_questions": int(ocr.get("max_stage3_questions", 12) or 12),
+        "generator_enable_thinking": bool(ocr.get("generator_enable_thinking", False)),
+        "verifier_enable_thinking": bool(ocr.get("verifier_enable_thinking", True)),
+        "patcher_enable_thinking": bool(ocr.get("patcher_enable_thinking", False)),
+    }
+
+
+def _client_from_config(cfg: dict[str, Any]) -> OpenAI:
+    api_key = str(cfg.get("api_key") or "").strip()
+    if not api_key:
+        raise RuntimeError("OCR agent requires an API key in config.json.")
+    client_kwargs: dict[str, Any] = {"api_key": api_key, "timeout": cfg.get("timeout_seconds", 120)}
+    base_url = str(cfg.get("base_url") or "").strip()
+    if base_url:
+        client_kwargs["base_url"] = base_url
+    return OpenAI(**client_kwargs)
+
+
+def _model_candidates(cfg: dict[str, Any]) -> list[str]:
+    candidates: list[str] = []
+    for item in [cfg.get("model_name"), *list(cfg.get("fallback_models") or [])]:
+        model_name = str(item or "").strip()
+        if model_name and model_name not in candidates:
+            candidates.append(model_name)
+    return candidates or [_DEFAULT_OCR_MODEL]
+
+
+def _parse_json_text(raw_text: str) -> Any:
+    text = str(raw_text or "").strip()
+    if not text:
+        return {}
+    if text.startswith("```"):
+        text = re.sub(r"^```(?:json)?\s*", "", text)
+        text = re.sub(r"\s*```$", "", text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        match = re.search(r"(\{.*\}|\[.*\])", text, re.DOTALL)
+        if not match:
+            raise
+        return json.loads(match.group(1))
+
+
+def _message_to_text(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts: list[str] = []
+        for item in content:
+            if isinstance(item, dict):
+                text = item.get("text")
+                if text:
+                    parts.append(str(text))
+            else:
+                text = getattr(item, "text", None)
+                if text:
+                    parts.append(str(text))
+        return "\n".join(parts)
+    return str(content or "")
+
+
+def _image_to_data_url(image_path: Path) -> str:
+    suffix = image_path.suffix.lower()
+    mime_type = mimetypes.guess_type(image_path.name)[0] or "image/png"
+    with Image.open(image_path) as image:
+        image = ImageOps.exif_transpose(image)
+        image.load()
+        output = io.BytesIO()
+        if suffix in {".jpg", ".jpeg"}:
+            image.convert("RGB").save(output, format="JPEG", quality=90)
+            mime_type = "image/jpeg"
+        elif suffix == ".png":
+            image.save(output, format="PNG")
+            mime_type = "image/png"
+        else:
+            image.convert("RGB").save(output, format="JPEG", quality=90)
+            mime_type = "image/jpeg"
+    return f"data:{mime_type};base64,{base64.b64encode(output.getvalue()).decode('ascii')}"
+
+
+def _call_vl_json(*, cfg: dict[str, Any], image_paths: Iterable[Path], system_prompt: str, user_prompt: str, schema_name: str, schema: dict[str, Any], enable_thinking: bool) -> dict[str, Any]:
+    client = _client_from_config(cfg)
+    content: list[dict[str, Any]] = [{"type": "text", "text": user_prompt}]
+    for image_path in image_paths:
+        content.append({"type": "image_url", "image_url": {"url": _image_to_data_url(Path(image_path))}})
+
+    last_error: Exception | None = None
+    for model_name in _model_candidates(cfg):
+        base_kwargs = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": content},
+            ],
+            "temperature": cfg.get("temperature", 0.1),
+            "extra_body": {"enable_thinking": bool(enable_thinking)},
+        }
+        attempts = [
+            {**base_kwargs, "response_format": {"type": "json_schema", "json_schema": {"name": schema_name, "schema": schema}}},
+            {**base_kwargs, "response_format": {"type": "json_object"}},
+            base_kwargs,
+        ]
+        for attempt in attempts:
+            try:
+                response = client.chat.completions.create(**attempt)
+                message = response.choices[0].message if response.choices else None
+                raw_text = _message_to_text(getattr(message, "content", None)) or "{}"
+                data = _parse_json_text(raw_text)
+                if isinstance(data, dict):
+                    return data
+                return {"boxes": data} if isinstance(data, list) else {"value": data}
+            except Exception as exc:
+                last_error = exc
+                logger.debug("OCR VL call failed for model=%s schema=%s", model_name, schema_name, exc_info=True)
+                continue
+    raise RuntimeError(f"OCR VL call failed: {last_error}") from last_error
+
+
+def _normalize_box(candidate: dict[str, Any], *, page_width: int, page_height: int) -> dict[str, Any] | None:
+    bbox = candidate.get("bbox") or []
+    if not isinstance(bbox, list) or len(bbox) != 4:
+        return None
+    try:
+        x1, y1, x2, y2 = [float(v) for v in bbox]
+    except Exception:
+        return None
+    x1, x2 = sorted((_clamp(x1, 0, page_width), _clamp(x2, 0, page_width)))
+    y1, y2 = sorted((_clamp(y1, 0, page_height), _clamp(y2, 0, page_height)))
+    if x2 - x1 < 10 or y2 - y1 < 10:
+        return None
+    cls = str(candidate.get("cls") or "partial").strip().lower()
+    if cls not in _ALLOWED_CLASSES:
+        cls = "partial"
+    qtype = str(candidate.get("qtype") or "unknown").strip().upper()
+    if qtype not in _ALLOWED_QTYPES:
+        qtype = "unknown"
+    if cls != "question":
+        qtype = "unknown"
+    return {
+        "cls": cls,
+        "qtype": qtype,
+        "bbox": [int(round(x1)), int(round(y1)), int(round(x2)), int(round(y2))],
+        "visibility_ratio_est": round(_clamp(candidate.get("visibility_ratio_est", 0.85), 0.0, 1.0), 4),
+        "confidence": round(_clamp(candidate.get("confidence", 0.5), 0.0, 1.0), 4),
+    }
+
+
+def _bbox_area(bbox: list[int] | list[float]) -> float:
+    return max(0.0, float(bbox[2] - bbox[0])) * max(0.0, float(bbox[3] - bbox[1]))
+
+
+def _bbox_intersection(a: list[int] | list[float], b: list[int] | list[float]) -> float:
+    x1 = max(float(a[0]), float(b[0]))
+    y1 = max(float(a[1]), float(b[1]))
+    x2 = min(float(a[2]), float(b[2]))
+    y2 = min(float(a[3]), float(b[3]))
+    return max(0.0, x2 - x1) * max(0.0, y2 - y1)
+
+
+def _bbox_iou(a: list[int] | list[float], b: list[int] | list[float]) -> float:
+    inter = _bbox_intersection(a, b)
+    denom = _bbox_area(a) + _bbox_area(b) - inter
+    return inter / denom if denom > 0 else 0.0
+
+
+def _inside_ratio(inner: list[int] | list[float], outer: list[int] | list[float]) -> float:
+    denom = _bbox_area(inner)
+    if denom <= 0:
+        return 0.0
+    return _bbox_intersection(inner, outer) / denom
+
+
+def _crop_bbox(bbox: list[int], width: int, height: int, *, padding_ratio: float = 0.05, min_padding: int = 16) -> list[int]:
+    w = bbox[2] - bbox[0]
+    h = bbox[3] - bbox[1]
+    pad_x = max(min_padding, int(round(w * padding_ratio)))
+    pad_y = max(min_padding, int(round(h * padding_ratio)))
+    return [
+        max(0, bbox[0] - pad_x),
+        max(0, bbox[1] - pad_y),
+        min(width, bbox[2] + pad_x),
+        min(height, bbox[3] + pad_y),
+    ]
+
+
+def _page_payload_from_image(image_path: Path, *, page_index: int) -> dict[str, Any]:
+    with Image.open(image_path) as image:
+        image = ImageOps.exif_transpose(image)
+        width, height = image.size
+    return {
+        "page_index": page_index,
+        "image_path": str(image_path),
+        "width": width,
+        "height": height,
+    }
+
+
+def render_pdf_pages_for_ocr(source: str, max_pages: int | None = None, dpi: int | None = None, output_dir: str | None = None) -> dict[str, Any]:
+    cfg = _load_ocr_config()
+    source_path = _resolve_source_path(source)
+    if not source_path.exists():
+        return {"error": f"File not found: {source_path}"}
+    if source_path.suffix.lower() != ".pdf":
+        return {"error": f"Not a PDF: {source_path}"}
+
+    out_dir = Path(output_dir) if output_dir else (_new_run_dir(source) / "pages")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    scale = max(72, int(dpi or cfg.get("dpi", 170))) / 72.0
+    rendered_pages: list[dict[str, Any]] = []
+
+    with fitz.open(source_path) as document:
+        page_total = len(document)
+        limit = min(page_total, max_pages) if max_pages else page_total
+        for page_index in range(limit):
+            page = document.load_page(page_index)
+            pixmap = page.get_pixmap(matrix=fitz.Matrix(scale, scale), alpha=False)
+            image_path = out_dir / f"page-{page_index + 1:03d}.png"
+            pixmap.save(image_path)
+            rendered_pages.append(_page_payload_from_image(image_path, page_index=page_index))
+
+    return {
+        "source": str(source_path),
+        "document_type": "pdf",
+        "page_count": len(rendered_pages),
+        "rendered_pages": rendered_pages,
+        "output_dir": str(out_dir),
+    }
+
+
+def _prepare_pages(source: str, *, max_pages: int, run_dir: Path, cfg: dict[str, Any]) -> list[dict[str, Any]]:
+    source_path = _resolve_source_path(source)
+    if not source_path.exists():
+        raise FileNotFoundError(f"File not found: {source_path}")
+
+    pages_dir = run_dir / "pages"
+    pages_dir.mkdir(parents=True, exist_ok=True)
+    if source_path.suffix.lower() == ".pdf":
+        rendered = render_pdf_pages_for_ocr(str(source_path), max_pages=max_pages, dpi=cfg.get("dpi"), output_dir=str(pages_dir))
+        if rendered.get("error"):
+            raise RuntimeError(str(rendered["error"]))
+        return list(rendered.get("rendered_pages") or [])
+
+    image_path = pages_dir / "page-001.png"
+    with Image.open(source_path) as image:
+        image = ImageOps.exif_transpose(image)
+        image.save(image_path, format="PNG")
+    return [_page_payload_from_image(image_path, page_index=0)]
+
+
+def _build_page_views(page: dict[str, Any], run_dir: Path) -> list[dict[str, Any]]:
+    page_path = Path(page["image_path"])
+    view_dir = run_dir / "views" / f"page-{page['page_index'] + 1:03d}"
+    view_dir.mkdir(parents=True, exist_ok=True)
+
+    with Image.open(page_path) as image:
+        image = ImageOps.exif_transpose(image).convert("RGB")
+        original_path = view_dir / "original.png"
+        image.save(original_path, format="PNG")
+
+        contrast = ImageOps.autocontrast(ImageEnhance.Contrast(image).enhance(1.35))
+        contrast_path = view_dir / "contrast_enhanced.png"
+        contrast.save(contrast_path, format="PNG")
+
+        cleaned = ImageOps.grayscale(image)
+        cleaned = ImageEnhance.Contrast(cleaned).enhance(1.6)
+        cleaned = cleaned.filter(ImageFilter.MedianFilter(size=3))
+        cleaned = ImageOps.autocontrast(cleaned).convert("RGB")
+        cleaned_path = view_dir / "cleaned_grayscale.png"
+        cleaned.save(cleaned_path, format="PNG")
+
+    return [
+        {"page_index": page["page_index"], "view_name": "original", "image_path": str(original_path)},
+        {"page_index": page["page_index"], "view_name": "contrast_enhanced", "image_path": str(contrast_path)},
+        {"page_index": page["page_index"], "view_name": "cleaned_grayscale", "image_path": str(cleaned_path)},
+    ]
+
+
+_STAGE1_SYSTEM_PROMPT = """
+You are Stage-1 evidence extractor for degraded math exam pages.
+Only localize evidence boxes. Do not OCR. Do not solve. Do not summarize.
+Return strict JSON only.
+""".strip()
+
+_STAGE1_USER_PROMPT = """
+Detect all question boxes, figure boxes, and partial or uncertain boxes on this exam page.
+Rules:
+- Return absolute pixel coordinates [x1,y1,x2,y2] for the current image.
+- A question box must cover the full semantic span of one question: number, stem, options, blanks, and short inline notes.
+- When a region is partly occluded, return the full semantic box instead of only the visible pixels.
+- Do not merge adjacent questions. If a region contains multiple question-number starts, split it.
+- If a region cannot be localized reliably, label it as partial.
+- qtype may be MC, SA, LA, or unknown.
+- Output JSON only.
+""".strip()
+
+_STAGE1_REFINE_PROMPT = """
+Refine the provisional box on this crop.
+Rules:
+- Return coordinates relative to the crop image, not the original page.
+- If the box is too small, expand to the full semantic span.
+- If the box is too large but still one question, tighten it.
+- If the crop actually contains multiple questions, split them.
+- If reliable refinement is impossible, output a partial box.
+- Output JSON only.
+""".strip()
+
+
+def _extract_stage1_candidates(page: dict[str, Any], views: list[dict[str, Any]], cfg: dict[str, Any]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    candidates: list[dict[str, Any]] = []
+    raw_calls: list[dict[str, Any]] = []
+    for view in views:
+        payload = _call_vl_json(
+            cfg=cfg,
+            image_paths=[Path(view["image_path"])],
+            system_prompt=_STAGE1_SYSTEM_PROMPT,
+            user_prompt=_STAGE1_USER_PROMPT,
+            schema_name="stage1_boxes",
+            schema=_STAGE1_SCHEMA,
+            enable_thinking=False,
+        )
+        raw_calls.append(
+            {
+                "page_index": page["page_index"],
+                "view_name": view["view_name"],
+                "image_path": view["image_path"],
+                "response": payload,
+            }
+        )
+        for box in payload.get("boxes") or []:
+            normalized = _normalize_box(box, page_width=page["width"], page_height=page["height"])
+            if not normalized:
+                continue
+            normalized.update(
+                {
+                    "page_index": page["page_index"],
+                    "source_view": view["view_name"],
+                    "source_kind": "proposal",
+                    "support_tokens": [view["view_name"]],
+                }
+            )
+            candidates.append(normalized)
+    return candidates, raw_calls
+
+
+def _cluster_candidates(candidates: list[dict[str, Any]], iou_threshold: float) -> list[list[dict[str, Any]]]:
+    clusters: list[list[dict[str, Any]]] = []
+    ordered = sorted(candidates, key=lambda item: item.get("confidence", 0.0), reverse=True)
+    for candidate in ordered:
+        placed = False
+        for cluster in clusters:
+            anchor = cluster[0]
+            if candidate.get("page_index") != anchor.get("page_index"):
+                continue
+            if candidate.get("cls") != anchor.get("cls"):
+                continue
+            if max(_bbox_iou(candidate["bbox"], other["bbox"]) for other in cluster) >= iou_threshold:
+                cluster.append(candidate)
+                placed = True
+                break
+        if not placed:
+            clusters.append([candidate])
+    return clusters
+
+
+def _refine_stage1_candidates(page: dict[str, Any], seeds: list[dict[str, Any]], cfg: dict[str, Any], run_dir: Path) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    candidates: list[dict[str, Any]] = []
+    raw_calls: list[dict[str, Any]] = []
+    refine_dir = run_dir / "refine" / f"page-{page['page_index'] + 1:03d}"
+    refine_dir.mkdir(parents=True, exist_ok=True)
+
+    with Image.open(page["image_path"]) as image:
+        image = ImageOps.exif_transpose(image).convert("RGB")
+        for seed_index, seed in enumerate(seeds[: cfg.get("max_refine_candidates", 18)], start=1):
+            crop_box = _crop_bbox(seed["bbox"], page["width"], page["height"], padding_ratio=0.06, min_padding=18)
+            crop_path = refine_dir / f"seed-{seed_index:03d}.png"
+            image.crop(tuple(crop_box)).save(crop_path, format="PNG")
+            crop_width = crop_box[2] - crop_box[0]
+            crop_height = crop_box[3] - crop_box[1]
+            user_prompt = (
+                f"provisional_box={seed['bbox']}\n"
+                f"crop_box_on_page={crop_box}\n"
+                f"crop_size=({crop_width},{crop_height})\n"
+                f"expected_class={seed.get('cls')} qtype={seed.get('qtype', 'unknown')}"
+            )
+            try:
+                payload = _call_vl_json(
+                    cfg=cfg,
+                    image_paths=[crop_path],
+                    system_prompt=_STAGE1_SYSTEM_PROMPT,
+                    user_prompt=f"{_STAGE1_REFINE_PROMPT}\n{user_prompt}",
+                    schema_name="stage1_refine",
+                    schema=_STAGE1_SCHEMA,
+                    enable_thinking=False,
+                )
+            except Exception as exc:
+                raw_calls.append(
+                    {
+                        "page_index": page["page_index"],
+                        "crop_path": str(crop_path),
+                        "seed_bbox": seed["bbox"],
+                        "error": str(exc),
+                    }
+                )
+                continue
+
+            raw_calls.append(
+                {
+                    "page_index": page["page_index"],
+                    "crop_path": str(crop_path),
+                    "seed_bbox": seed["bbox"],
+                    "response": payload,
+                }
+            )
+            for box in payload.get("boxes") or []:
+                normalized = _normalize_box(box, page_width=crop_width, page_height=crop_height)
+                if not normalized:
+                    continue
+                shifted = {
+                    **normalized,
+                    "bbox": [
+                        normalized["bbox"][0] + crop_box[0],
+                        normalized["bbox"][1] + crop_box[1],
+                        normalized["bbox"][2] + crop_box[0],
+                        normalized["bbox"][3] + crop_box[1],
+                    ],
+                    "page_index": page["page_index"],
+                    "source_view": seed.get("source_view", "refine"),
+                    "source_kind": "refine",
+                    "support_tokens": list(seed.get("support_tokens") or [seed.get("source_view", "refine")]),
+                }
+                shifted = _normalize_box(shifted, page_width=page["width"], page_height=page["height"])
+                if not shifted:
+                    continue
+                shifted.update(
+                    {
+                        "page_index": page["page_index"],
+                        "source_view": seed.get("source_view", "refine"),
+                        "source_kind": "refine",
+                        "support_tokens": list(seed.get("support_tokens") or [seed.get("source_view", "refine")]),
+                    }
+                )
+                candidates.append(shifted)
+    return candidates, raw_calls
+
+
+def _majority(values: Iterable[str], default: str) -> str:
+    counter = Counter(str(value or "").strip() for value in values if str(value or "").strip())
+    if not counter:
+        return default
+    return counter.most_common(1)[0][0]
+
+
+def _assign_box_ids(boxes: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    counters = defaultdict(int)
+    prefix_map = {"question": "q", "figure": "f", "partial": "p"}
+    result: list[dict[str, Any]] = []
+    for box in sorted(boxes, key=lambda item: (item["bbox"][1], item["bbox"][0], item["cls"])):
+        prefix = prefix_map.get(box["cls"], "p")
+        counters[prefix] += 1
+        result.append({**box, "id": f"{prefix}_{counters[prefix]:03d}"})
+    return result
+
+
+def _fuse_candidates(candidates: list[dict[str, Any]], *, page_width: int, page_height: int, cfg: dict[str, Any]) -> list[dict[str, Any]]:
+    fused: list[dict[str, Any]] = []
+    for cluster in _cluster_candidates(candidates, cfg.get("iou_threshold", 0.55)):
+        support_tokens = sorted({token for item in cluster for token in item.get("support_tokens") or []})
+        best_confidence = max(item.get("confidence", 0.0) for item in cluster)
+        if len(support_tokens) < cfg.get("min_consensus_support", 2) and best_confidence < cfg.get("high_confidence_keep", 0.92):
+            continue
+        bbox = [
+            int(round(statistics.median(item["bbox"][0] for item in cluster))),
+            int(round(statistics.median(item["bbox"][1] for item in cluster))),
+            int(round(statistics.median(item["bbox"][2] for item in cluster))),
+            int(round(statistics.median(item["bbox"][3] for item in cluster))),
+        ]
+        merged = _normalize_box(
+            {
+                "cls": _majority((item.get("cls") for item in cluster), "partial"),
+                "qtype": _majority((item.get("qtype") for item in cluster), "unknown"),
+                "bbox": bbox,
+                "visibility_ratio_est": statistics.median(item.get("visibility_ratio_est", 0.8) for item in cluster),
+                "confidence": max(best_confidence, statistics.median(item.get("confidence", 0.0) for item in cluster)),
+            },
+            page_width=page_width,
+            page_height=page_height,
+        )
+        if not merged:
+            continue
+        merged.update(
+            {
+                "support_count": len(support_tokens),
+                "support_views": support_tokens,
+                "source_kinds": sorted({item.get("source_kind", "proposal") for item in cluster}),
+            }
+        )
+        fused.append(merged)
+    return _assign_box_ids(fused)
+
+
+def extract_qwen_box_evidence(source: str, max_pages: int = 2, run_dir: str | None = None) -> dict[str, Any]:
+    cfg = _load_ocr_config()
+    active_run_dir = Path(run_dir) if run_dir else _new_run_dir(source)
+    pages = _prepare_pages(source, max_pages=max_pages, run_dir=active_run_dir, cfg=cfg)
+    raw_calls: list[dict[str, Any]] = []
+    page_outputs: list[dict[str, Any]] = []
+    flat_boxes: list[dict[str, Any]] = []
+
+    for page in pages:
+        views = _build_page_views(page, active_run_dir)
+        proposals, proposal_calls = _extract_stage1_candidates(page, views, cfg)
+        raw_calls.extend(proposal_calls)
+
+        seed_candidates: list[dict[str, Any]] = []
+        for cluster in _cluster_candidates(proposals, cfg.get("iou_threshold", 0.55)):
+            best = max(cluster, key=lambda item: item.get("confidence", 0.0))
+            best = {
+                **best,
+                "support_tokens": sorted({token for item in cluster for token in item.get("support_tokens") or []}),
+            }
+            seed_candidates.append(best)
+
+        refined, refine_calls = _refine_stage1_candidates(page, seed_candidates, cfg, active_run_dir)
+        raw_calls.extend(refine_calls)
+        fused = _fuse_candidates([*proposals, *refined], page_width=page["width"], page_height=page["height"], cfg=cfg)
+        for box in fused:
+            flat_boxes.append({**box, "page_index": page["page_index"]})
+
+        page_outputs.append(
+            {
+                **page,
+                "views": views,
+                "proposal_count": len(proposals),
+                "refined_count": len(refined),
+                "boxes": fused,
+            }
+        )
+
+    payload = {
+        "pipeline": "MessToClean-Q3VL",
+        "stage": "stage1",
+        "source": str(_resolve_source_path(source)),
+        "model": cfg.get("model_name", _DEFAULT_OCR_MODEL),
+        "page_count": len(page_outputs),
+        "run_dir": str(active_run_dir),
+        "pages": page_outputs,
+        "boxes": flat_boxes,
+    }
+    payload["stage1_box_evidence_path"] = _write_json(active_run_dir / "stage1_box_evidence.json", payload)
+    payload["stage1_raw_calls_path"] = _write_json(active_run_dir / "stage1_raw_calls.json", raw_calls)
+    return payload
+
+
+def _coverage_split_x(question_boxes: list[dict[str, Any]], page_width: int) -> int | None:
+    if len(question_boxes) < 3 or page_width <= 0:
+        return None
+    coverage = [0] * max(1, page_width)
+    for box in question_boxes:
+        x1, _, x2, _ = box["bbox"]
+        for index in range(max(0, x1), min(page_width, x2)):
+            coverage[index] += 1
+    start = int(page_width * 0.15)
+    end = int(page_width * 0.85)
+    if end <= start:
+        return None
+    candidate_x = min(range(start, end), key=lambda idx: coverage[idx])
+    positive = [value for value in coverage if value > 0]
+    median_coverage = statistics.median(positive) if positive else 0
+    left = any((box["bbox"][0] + box["bbox"][2]) / 2 < candidate_x for box in question_boxes)
+    right = any((box["bbox"][0] + box["bbox"][2]) / 2 > candidate_x for box in question_boxes)
+    if left and right and coverage[candidate_x] <= max(0, median_coverage * 0.35):
+        return int(candidate_x)
+    return None
+
+
+def _simple_kmeans_1d(values: list[float], k: int, iterations: int = 16) -> tuple[list[float], list[int], float]:
+    if not values:
+        return [], [], 0.0
+    if k <= 1 or len(values) == 1:
+        center = statistics.mean(values)
+        assignments = [0] * len(values)
+        sse = sum((value - center) ** 2 for value in values)
+        return [center], assignments, sse
+
+    ordered = sorted(values)
+    centers = [ordered[0], ordered[-1]] if k == 2 else [ordered[int(i * (len(ordered) - 1) / max(1, k - 1))] for i in range(k)]
+    assignments = [0] * len(values)
+    for _ in range(iterations):
+        updated = False
+        for index, value in enumerate(values):
+            best_idx = min(range(k), key=lambda center_idx: abs(value - centers[center_idx]))
+            if assignments[index] != best_idx:
+                assignments[index] = best_idx
+                updated = True
+        for center_idx in range(k):
+            members = [value for value, assignment in zip(values, assignments) if assignment == center_idx]
+            if members:
+                centers[center_idx] = statistics.mean(members)
+        if not updated:
+            break
+    sse = sum((value - centers[assignments[index]]) ** 2 for index, value in enumerate(values))
+    return centers, assignments, sse
+
+
+def _determine_layout(question_boxes: list[dict[str, Any]], page_width: int) -> dict[str, Any]:
+    if not question_boxes:
+        return {"layout_type": "empty", "column_count": 0, "split_x": None, "span_barriers": []}
+
+    span_barriers = [box["id"] for box in question_boxes if (box["bbox"][2] - box["bbox"][0]) / max(1, page_width) >= 0.82]
+    split_x = _coverage_split_x(question_boxes, page_width)
+    left_edges = [float(box["bbox"][0]) for box in question_boxes]
+    _, _, sse_one = _simple_kmeans_1d(left_edges, 1)
+    _, _, sse_two = _simple_kmeans_1d(left_edges, 2)
+    gain = 0.0 if sse_one <= 1e-6 else max(0.0, (sse_one - sse_two) / sse_one)
+
+    column_count = 1
+    if split_x is not None:
+        column_count = 2
+    elif len(question_boxes) >= 4 and gain >= 0.18:
+        column_count = 2
+        split_x = int(statistics.median((box["bbox"][0] + box["bbox"][2]) / 2 for box in question_boxes))
+
+    layout_type = "single_column"
+    if column_count == 2:
+        layout_type = "spread" if span_barriers else "double_column"
+
+    return {
+        "layout_type": layout_type,
+        "column_count": column_count,
+        "split_x": split_x,
+        "span_barriers": span_barriers,
+        "cluster_gain": round(gain, 4),
+    }
+
+
+def _read_order_for_page(question_boxes: list[dict[str, Any]], page_width: int) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    layout = _determine_layout(question_boxes, page_width)
+    barrier_ids = set(layout.get("span_barriers") or [])
+    barrier_bottoms = sorted(
+        [box["bbox"][3] for box in question_boxes if box["id"] in barrier_ids]
+    )
+    split_x = layout.get("split_x")
+
+    enriched: list[dict[str, Any]] = []
+    for question in question_boxes:
+        zone = sum(1 for bottom in barrier_bottoms if question["bbox"][1] > bottom)
+        if layout.get("column_count") == 2 and split_x is not None and question["id"] not in barrier_ids:
+            center_x = (question["bbox"][0] + question["bbox"][2]) / 2
+            column = 0 if center_x <= split_x else 1
+            sort_key = (zone, column, question["bbox"][1], question["bbox"][0])
+        else:
+            column = 0
+            sort_key = (zone, question["bbox"][1], question["bbox"][0])
+        enriched.append({**question, "zone_index": zone, "column_index": column, "_sort_key": sort_key})
+
+    ordered = sorted(enriched, key=lambda item: item["_sort_key"])
+    output: list[dict[str, Any]] = []
+    for read_index, question in enumerate(ordered, start=1):
+        clean = {key: value for key, value in question.items() if key != "_sort_key"}
+        clean["read_index"] = read_index
+        output.append(clean)
+    return output, layout
+
+
+def _figure_binding_score(question: dict[str, Any], figure: dict[str, Any]) -> float:
+    qbox = question["bbox"]
+    fbox = figure["bbox"]
+    inter = _bbox_intersection(qbox, fbox)
+    q_area = _bbox_area(qbox)
+    f_area = _bbox_area(fbox)
+    ioq = inter / q_area if q_area > 0 else 0.0
+    iof = inter / f_area if f_area > 0 else 0.0
+    inside = 1.0 if _inside_ratio(fbox, qbox) >= 0.98 else 0.0
+
+    qcx = (qbox[0] + qbox[2]) / 2
+    qcy = (qbox[1] + qbox[3]) / 2
+    fcx = (fbox[0] + fbox[2]) / 2
+    fcy = (fbox[1] + fbox[3]) / 2
+    q_diag = math.hypot(max(1, qbox[2] - qbox[0]), max(1, qbox[3] - qbox[1]))
+    center_distance = math.hypot(qcx - fcx, qcy - fcy) / max(1.0, q_diag)
+
+    gap_x = max(0.0, max(qbox[0] - fbox[2], fbox[0] - qbox[2])) / max(1.0, qbox[2] - qbox[0])
+    gap_y = max(0.0, max(qbox[1] - fbox[3], fbox[1] - qbox[3])) / max(1.0, qbox[3] - qbox[1])
+
+    score = 2.0 * inside + 1.1 * iof + 0.5 * ioq - 0.22 * gap_x - 0.28 * gap_y - 0.18 * center_distance
+    if fcy < qbox[1] and gap_y > 0.4:
+        score -= 0.15
+    return float(score)
+
+
+def _bind_figures(questions: list[dict[str, Any]], figures: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not questions or not figures:
+        return []
+
+    scores = [[_figure_binding_score(question, figure) for figure in figures] for question in questions]
+    cost = [[1.0 - score for score in row] for row in scores]
+    rows, cols = linear_sum_assignment(cost)
+    bindings: list[dict[str, Any]] = []
+    assigned_figures: set[str] = set()
+
+    for row_idx, col_idx in zip(rows.tolist(), cols.tolist()):
+        score = scores[row_idx][col_idx]
+        if score < 0.2:
+            continue
+        question = questions[row_idx]
+        figure = figures[col_idx]
+        bindings.append(
+            {
+                "question_id": question["id"],
+                "figure_id": figure["id"],
+                "score": round(score, 4),
+                "method": "hungarian",
+            }
+        )
+        assigned_figures.add(figure["id"])
+
+    for figure in figures:
+        if figure["id"] in assigned_figures:
+            continue
+        best_question = max(questions, key=lambda question: _figure_binding_score(question, figure))
+        score = _figure_binding_score(best_question, figure)
+        if score >= 0.48:
+            bindings.append(
+                {
+                    "question_id": best_question["id"],
+                    "figure_id": figure["id"],
+                    "score": round(score, 4),
+                    "method": "fallback_best",
+                }
+            )
+    return sorted(bindings, key=lambda item: (item["question_id"], -item["score"], item["figure_id"]))
+
+
+def _load_box_evidence_payload(box_evidence: str | dict[str, Any]) -> dict[str, Any]:
+    if isinstance(box_evidence, dict):
+        return box_evidence
+    path = Path(str(box_evidence)).expanduser()
+    if not path.is_absolute():
+        path = Path(WORKING_DIR) / path
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def recover_exam_layout_from_box_evidence(box_evidence: str | dict[str, Any]) -> dict[str, Any]:
+    payload = _load_box_evidence_payload(box_evidence)
+    page_outputs: list[dict[str, Any]] = []
+    ordered_questions_flat: list[dict[str, Any]] = []
+    figure_bindings_flat: list[dict[str, Any]] = []
+
+    for page in payload.get("pages") or []:
+        questions = [box for box in page.get("boxes") or [] if box.get("cls") == "question"]
+        figures = [box for box in page.get("boxes") or [] if box.get("cls") == "figure"]
+        partials = [box for box in page.get("boxes") or [] if box.get("cls") == "partial"]
+        ordered_questions, layout = _read_order_for_page(questions, page.get("width", 0))
+        bindings = _bind_figures(ordered_questions, figures)
+        binding_map: dict[str, list[str]] = defaultdict(list)
+        for binding in bindings:
+            binding_map[binding["question_id"]].append(binding["figure_id"])
+            figure_bindings_flat.append({**binding, "page_index": page["page_index"]})
+        ordered_questions = [
+            {
+                **question,
+                "page_index": page["page_index"],
+                "bound_figure_ids": binding_map.get(question["id"], []),
+            }
+            for question in ordered_questions
+        ]
+        ordered_questions_flat.extend(ordered_questions)
+        page_outputs.append(
+            {
+                "page_index": page["page_index"],
+                "image_path": page.get("image_path"),
+                "width": page.get("width"),
+                "height": page.get("height"),
+                "layout": layout,
+                "ordered_questions": ordered_questions,
+                "figures": figures,
+                "partials": partials,
+                "figure_bindings": bindings,
+            }
+        )
+
+    result = {
+        "pipeline": payload.get("pipeline", "MessToClean-Q3VL"),
+        "stage": "stage2",
+        "source": payload.get("source", ""),
+        "run_dir": payload.get("run_dir", ""),
+        "page_count": len(page_outputs),
+        "pages": page_outputs,
+        "ordered_questions": ordered_questions_flat,
+        "question_figure_bindings": figure_bindings_flat,
+    }
+    run_dir = Path(result["run_dir"]) if result.get("run_dir") else None
+    if run_dir:
+        result["stage2_layout_path"] = _write_json(run_dir / "stage2_layout.json", result)
+    return result
+
+
+_STAGE3_GENERATOR_PROMPT = """
+You are the Generator in MessToClean-Q3VL.
+Transcribe one math question crop into clean Markdown.
+- Preserve question numbering if visible.
+- Preserve formulas and answer options.
+- If a token is uncertain, keep it and mention it in uncertain_tokens.
+- Do not solve the question.
+- Return JSON only.
+""".strip()
+
+_STAGE3_VERIFIER_PROMPT = """
+You are the Verifier in MessToClean-Q3VL.
+Check whether the proposed markdown is faithful to the crop evidence.
+- Focus on missing lines, wrong math symbols, broken option labels, and lost figures.
+- If the markdown is acceptable, verdict=pass and patch_needed=false.
+- If there is a mismatch, explain it briefly and provide a minimally patched markdown.
+- Return JSON only.
+""".strip()
+
+_STAGE3_PATCHER_PROMPT = """
+You are the Patcher in MessToClean-Q3VL.
+Apply only the verifier-approved minimal edits.
+- Do not add new content beyond the verifier's issues.
+- Keep the structure stable.
+- Return JSON only.
+""".strip()
+
+
+def _question_crop_paths(page: dict[str, Any], question: dict[str, Any], figures: list[dict[str, Any]], run_dir: Path) -> dict[str, Any]:
+    crops_dir = run_dir / "question_crops" / f"page-{page['page_index'] + 1:03d}"
+    crops_dir.mkdir(parents=True, exist_ok=True)
+    with Image.open(page["image_path"]) as image:
+        image = ImageOps.exif_transpose(image).convert("RGB")
+        question_box = _crop_bbox(question["bbox"], page["width"], page["height"], padding_ratio=0.04, min_padding=16)
+        question_image_path = crops_dir / f"{question['id']}.png"
+        image.crop(tuple(question_box)).save(question_image_path, format="PNG")
+
+        figure_paths: list[str] = []
+        for figure in figures:
+            figure_box = _crop_bbox(figure["bbox"], page["width"], page["height"], padding_ratio=0.03, min_padding=10)
+            figure_path = crops_dir / f"{question['id']}-{figure['id']}.png"
+            image.crop(tuple(figure_box)).save(figure_path, format="PNG")
+            figure_paths.append(str(figure_path))
+    return {
+        "question_image_path": str(question_image_path),
+        "figure_image_paths": figure_paths,
+    }
+
+
+def _stage3_question_record(cfg: dict[str, Any], page: dict[str, Any], question: dict[str, Any], figures: list[dict[str, Any]], run_dir: Path) -> dict[str, Any]:
+    crop_info = _question_crop_paths(page, question, figures, run_dir)
+    image_paths = [Path(crop_info["question_image_path"]), *[Path(path) for path in crop_info["figure_image_paths"]]]
+
+    generator = _call_vl_json(
+        cfg=cfg,
+        image_paths=image_paths,
+        system_prompt=_STAGE3_GENERATOR_PROMPT,
+        user_prompt=f"question_id={question['id']} read_index={question.get('read_index')} bound_figures={question.get('bound_figure_ids', [])}",
+        schema_name="stage3_generator",
+        schema=_STAGE3_GENERATOR_SCHEMA,
+        enable_thinking=cfg.get("generator_enable_thinking", False),
+    )
+    generator.setdefault("question_id", question["id"])
+    generator.setdefault("markdown", f"### {question['id']}\n\n[generator returned empty markdown]")
+    generator.setdefault("uncertain_tokens", [])
+    generator.setdefault("formula_candidates", [])
+    generator.setdefault("notes", [])
+
+    verifier = _call_vl_json(
+        cfg=cfg,
+        image_paths=image_paths,
+        system_prompt=_STAGE3_VERIFIER_PROMPT,
+        user_prompt=(
+            f"question_id={question['id']}\n"
+            f"candidate_markdown:\n{generator['markdown']}"
+        ),
+        schema_name="stage3_verifier",
+        schema=_STAGE3_VERIFIER_SCHEMA,
+        enable_thinking=cfg.get("verifier_enable_thinking", True),
+    )
+    verifier.setdefault("question_id", question["id"])
+    verifier.setdefault("verdict", "review")
+    verifier.setdefault("confidence", 0.0)
+    verifier.setdefault("issues", [])
+    verifier.setdefault("patch_needed", False)
+    verifier.setdefault("patched_markdown", generator["markdown"])
+
+    patcher: dict[str, Any] | None = None
+    final_markdown = generator["markdown"]
+    if verifier.get("patch_needed") or verifier.get("verdict") != "pass":
+        patcher = _call_vl_json(
+            cfg=cfg,
+            image_paths=image_paths,
+            system_prompt=_STAGE3_PATCHER_PROMPT,
+            user_prompt=(
+                f"question_id={question['id']}\n"
+                f"generator_markdown:\n{generator['markdown']}\n\n"
+                f"verifier_issues:\n- " + "\n- ".join(verifier.get("issues") or ["no verifier issues supplied"])
+            ),
+            schema_name="stage3_patcher",
+            schema=_STAGE3_PATCHER_SCHEMA,
+            enable_thinking=cfg.get("patcher_enable_thinking", False),
+        )
+        patcher.setdefault("question_id", question["id"])
+        patcher.setdefault("patched_markdown", verifier.get("patched_markdown") or generator["markdown"])
+        patcher.setdefault("applied_changes", [])
+        patcher.setdefault("remaining_uncertainties", verifier.get("issues") or [])
+        final_markdown = patcher.get("patched_markdown") or verifier.get("patched_markdown") or generator["markdown"]
+    elif verifier.get("patched_markdown"):
+        final_markdown = verifier["patched_markdown"]
+
+    return {
+        "question_id": question["id"],
+        "page_index": page["page_index"],
+        "read_index": question.get("read_index"),
+        "question_box": question["bbox"],
+        "bound_figure_ids": question.get("bound_figure_ids", []),
+        "crop_info": crop_info,
+        "generator": generator,
+        "verifier": verifier,
+        "patcher": patcher,
+        "final_markdown": final_markdown.strip() or generator["markdown"],
+    }
+
+
+def _build_structured_markdown(records: list[dict[str, Any]], source: str) -> str:
+    sections = [
+        "# Structured OCR Output",
+        "",
+        f"Source: `{source}`",
+        "",
+    ]
+    for record in sorted(records, key=lambda item: (item.get("page_index", 0), item.get("read_index", 0))):
+        sections.append(record.get("final_markdown", "").strip())
+        sections.append("")
+    return "\n".join(sections).strip() + "\n"
+
+
+def _run_stage3(stage1: dict[str, Any], stage2: dict[str, Any], cfg: dict[str, Any], run_dir: Path, max_questions: int | None = None) -> dict[str, Any]:
+    max_questions = max_questions or cfg.get("max_stage3_questions", 12)
+    page_map = {page["page_index"]: page for page in stage1.get("pages") or []}
+    figure_map = {
+        (page["page_index"], figure["id"]): figure
+        for page in stage2.get("pages") or []
+        for figure in page.get("figures") or []
+    }
+    questions = list(stage2.get("ordered_questions") or [])
+    if max_questions:
+        questions = questions[: int(max_questions)]
+
+    records: list[dict[str, Any]] = []
+    for question in questions:
+        page = page_map.get(question["page_index"])
+        if not page:
+            continue
+        figures = [figure_map[(question["page_index"], figure_id)] for figure_id in question.get("bound_figure_ids", []) if (question["page_index"], figure_id) in figure_map]
+        try:
+            record = _stage3_question_record(cfg, page, question, figures, run_dir)
+        except Exception as exc:
+            record = {
+                "question_id": question["id"],
+                "page_index": question["page_index"],
+                "read_index": question.get("read_index"),
+                "question_box": question["bbox"],
+                "bound_figure_ids": question.get("bound_figure_ids", []),
+                "crop_info": {},
+                "generator": {},
+                "verifier": {"verdict": "review", "issues": [str(exc)]},
+                "patcher": None,
+                "final_markdown": f"## {question['id']}\n\n[OCR failed for this question: {exc}]",
+            }
+        records.append(record)
+
+    structured_markdown = _build_structured_markdown(records, stage1.get("source", ""))
+    structured_path = run_dir / "Structured.md"
+    structured_path.write_text(structured_markdown, encoding="utf-8")
+
+    audit_payload = {
+        "pipeline": stage1.get("pipeline", "MessToClean-Q3VL"),
+        "stage": "stage3",
+        "source": stage1.get("source", ""),
+        "records": records,
+        "question_count_processed": len(records),
+        "question_count_total": len(stage2.get("ordered_questions") or []),
+    }
+    audit_path = run_dir / "FullAuditLog.json"
+    _write_json(audit_path, audit_payload)
+
+    return {
+        "Structured_md_path": str(structured_path),
+        "FullAuditLog_json_path": str(audit_path),
+        "question_records": records,
+        "question_count_processed": len(records),
+        "question_count_total": len(stage2.get("ordered_questions") or []),
+    }
+
+
+def run_mess_to_clean_q3vl(source: str, max_pages: int = 2, max_questions: int | None = None) -> dict[str, Any]:
+    stage1 = extract_qwen_box_evidence(source=source, max_pages=max_pages)
+    stage2 = recover_exam_layout_from_box_evidence(stage1)
+    cfg = _load_ocr_config()
+    run_dir = Path(stage1["run_dir"])
+    stage3 = _run_stage3(stage1, stage2, cfg, run_dir, max_questions=max_questions)
+    summary = {
+        "pipeline": "MessToClean-Q3VL",
+        "source": stage1.get("source", source),
+        "run_dir": stage1.get("run_dir"),
+        "stage1_box_evidence_path": stage1.get("stage1_box_evidence_path"),
+        "stage1_raw_calls_path": stage1.get("stage1_raw_calls_path"),
+        "stage2_layout_path": stage2.get("stage2_layout_path"),
+        "Structured_md_path": stage3.get("Structured_md_path"),
+        "FullAuditLog_json_path": stage3.get("FullAuditLog_json_path"),
+        "page_count": stage1.get("page_count", 0),
+        "question_count": len(stage2.get("ordered_questions") or []),
+        "question_count_processed": stage3.get("question_count_processed", 0),
+    }
+    summary["summary_path"] = _write_json(run_dir / "summary.json", summary)
+    return summary
+
+
+def extract_math_document(source: str, max_pages: int = 3, mode: str = "full", max_questions: int | None = None) -> dict[str, Any]:
+    normalized_mode = str(mode or "full").strip().lower()
+    if normalized_mode in {"stage1", "boxes", "evidence"}:
+        return extract_qwen_box_evidence(source=source, max_pages=max_pages)
+    if normalized_mode in {"stage2", "layout"}:
+        stage1 = extract_qwen_box_evidence(source=source, max_pages=max_pages)
+        return recover_exam_layout_from_box_evidence(stage1)
+    return run_mess_to_clean_q3vl(source=source, max_pages=max_pages, max_questions=max_questions)
+
+# === SIMPLE_OCR_OVERRIDE_20260315 ===
+_SIMPLE_OCR_CHAIN_SENTENCE_20260315 = "这是基于上一次跟你讨论总结的内容{}"
+
+_SIMPLE_OCR_STAGE1_SCHEMA_20260315 = {
+    "type": "object",
+    "properties": {
+        "boxes": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {"type": "string"},
+                    "type": {"type": "string"},
+                    "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+                    "summary": {"type": "string"},
+                },
+                "required": ["bbox"],
+            },
+        },
+    },
+    "required": ["boxes"],
+}
+
+_SIMPLE_OCR_STAGE2_SCHEMA_20260315 = {
+    "type": "object",
+    "properties": {
+        "page_summary": {"type": "string"},
+        "questions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "question_no": {"type": "string"},
+                    "question_text": {"type": "string"},
+                    "options": {"type": "array", "items": {"type": "string"}},
+                    "figure_note": {"type": "string"},
+                    "bbox_ref_ids": {"type": "array", "items": {"type": "string"}},
+                },
+                "required": ["question_text"],
+            },
+        },
+    },
+    "required": ["questions"],
+}
+
+
+def _simple_chain_suffix_ocr_20260315(previous_content: Any) -> str:
+    text = previous_content
+    if isinstance(text, (dict, list)):
+        text = json.dumps(text, ensure_ascii=False)
+    text = str(text or '').strip()
+    if not text:
+        return ''
+    return '\n\n' + _SIMPLE_OCR_CHAIN_SENTENCE_20260315.format(text)
+
+
+def _simple_normalize_boxes_20260315(boxes: Any, page_width: int, page_height: int) -> list[dict[str, Any]]:
+    normalized: list[dict[str, Any]] = []
+    for idx, item in enumerate(boxes or [], start=1):
+        if not isinstance(item, dict):
+            continue
+        bbox = item.get('bbox') or []
+        if not isinstance(bbox, list) or len(bbox) != 4:
+            continue
+        try:
+            x1, y1, x2, y2 = [int(round(float(v))) for v in bbox]
+        except Exception:
+            continue
+        x1 = max(0, min(page_width, x1))
+        x2 = max(0, min(page_width, x2))
+        y1 = max(0, min(page_height, y1))
+        y2 = max(0, min(page_height, y2))
+        if x2 <= x1 or y2 <= y1:
+            continue
+        normalized.append({'id': str(item.get('id') or f'b{idx:03d}'), 'type': str(item.get('type') or item.get('cls') or '文本区域').strip() or '文本区域', 'bbox': [x1, y1, x2, y2], 'summary': str(item.get('summary') or '').strip()})
+    if not normalized:
+        normalized.append({'id': 'b001', 'type': '整页题面', 'bbox': [0, 0, page_width, page_height], 'summary': '整页题目区域'})
+    return normalized
+
+
+def _simple_normalize_questions_20260315(questions: Any, max_questions: int | None = None) -> list[dict[str, Any]]:
+    normalized: list[dict[str, Any]] = []
+    for idx, item in enumerate(questions or [], start=1):
+        if not isinstance(item, dict):
+            continue
+        question_text = str(item.get('question_text') or '').strip()
+        if not question_text:
+            continue
+        options = [str(opt).strip() for opt in (item.get('options') or []) if str(opt).strip()]
+        normalized.append({'question_no': str(item.get('question_no') or idx), 'question_text': question_text, 'options': options, 'figure_note': str(item.get('figure_note') or '').strip(), 'bbox_ref_ids': [str(v).strip() for v in (item.get('bbox_ref_ids') or []) if str(v).strip()]})
+    if max_questions:
+        normalized = normalized[: int(max_questions)]
+    return normalized
+
+
+def _simple_render_structured_markdown_20260315(questions: list[dict[str, Any]]) -> str:
+    lines: list[str] = []
+    for idx, question in enumerate(questions, start=1):
+        lines.append(f"{idx}. {question.get('question_text', '').strip()}")
+        for option in question.get('options') or []:
+            lines.append(option)
+        figure_note = str(question.get('figure_note') or '').strip()
+        if figure_note:
+            lines.append(f"图形说明：{figure_note}")
+        lines.append('')
+    return '\n'.join(lines).strip()
+
+
+def _simple_save_question_crops_20260315(page_path: str, questions: list[dict[str, Any]], boxes: list[dict[str, Any]], run_dir: Path) -> None:
+    crop_dir = run_dir / 'question_crops'
+    crop_dir.mkdir(parents=True, exist_ok=True)
+    box_map = {str(item.get('id') or '').strip(): item for item in boxes}
+    with Image.open(page_path) as image:
+        image = ImageOps.exif_transpose(image).convert('RGB')
+        for idx, question in enumerate(questions, start=1):
+            bbox = None
+            for ref_id in question.get('bbox_ref_ids') or []:
+                candidate = box_map.get(ref_id)
+                if candidate:
+                    bbox = candidate.get('bbox')
+                    break
+            crop = image.crop(tuple(bbox)) if isinstance(bbox, list) and len(bbox) == 4 else image.copy()
+            crop.save(crop_dir / f'question-{idx:03d}.png', format='PNG')
+
+
+def extract_qwen_box_evidence(source: str, max_pages: int = 1, original_prompt: str = '') -> dict[str, Any]:
+    cfg = _load_ocr_config()
+    run_dir = _new_run_dir(source)
+    pages = _prepare_pages(source, max_pages=max_pages, run_dir=run_dir, cfg=cfg)
+    if not pages:
+        return {'error': '没有可用于 OCR 的页面。', 'run_dir': str(run_dir)}
+    page = pages[0]
+    system_prompt = '你是一名试卷 OCR 助手。先只看整页，并找出与题目内容直接相关的主要文本框位置。可以充分思考，但输出保持精简，只返回 JSON。'
+    user_prompt = f"用户原始需求：{str(original_prompt or '').strip() or '未提供'}\n请在这张试卷原图上标出主要文本框，重点覆盖题号、题干、选项和图形说明。"
+    raw = _call_vl_json(cfg=cfg, image_paths=[Path(page['image_path'])], system_prompt=system_prompt, user_prompt=user_prompt, schema_name='simple_ocr_stage1', schema=_SIMPLE_OCR_STAGE1_SCHEMA_20260315, enable_thinking=True)
+    boxes = _simple_normalize_boxes_20260315(raw.get('boxes') if isinstance(raw, dict) else [], int(page.get('width') or 0), int(page.get('height') or 0))
+    payload = {'source': str(_resolve_source_path(source)), 'run_dir': str(run_dir), 'page_index': int(page.get('page_index') or 0), 'page_width': int(page.get('width') or 0), 'page_height': int(page.get('height') or 0), 'image_path': str(page.get('image_path') or ''), 'boxes': boxes, 'raw_payload': raw}
+    _write_json(run_dir / 'stage1_box_evidence.json', payload)
+    return payload
+
+
+def recover_exam_layout_from_box_evidence(source: str, box_evidence: Any = None, max_pages: int = 1, max_questions: int | None = None, original_prompt: str = '') -> dict[str, Any]:
+    stage1_payload = box_evidence if isinstance(box_evidence, dict) else {}
+    if not stage1_payload:
+        stage1_payload = extract_qwen_box_evidence(source, max_pages=max_pages, original_prompt=original_prompt)
+    run_dir = Path(str(stage1_payload.get('run_dir') or _new_run_dir(source)))
+    cfg = _load_ocr_config()
+    image_path = str(stage1_payload.get('image_path') or '').strip()
+    if not image_path:
+        pages = _prepare_pages(source, max_pages=max_pages, run_dir=run_dir, cfg=cfg)
+        if not pages:
+            return {'error': '没有可用于版面恢复的页面。', 'run_dir': str(run_dir)}
+        image_path = str(pages[0].get('image_path') or '')
+    system_prompt = '你是一名试卷题目整理助手。请根据原图和上一步给出的文本框信息，恢复题目顺序并整理出具体题目内容。可以充分思考，但输出尽量精简，只返回 JSON。'
+    user_prompt = f"用户原始需求：{str(original_prompt or '').strip() or '未提供'}\n请整理出这张试卷里的具体题目内容，按顺序输出题目、选项和必要的图形说明。"
+    user_prompt += _simple_chain_suffix_ocr_20260315(stage1_payload)
+    raw = _call_vl_json(cfg=cfg, image_paths=[Path(image_path)], system_prompt=system_prompt, user_prompt=user_prompt, schema_name='simple_ocr_stage2', schema=_SIMPLE_OCR_STAGE2_SCHEMA_20260315, enable_thinking=True)
+    questions = _simple_normalize_questions_20260315(raw.get('questions') if isinstance(raw, dict) else [], max_questions=max_questions)
+    structured_text = _simple_render_structured_markdown_20260315(questions)
+    structured_path = run_dir / 'Structured.md'
+    audit_path = run_dir / 'FullAuditLog.json'
+    structured_path.write_text(structured_text, encoding='utf-8')
+    _simple_save_question_crops_20260315(image_path, questions, list(stage1_payload.get('boxes') or []), run_dir)
+    audit_payload = {'source': str(_resolve_source_path(source)), 'stage1': stage1_payload, 'stage2': raw, 'questions': questions}
+    _write_json(audit_path, audit_payload)
+    return {'source': str(_resolve_source_path(source)), 'run_dir': str(run_dir), 'Structured_md_path': str(structured_path), 'FullAuditLog_json_path': str(audit_path), 'structured_text': structured_text, 'page_summary': str(raw.get('page_summary') or '').strip() if isinstance(raw, dict) else '', 'questions': questions, 'question_texts': [item.get('question_text', '') for item in questions], 'question_count_processed': len(questions), 'stage1_box_evidence_path': str(run_dir / 'stage1_box_evidence.json')}
+
+
+def run_mess_to_clean_q3vl(source: str, max_pages: int = 1, mode: str = 'full', max_questions: int | None = None, original_prompt: str = '') -> dict[str, Any]:
+    stage1_payload = extract_qwen_box_evidence(source, max_pages=max_pages, original_prompt=original_prompt)
+    if stage1_payload.get('error'):
+        return stage1_payload
+    stage2_payload = recover_exam_layout_from_box_evidence(source, box_evidence=stage1_payload, max_pages=max_pages, max_questions=max_questions, original_prompt=original_prompt)
+    if stage2_payload.get('error'):
+        return stage2_payload
+    return {**stage2_payload, 'document_type': 'image' if str(source).lower().endswith(('.png', '.jpg', '.jpeg', '.webp', '.bmp')) else 'pdf', 'ocr_pipeline': 'Simple-Qwen-OCR', 'mode': mode}
+
+
+def extract_math_document(source: str, max_pages: int = 1, mode: str = 'full', max_questions: int | None = None, original_prompt: str = '') -> dict[str, Any]:
+    return run_mess_to_clean_q3vl(source=source, max_pages=max_pages, mode=mode, max_questions=max_questions, original_prompt=original_prompt)
+
+
+
+# === SIMPLE_OCR_OVERRIDE_20260315B ===
+def _simple_normalize_questions_20260315(questions: Any, max_questions: int | None = None) -> list[dict[str, Any]]:
+    normalized: list[dict[str, Any]] = []
+    for idx, item in enumerate(questions or [], start=1):
+        if not isinstance(item, dict):
+            continue
+        question_text = str(item.get('question_text') or item.get('question') or item.get('stem') or '').strip()
+        if not question_text:
+            continue
+        raw_options = item.get('options') or []
+        if isinstance(raw_options, str):
+            raw_options = [segment.strip() for segment in re.split(r'(?=[A-D][\.?])', raw_options) if segment.strip()]
+        options = [str(opt).strip() for opt in raw_options if str(opt).strip()]
+        bbox_ref_ids = [str(v).strip() for v in (item.get('bbox_ref_ids') or []) if str(v).strip()]
+        if not bbox_ref_ids and str(item.get('id') or '').strip():
+            bbox_ref_ids = [str(item.get('id')).strip()]
+        normalized.append({
+            'question_no': str(item.get('question_no') or item.get('id') or idx),
+            'question_text': question_text,
+            'options': options,
+            'figure_note': str(item.get('figure_note') or '').strip(),
+            'bbox_ref_ids': bbox_ref_ids,
+        })
+    if max_questions:
+        normalized = normalized[: int(max_questions)]
+    return normalized
+

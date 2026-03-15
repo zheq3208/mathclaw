@@ -1,0 +1,68 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108",
+  "model": "qwen3-vl-plus",
+  "status": "diagnosed",
+  "primary_weakness": "incomplete_reasoning",
+  "CaseBrief_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108/case_brief.json",
+  "LocalChecks_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108/local_checks.json",
+  "Process_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108/process.json",
+  "Learning_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108/learning.json",
+  "TeacherFeedback_md_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108/WeaknessReport.json",
+  "GlobalLearningMemory_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-14T16:13:49.309366Z",
+    "event": {
+      "timestamp": "2026-03-14T16:13:49.309366Z",
+      "conversation_id": "debug-exam-pipeline-4",
+      "source": "weakness_diag",
+      "result": "partial",
+      "primary_weakness": "incomplete_reasoning",
+      "secondary_weaknesses": [
+        "diagram_or_theorem_gap"
+      ],
+      "knowledge_points": [
+        "geometry"
+      ],
+      "prerequisite_gaps": [
+        "arithmetic_operations",
+        "angle_basics",
+        "length_and_area"
+      ],
+      "practice_focus": [
+        "geometry"
+      ],
+      "note": "incomplete_reasoning",
+      "evidence": [
+        "Student process is incomplete for diagnostic checking."
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation",
+        "diagram_or_theorem_gap"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  },
+  "BootstrapVerification_json_path": "/root/autodl-tmp/mathclaw/.researchclaw/weakness_diag_runs/1773504787-1-s-m-t-s-51e96108/bootstrap_verification.json"
+}

@@ -1,0 +1,9 @@
+{
+  "pipeline": "VariantGen-Q3VL",
+  "run_dir": "/root/.researchclaw/variant_generation_runs/1773484776-solve-x-2-5x-6-0-e40ba930",
+  "model": "qwen3-vl-plus",
+  "status": "generated",
+  "variant_count": 3,
+  "VariantSet_md_path": "/root/.researchclaw/variant_generation_runs/1773484776-solve-x-2-5x-6-0-e40ba930/VariantSet.md",
+  "VariantBundle_json_path": "/root/.researchclaw/variant_generation_runs/1773484776-solve-x-2-5x-6-0-e40ba930/VariantBundle.json"
+}

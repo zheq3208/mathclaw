@@ -1,0 +1,34 @@
+[
+  {
+    "value": 0.0,
+    "solver_role": "solver_a",
+    "method": "unspecified",
+    "reasoning_outline": [],
+    "key_steps": [],
+    "final_answer": "",
+    "final_expression": "",
+    "assumptions": [],
+    "confidence": 0.0
+  },
+  {
+    "solver_role": "Solver B",
+    "method": "Error handling for unreadable problem",
+    "reasoning_outline": [
+      "Problem text is entirely unreadable (all question marks).",
+      "This indicates an OCR failure or corrupted input.",
+      "Without a clear problem statement, no mathematical or logical solution can be attempted."
+    ],
+    "key_steps": [
+      "Attempted to read the problem text but found only question marks.",
+      "Checked the planner brief which confirms the problem is unreadable.",
+      "Concluded that the problem cannot be solved due to missing information."
+    ],
+    "final_answer": "Problem text unreadable",
+    "final_expression": "N/A",
+    "assumptions": [
+      "The input was corrupted during OCR processing.",
+      "The original problem was intended to be a mathematical or logical problem but is not recoverable."
+    ],
+    "confidence": 0.0
+  }
+]

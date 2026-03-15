@@ -1,0 +1,30 @@
+{
+  "verification_compare": {
+    "status": "conflict",
+    "equation": "2*x + 3 = 7",
+    "variable": "x",
+    "expected_solutions": [
+      "2"
+    ],
+    "proposed_solutions": [
+      "5"
+    ],
+    "notes": []
+  },
+  "verification_status": "conflict",
+  "wrong_answer": true,
+  "process_incomplete": false,
+  "missing_steps": [],
+  "likely_error_causes": [
+    "reading_or_prompt_misread",
+    "sign_error",
+    "calculation_or_careless_error",
+    "strategy_gap",
+    "symbolic_manipulation_gap"
+  ],
+  "evidence_items": [
+    "Student final answer conflicts with the verified answer or exact check.",
+    "Reference answer: 2"
+  ],
+  "method_tags": []
+}

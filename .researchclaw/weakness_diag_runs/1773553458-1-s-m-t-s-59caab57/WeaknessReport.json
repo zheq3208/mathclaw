@@ -1,0 +1,169 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "problem_text": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+  "case_brief": {
+    "problem_summary": "1. 某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "student_state": "???????????????",
+    "question_type": "geometry",
+    "chapter": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "target": "",
+    "observed_signals": [
+      "当前缺少足够的学生作答步骤，暂时只能做保守诊断。"
+    ],
+    "diagnosis_focus": [
+      "?????",
+      "??????"
+    ],
+    "evidence_gaps": [
+      "?????????????"
+    ],
+    "needs_solution_bootstrap": false,
+    "difficulty_band": "hard",
+    "reference_answer": ""
+  },
+  "process": {
+    "primary_error_stage": "execution",
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "未展示导数计算及代入求值的中间步骤"
+    ],
+    "evidence_items": [
+      "学生作答未提供解题中间步骤，仅给出选项"
+    ],
+    "likely_error_causes": [
+      "解题过程不完整",
+      "推理步骤缺失"
+    ],
+    "confidence": 0.5
+  },
+  "learning": {
+    "primary_weakness": "解题步骤完整性",
+    "secondary_weaknesses": [
+      "sign_error",
+      "calculation_or_careless_error"
+    ],
+    "knowledge_points": [
+      "导数的计算与应用"
+    ],
+    "prerequisite_gaps": [
+      "函数求导法则"
+    ],
+    "recommended_practice_focus": [
+      "规范书写导数求解过程",
+      "强化瞬时速度与位移函数导数的关联训练"
+    ],
+    "teacher_watchouts": [
+      "关注学生是否理解瞬时速度的导数定义",
+      "检查解题步骤的完整性"
+    ],
+    "confidence": 0.5
+  },
+  "arbiter": {
+    "status": "review",
+    "problem_summary": "某质点沿直线运动,位移 $ S $(单位:m)与时间 $ t $(单位:s)之间的关系为 $ S(t) = 2t^3 - 5t^2 $,则当 $ t = 3 \\, \\text{s} $ 时该质点的瞬时速度为",
+    "primary_weakness": "解题步骤完整性",
+    "secondary_weaknesses": [
+      "sign_error",
+      "calculation_or_careless_error",
+      "推理步骤缺失",
+      "reading_or_prompt_misread"
+    ],
+    "wrong_answer": false,
+    "process_incomplete": true,
+    "missing_steps": [
+      "未展示导数计算及代入求值的中间步骤"
+    ],
+    "evidence_items": [
+      "学生作答未提供解题中间步骤，仅给出选项"
+    ],
+    "chapter": "geometry",
+    "question_type": "geometry",
+    "knowledge_points": [
+      "geometry"
+    ],
+    "prerequisite_gaps": [
+      "arithmetic_operations"
+    ],
+    "likely_error_causes": [
+      "解题过程不完整",
+      "推理步骤缺失"
+    ],
+    "recommended_practice_focus": [
+      "规范书写导数求解过程",
+      "强化瞬时速度与位移函数导数的关联训练"
+    ],
+    "teacher_feedback_markdown": "学生在解答瞬时速度问题时仅给出选项，未展示导数计算及代入过程。建议加强解题步骤的规范训练，确保理解瞬时速度与位移函数导数的关系。",
+    "mastery_update_suggestion": {
+      "result": "partial",
+      "knowledge_points": [
+        "导数的计算与应用"
+      ],
+      "note": "答案正确但步骤缺失，需补充完整推导过程"
+    },
+    "confidence": 0.5
+  },
+  "global_memory_event": {
+    "memory_path": "/root/autodl-tmp/mathclaw/.researchclaw/memory/math_learning/global_learning_memory.json",
+    "student_id": "__global__",
+    "updated_at": "2026-03-15T05:45:32.696984Z",
+    "event": {
+      "timestamp": "2026-03-15T05:45:32.696984Z",
+      "conversation_id": "debug-http-chinese-9a9c8f96",
+      "source": "weakness_diag",
+      "result": "partial",
+      "primary_weakness": "解题步骤完整性",
+      "secondary_weaknesses": [
+        "sign_error",
+        "calculation_or_careless_error",
+        "推理步骤缺失",
+        "reading_or_prompt_misread"
+      ],
+      "knowledge_points": [
+        "导数的计算与应用"
+      ],
+      "prerequisite_gaps": [
+        "arithmetic_operations"
+      ],
+      "practice_focus": [
+        "规范书写导数求解过程",
+        "强化瞬时速度与位移函数导数的关联训练"
+      ],
+      "note": "答案正确但步骤缺失，需补充完整推导过程",
+      "evidence": [
+        "学生作答未提供解题中间步骤，仅给出选项"
+      ],
+      "archived": {
+        "weaknesses": [],
+        "knowledge_points": [],
+        "revived": []
+      }
+    },
+    "summary": {
+      "active_weaknesses": [
+        "incomplete_reasoning",
+        "Calculus concept: derivative as instantaneous velocity",
+        "Arithmetic verification in derivative evaluation",
+        "diagram_or_theorem_gap",
+        "reading_or_prompt_misread",
+        "sign_error",
+        "calculation_or_careless_error"
+      ],
+      "knowledge_points": [
+        "derivatives",
+        "geometry",
+        "kinematics",
+        "linear equation",
+        "linear_equation",
+        "导数的计算与应用"
+      ],
+      "mastered_knowledge_points": [],
+      "mastered_weaknesses": [
+        "symbolic_manipulation_gap"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1 @@
+The problem statement appears to contain a typo (S(t) = 2t² - 5t² simplifies to -3t², but answer choices suggest intended function was likely 2t³ - 5t²). Student selected correct answer (24 m/s) but process is incomplete. Focus on showing derivative calculation steps and verifying problem statements.

@@ -1,0 +1,34 @@
+{
+  "verification_compare": {
+    "status": "conflict",
+    "equation": "solve 2*x + 3 = 7. Student answer",
+    "variable": "x",
+    "expected_solutions": [
+      "2"
+    ],
+    "proposed_solutions": [
+      "5.00000000000000"
+    ],
+    "notes": []
+  },
+  "verification_status": "conflict",
+  "wrong_answer": true,
+  "process_incomplete": true,
+  "missing_steps": [
+    "Student attempt does not show explicit intermediate steps."
+  ],
+  "likely_error_causes": [
+    "incomplete_reasoning",
+    "symbolic_manipulation_gap"
+  ],
+  "evidence_items": [
+    "Student final answer conflicts with the verified answer or exact check.",
+    "Student process is incomplete for diagnostic checking.",
+    "Reference answer: x=2",
+    "Tool parsing failure due to malformed input string (e.g., 'solve 2*x + 3 = 7. Student answer' instead of clean equation).",
+    "No ground-truth expected solution was provided to the verifier, causing uncertainty despite correct manual derivation.",
+    "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+    "no_expected_solution_available"
+  ],
+  "method_tags": []
+}

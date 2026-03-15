@@ -1,0 +1,65 @@
+{
+  "query": "直接调用 run_math_solve_verify_agent，处理题目：解方程 x^2 - 5x + 6 = 0。若工具返回通过，只回复最终答案和状态。 pdf",
+  "raw_text": "请直接调用 run_math_solve_verify_agent，处理题目：解方程 x^2 - 5x + 6 = 0。若工具返回通过，只回复最终答案和状态。",
+  "year": null,
+  "stage": "generic",
+  "resource_types": [
+    "exam_paper"
+  ],
+  "topic_terms": [
+    "方程"
+  ],
+  "session_id": "solve-verify-smoke",
+  "verified_title": "",
+  "excerpt": "#### Stack Exchange Network Stack Exchange network consists of 183 Q&A communities including [Stack Overflow](https://stackoverflow.com), the largest, most trusted online community for developers to learn, share their k…",
+  "results": [
+    {
+      "title": "Verifying Solutions for Quadratic Equations - Math Stack Exchange",
+      "url": "https://math.stackexchange.com/questions/4778174/verifying-solutions-for-quadratic-equations",
+      "snippet": "#### Stack Exchange Network\n\nStack Exchange network consists of 183 Q&A communities including Stack Overflow, the largest, most trusted online community for developers to learn, share their knowledge, and build their careers.\n\n### current community\n\n### your communities\n\n### more stack exchange communities\n\nMathematics\n\nStack Overflow for Teams is now called Stack Internal. Bring the best of human thought and AI automation together at your work.\n\nBring the best of human thought and AI automation together at your work.\nLearn more\n\nStack Internal\n\nKnowledge at work\n\nBring the best of human thought and AI automation together at your work.\n\n# Verifying Solutions for Quadratic Equations [...] # Verifying Solutions for Quadratic Equations\n\nI'm studying Algebra 1, focusing on Quadratic Equations. I've learned the Quadratic Formula for solving them and want to practice verifying solutions by substituting them back into the original equation.\n\nI came across this Problem: $ 3x^2 - 6x - 17 = 0 $\n\nUsing the Quadratic Formula, the solution is: $$ x = \\frac {3 \\pm 2\\sqrt{15}} {3} $$\n\nI attempted to verify the positive solution, but I keep getting incorrect results.\n\nThose are my Steps to check $ x = \\frac {3 + 2\\sqrt{15}} {3} $\n\n`- Plug in the solution for x`\n\n$$ 3[\\frac {3 + 2\\sqrt{15}} {3}]^2 -6[\\frac {3 + 2\\sqrt{15}} {3}] - 17 = 0 $$\n\n`- Squaring each term within the larger first term.`\n\n$$ 3[\\frac {9 + 60} {9}] -6[\\frac {3 + 2\\sqrt{15}} {3}] - 17 = 0 $$ [...] #### Related\n\n#### Hot Network Questions\n\n# Subscribe to RSS\n\nTo subscribe to this RSS feed, copy and paste this URL into your RSS reader.\n\n##### Mathematics\n\n##### Company\n\n##### Stack Exchange Network\n\nSite design / logo © 2026 Stack Exchange Inc; \nuser contributions licensed under \nCC BY-SA\n. \nrev 2026.3.13.41005",
+      "score": 16,
+      "source_host": "math.stackexchange.com",
+      "matched_terms": [
+        "数学"
+      ]
+    },
+    {
+      "title": "Solve Using the Quadratic Formula x^2-5x+6=0 | Mathway",
+      "url": "https://www.mathway.com/popular-problems/Algebra/200306",
+      "snippet": "Enter a problem...\n\n# Algebra Examples\n\nPopular Problems\n\nSolve Using the Quadratic Formula x^2-5x+6=0\n\nStep 1\n\nUse the quadratic formula to find the solutions.\n\nStep 2\n\nSubstitute the values , , and into the quadratic formula and solve for .\n\nStep 3\n\nSimplify.\n\nTap for more steps...\n\nStep 3.1\n\nSimplify the numerator.\n\nTap for more steps...\n\nStep 3.1.1\n\nRaise to the power of .\n\nStep 3.1.2\n\nMultiply .\n\nTap for more steps...\n\nStep 3.1.2.1\n\nMultiply by .\n\nStep 3.1.2.2\n\nMultiply by .\n\nStep 3.1.3\n\nSubtract from .\n\nStep 3.1.4\n\nAny root of is .\n\nStep 3.2\n\nMultiply by .\n\nStep 4\n\nThe final answer is the combination of both solutions.\n\n|  |\n\n|  |\n\nPlease ensure that your password is at least 8 characters and contains each of the following:\n\n a number\n a letter\n a special character: @$#!%\\?&",
+      "score": 16,
+      "source_host": "www.mathway.com",
+      "matched_terms": [
+        "数学"
+      ]
+    },
+    {
+      "title": "[FREE] b) Solve x^2 + 5x + 6 = 0 - brainly.com",
+      "url": "https://brainly.com/question/42433881",
+      "snippet": "## Explanation\n\nTo solve the quadratic equation x² + 5x + 6 = 0, we can use factoring or the quadratic formula. Factoring involves finding two numbers whose sum is equal to 5 and whose product is equal to 6. In this case, we have 2 and 3 as the numbers, so we can factor the equation as (x + 2)(x + 3) = 0. Setting each factor equal to zero, we get x + 2 = 0 and x + 3 = 0. Solving for x, we find two solutions: x = -2 and x = -3.\n\n### Learn more about Solving quadratic equations here:\n\nbrainly.com/question/27318739\n\n## Textbook & Expert-Verified⬈(opens in a new tab)\n\nThe solutions to the equation x2+5x+6=0 are found by factoring it as (x+2)(x+3)=0. Setting each factor to zero gives the solutions x=−2 and x=−3. Thus, the roots of the equation are −2 and −3.\n\n## Explanation [...] ## Explanation\n\nTo solve the equation x2+5x+6=0, we can use factoring. Here is a step-by-step guide to find the solutions:\n\nIdentify the equation: The equation is in the standard form of a quadratic equation, ax2+bx+c=0, where a=1, b=5, and c=6.\n\nFactor the quadratic: We need to find two numbers that multiply to c(6) and add to b(5). The numbers that work are 2 and 3, since:\n\nWrite the factored form: So we can write the equation as:  \n(x+2)(x+3)=0\n\nSet each factor to zero: To find the values of x, we set each factor equal to zero:\n\nSolutions: Therefore, the solutions to the equation x2+5x+6=0 are x=−2 and x=−3.\n\n## Examples & Evidence [...] ## Examples & Evidence\n\nFor example, if you have another equation x2+3x+2=0, you can apply the same method to factor it into (x+1)(x+2)=0, leading to solutions of x=−1 and x=−2. This shows how factoring can reliably help to solve similar quadratic equations.\n\nThe process used here follows standard algebra techniques for solving quadratic equations by factoring, which is a widely accepted method in mathematics.\n\n### crimsonSky40 has a question! Can you help?\n\n### Free Mathematics solutions and answers\n\n### New questions in Mathematics\n\nginny blinking eyes\n\nLearn\n\nPractice\n\nTest\n\n### Company\n\n### Help\n\n### Connect with us\n\nBrainly.com",
+      "score": 16,
+      "source_host": "brainly.com",
+      "matched_terms": [
+        "数学"
+      ]
+    },
+    {
+      "title": "使用 LangGraph 与 LangChain 构建多工具有状态智能体 | Jimmy Song",
+      "url": "https://jimmysong.io/zh/book/ai-handbook/agent/langgraph",
+      "snippet": "1. 分析需求（Plan）：解析用户输入，判断是否需要调用工具（以及调用哪些工具）。如果不需要工具，直接生成答案；如果需要，决定下一步要用的工具及其输入。\n2. 执行工具（Execute Tool）：调用所选工具并获取结果。如果有多个子任务，可能重复调用不同工具。\n3. （可选）验证或后处理（Verify）：检查工具结果是否满足要求，是否需要再次调用其他工具或调整计划。如果结果不理想，可以回退到上一步重新规划。\n4. 最终回答（Finalize）：整合所有信息，形成给用户的最终答复。\n\n在我们的示例中，我们将实现一个智能体能够查询国家的人口并计算总和。这个智能体会动态决定使用两个工具：\n\n 一个检索工具：查找给定国家的人口数据。\n 一个计算工具：对获得的数值执行算术计算。\n\n我们会让智能体针对用户的问题自动决定调用上述工具的顺序和次数。例如用户问：“法国和日本的人口总和是多少？”，Agent 将判断需要查找法国人口、查找日本人口，然后加总。这一过程中，Agent 会经历循环：LLM 先规划调用检索工具，获取法国人口；接着再次规划调用检索工具获取日本人口；然后规划调用计算工具求和；最后生成答案。\n\n### 节点设计：Plan 与 Tools\n\n我们为上述流程设计两个主要节点：\n\n Plan 节点（如同智能体的“大脑”）：使用 LLM 或规则逻辑，根据当前状态决定下一步动作（调用工具或输出答案）。该节点会更新状态中的指令，例如选定工具及其输入参数，或者直接写入最终答案。\n Tools 节点（工具执行器）：根据 Plan 节点提供的指令，实际调用相应的工具函数，将结果写回状态（供下次 Plan 决策使用）。\n\n此外，可以视需要添加其他节点，例如用于验证或回退的节点。本例中我们简化，将验证逻辑融合在 Plan 节点里，根据需要重复工具调用或结束。 [...] 使用 LangGraph 定义智能体的基本步骤包括：\n\n 定义状态结构：使用 `TypedDict` 指定 State 对象的字段和类型，以及哪些字段是累加 List 需要用 `operator.add` 标记。\n 添加节点：使用 `graph.add_node(name, func)` 注册节点。每个节点要么是一个 Python 函数，要么是 LangChain Runnable，负责完成一个步骤的逻辑。\n 添加边（Edges）：用 `graph.set_entry_point(node)` 指定图的起始节点，然后通过 `graph.add_edge` 添加普通顺序边，或通过 `graph.add_conditional_edge` 添加条件分支边。条件边可以让某个节点根据状态判断下一步跳转到哪一个节点。\n 指定结束：LangGraph 提供特殊的 `END` 节点表示结束，务必保证循环流程有退出条件。\n 编译运行：调用 `graph.compile()` 将定义的图编译为一个可调用的对象（实现了 `.invoke()` 等方法），然后即可像调用链那样调用智能体。\n\n下面将结合这些概念，设计我们的有状态多工具 Agent，并在各环节介绍实现细节。\n\n## 设计有状态智能体的阶段编排与控制流程\n\n为了构建一个多工具 Agent，我们采用分阶段的流程设计：例如包含“需求分析/检索 → 计划 → 工具执行 → 验证”的流水线。在 LangGraph 中，这些阶段对应为一系列节点按某种逻辑连接成图。我们将用一个示意性任务来说明——根据用户查询决定是否需要检索外部数据、调用计算工具，并最终生成答案。这个任务中，Agent 可能需要经过以下决策步骤： [...] \"plan\") graph. add_edge(\"tools\", \"plan\") # 添加条件边：plan 节点根据返回结果决定下一步去向 # 添加条件边：plan 节点根据返回结果决定下一步去向 # 添加条件边：plan 节点根据返回结果决定下一步去向def should_continue(state: dict) -> str: def should_continue(state: dict) -> str: def should_continue(state: dict) -> str:  # 若 Plan 返回了最终答案，则结束，否则进入工具执行  # 若 Plan 返回了最终答案，则结束，否则进入工具执行 # 若 Plan 返回了最终答案，则结束，否则进入工具执行 return \"end\" if state.get('answer') else \"continue\"  return \"end\" if state.get('answer') else \"continue\" return \"end\" if state. get('answer') else \"continue\"   graph.add_conditional_edge( graph.add_conditional_edge( graph. add_conditional_edge( \"plan\",  \"plan\", \"plan\", should_continue,  should_continue, should_continue, {  { { \"end\": END,  \"end\": END, \"end\": END, \"continue\": \"tools\"  \"continue\": \"tools\" \"continue\": \"tools\" }  } }) ) ) # 编译图为可调用应用 #",
+      "score": -10,
+      "source_host": "jimmysong.io",
+      "matched_terms": [
+        "试卷"
+      ]
+    },
+    {
+      "title": "Solve the quadratic equation x² + 5x + 6 = 0 by factoring. | Filo",
+      "url": "https://askfilo.com/user-question-answers-smart-solutions/solve-the-quadratic-equation-x2-5x-6-0-by-factoring-3139333135393438",
+      "snippet": "Quadratic equations, Factoring\n\n## Explanation:\n\nTo solve the quadratic equation x2+5x+6=0 by factoring, we need to find two numbers that multiply to the constant term (6) and add up to the coefficient of the linear term (5).\n\n## Step by Step Solution:\n\n## Step 1\n\nWrite down the quadratic equation: x2+5x+6=0.\n\n## Step 2\n\nFind two numbers that multiply to 6 and add up to 5. These numbers are 2 and 3.\n\n## Step 3\n\nRewrite the quadratic equation using these numbers: x2+2x+3x+6=0.\n\n## Step 4\n\nFactor by grouping: x(x+2)+3(x+2)=0. This gives (x [...] filo LogoWorld's only instant tutoring  platform\n\nSearch questions and Textbooks\n\ndropdown-logo\n\nInstant TutoringPrivate CoursesBecome TutorExplore Tutors\n\nLogin\n\nStudentTutor\n\nApp StorePlay Store\n\nCBSE\n\nArrow Icon\n\nSmart Solutions\n\nArrow Icon\n\n●Solve the quadratic equation x² + 5x + 6 = 0 by factoring.\n\nQuestion\n\nQuestion asked by Filo student\n\n# ●Solve the quadratic equation x² + 5x + 6 = 0 by factoring.\n\nViews\n\nViews: 5,872students\n\nUpdated on: Aug 7, 2025\n\nNot the question you're searching for?\n\n+ Ask your question\n\nAsk your questionCross\n\nAdd an Image\n\nAdd a Document\n\n## Text SolutionText solutionverified iconVerified\n\n## Concepts:\n\nQuadratic equations, Factoring\n\n## Explanation:",
+      "score": -24,
+      "source_host": "askfilo.com",
+      "matched_terms": []
+    }
+  ]
+}

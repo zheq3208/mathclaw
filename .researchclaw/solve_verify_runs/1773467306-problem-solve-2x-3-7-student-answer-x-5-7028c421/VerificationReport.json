@@ -1,0 +1,134 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "Problem: solve 2x + 3 = 7. Student answer: x=5.",
+  "planner": {
+    "problem_summary": "Solve the linear equation 2x + 3 = 7 for x.",
+    "givens": [
+      "2x + 3 = 7",
+      "Student answer: x=5"
+    ],
+    "target": "The value of x that satisfies the equation",
+    "question_type": "equation",
+    "candidate_methods": [
+      "algebraic manipulation (isolate x)",
+      "substitution to verify solution"
+    ],
+    "exact_check_targets": {
+      "equation": "2x + 3 = 7",
+      "expressions": [
+        "2*5+3",
+        "7"
+      ],
+      "answer_format": "x = [number]"
+    },
+    "risks": [
+      "OCR misreading of constants (e.g., 7 as 17)",
+      "Notation: student answer might omit variable or use different variable"
+    ],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "2*x + 3 = 7",
+      "variable": "x",
+      "solutions": [
+        "2"
+      ]
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "Solver A",
+        "final_answer": "x = 2",
+        "verification": {
+          "status": "uncertain",
+          "equation": "solve 2*x + 3 = 7. Student answer",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": [
+            "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "2",
+          "normalized_formula": "2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "Solver B",
+        "final_answer": "x=2",
+        "verification": {
+          "status": "uncertain",
+          "equation": "solve 2*x + 3 = 7. Student answer",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": [
+            "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "2",
+          "normalized_formula": "2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "Solver A",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+      },
+      {
+        "solver_role": "Solver B",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "failed_to_solve_equation: Sympify of expression 'could not parse 'solve 2*x + 3'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [],
+    "recommended_winner": "Solver A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "x = 2",
+    "final_expression": "2",
+    "concise_solution_markdown": "Starting from $2x + 3 = 7$, subtract 3: $2x = 4$, then divide by 2: $x = 2$.",
+    "verification_summary": [
+      "Substituting student's answer $x = 5$: $2(5) + 3 = 13 \\neq 7$, so incorrect.",
+      "Substituting correct solution $x = 2$: $2(2) + 3 = 7$, matches RHS.",
+      "Algebraic isolation confirms $x = 2$."
+    ],
+    "unresolved_risks": [
+      "Tool verification failed due to syntax error in parsing 'solve 2*x + 3', but manual algebra is consistent and unambiguous."
+    ],
+    "recommended_follow_up": "Re-run symbolic solver with properly formatted input (e.g., '2*x + 3 - 7') to confirm automatically."
+  }
+}

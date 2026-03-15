@@ -1,0 +1,127 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544779027`\n\n第 I 卷(选择题 共 58 分)",
+  "planner": {
+    "problem_summary": "The problem text appears to be a header of an exam section (Volume I, Multiple Choice, Total 58 points) but the actual problem statement is missing. The OCR output only captured the section header.",
+    "givens": [
+      "Section header: '第 I 卷(选择题 共 58 分)'",
+      "Source file path: '/root/.researchclaw/media/unknown_file_1773544779027'"
+    ],
+    "target": "The problem statement is missing; only the section header is provided.",
+    "question_type": "equation",
+    "candidate_methods": [
+      "Algebraic manipulation",
+      "Substitution",
+      "Verification by plugging in choices"
+    ],
+    "exact_check_targets": {
+      "equation": "None provided",
+      "expressions": [],
+      "answer_format": "Multiple choice option (e.g., A, B, C, D)"
+    },
+    "risks": [
+      "OCR failure: only section header captured, problem statement missing",
+      "Domain risk: problem context (exam) may require specific knowledge not provided",
+      "Notation risk: no equation or problem statement to verify notation"
+    ],
+    "preferred_variable": "N/A",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "error": "Sympify of expression 'could not parse 'None provided'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)",
+      "equation": "None provided",
+      "variable": "N/A"
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "N/A",
+          "expected_solutions": [],
+          "proposed_solutions": [],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "Solver B",
+        "final_answer": "N/A",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "N/A",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "N/A"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "N/A",
+          "normalized_formula": "N/A",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      },
+      {
+        "solver_role": "Solver B",
+        "verdict": "review",
+        "strengths": [],
+        "issues": [
+          "no_expected_solution_available"
+        ],
+        "first_conflicting_step": "no_expected_solution_available"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "Sympify of expression 'could not parse 'None provided'' failed, because of exception being raised:\nSyntaxError: invalid syntax (<string>, line 1)"
+    ],
+    "recommended_winner": "solver_a",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "N/A",
+    "final_expression": "N/A",
+    "concise_solution_markdown": "The OCR output only includes the exam section header '第 I 卷(选择题 共 58 分)' with no actual problem statement, equations, or answer choices. Without the problem content, no solution can be derived.",
+    "verification_summary": [
+      "OCR failed to capture the problem statement; only a section header is present.",
+      "No equation or expression was provided for symbolic verification.",
+      "Both solvers correctly identified missing problem content; neither could produce a valid answer."
+    ],
+    "unresolved_risks": [
+      "OCR failure: full problem likely exists in source file but was not extracted.",
+      "Domain knowledge required (e.g., subject, grade level) is unavailable.",
+      "No way to validate candidate methods without problem context."
+    ],
+    "recommended_follow_up": "Re-run OCR on the original file '/root/.researchclaw/media/unknown_file_1773544779027' with higher resolution or manual inspection to recover the actual problem statement."
+  }
+}

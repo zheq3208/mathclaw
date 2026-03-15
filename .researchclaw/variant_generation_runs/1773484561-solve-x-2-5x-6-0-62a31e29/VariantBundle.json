@@ -1,0 +1,96 @@
+{
+  "case_brief": {
+    "problem_summary": "Solve x^2 - 5x + 6 = 0",
+    "problem_text": "Solve x^2 - 5x + 6 = 0",
+    "variant_request": "Generate isomorphic, easier, and harder follow-up practice variants for x^2 - 5x + 6 = 0.",
+    "requested_count": 2,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "x^2 - 5x + 6 = 0",
+    "difficulty_score": 2.35,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false
+  },
+  "variant_set_title": "Quadratic Equation Practice",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "Solve x^2 - 7x + 12 = 0",
+      "changes": [
+        "Coefficients changed from -5 and 6 to -7 and 12 while maintaining monic quadratic form and integer factorability"
+      ],
+      "intent": "Practice factoring monic quadratics with two distinct integer roots using the same method as the original problem",
+      "difficulty_goal": "same",
+      "coach_note": "This problem has the same structure as the original. Find two numbers that multiply to 12 and add to -7.",
+      "answer_outline": [
+        "Factor as (x-3)(x-4)=0",
+        "Solutions: x=3, x=4"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "Solve x^2 - 3x + 2 = 0",
+      "changes": [
+        "Smaller coefficients (-3 and 2 instead of -5 and 6) with simpler integer roots"
+      ],
+      "intent": "Practice factoring very simple monic quadratics with minimal calculation",
+      "difficulty_goal": "easier",
+      "coach_note": "This quadratic factors easily. Look for two numbers that multiply to 2 and add to -3.",
+      "answer_outline": [
+        "Factor as (x-1)(x-2)=0",
+        "Solutions: x=1, x=2"
+      ],
+      "difficulty_report": {
+        "score": 2.35,
+        "band": "medium",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.35,
+          "band": "medium",
+          "relation": "about_the_same"
+        }
+      },
+      "source": "qwen"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "about_the_same",
+      "difficulty_band": "medium",
+      "notes": []
+    }
+  ],
+  "design_notes": [
+    "Preserved core quadratic equation knowledge point throughout all variants",
+    "Isomorphic variant maintains identical solution method (factoring) with adjusted coefficients",
+    "Easier variant reduces cognitive load through smaller numbers while keeping factorability",
+    "Harder variant increases difficulty by requiring quadratic formula due to irrational roots"
+  ]
+}

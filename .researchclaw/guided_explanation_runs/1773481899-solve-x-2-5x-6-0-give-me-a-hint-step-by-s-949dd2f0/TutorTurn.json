@@ -1,0 +1,12 @@
+{
+  "hint_level": 1,
+  "teacher_response_markdown": "观察方程 $x^2 - 5x + 6 = 0$，你能告诉我 $x$ 的最高次数是多少吗？",
+  "student_checkpoint_question": "$x$ 的最高次数是多少？",
+  "expected_student_action": "State that the highest power of x is 2",
+  "if_student_stuck_then": "Provide a hint about the term $x^2$",
+  "revealed_step": "The equation is quadratic (has an $x^2$ term)",
+  "progress_signal": "The student correctly identifies the highest power of x as 2",
+  "stop_condition": "When the student answers the checkpoint question",
+  "confidence": 0.9,
+  "patched_for_answer_leak": false
+}

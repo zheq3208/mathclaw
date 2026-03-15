@@ -1,0 +1,49 @@
+{
+  "problem_overview": "根据 OCR 结果整理出的待批改题目",
+  "problems": [
+    {
+      "question_id": "q1",
+      "problem_text": "某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t³−5t²，则当t=3s时该质点的瞬时速度为",
+      "student_answer": "B",
+      "candidate_methods": [
+        "先判断题型，再求出正确答案，最后和学生作答对比"
+      ],
+      "verification_plan": [
+        "先独立解题，再核对学生答案和关键步骤是否一致"
+      ]
+    },
+    {
+      "question_id": "q2",
+      "problem_text": "已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有",
+      "student_answer": "D",
+      "candidate_methods": [
+        "先判断题型，再求出正确答案，最后和学生作答对比"
+      ],
+      "verification_plan": [
+        "先独立解题，再核对学生答案和关键步骤是否一致"
+      ]
+    },
+    {
+      "question_id": "q3",
+      "problem_text": "已知函数f(x)=e^x−a lnx在区间(0,1)上单调递减，则a的最小值为",
+      "student_answer": "B",
+      "candidate_methods": [
+        "先判断题型，再求出正确答案，最后和学生作答对比"
+      ],
+      "verification_plan": [
+        "先独立解题，再核对学生答案和关键步骤是否一致"
+      ]
+    },
+    {
+      "question_id": "q4",
+      "problem_text": "若C(24,m)=C(24,m+2)，则C(24,3)+C(24,4)+⋯+C(24,m)的值为",
+      "student_answer": "D",
+      "candidate_methods": [
+        "先判断题型，再求出正确答案，最后和学生作答对比"
+      ],
+      "verification_plan": [
+        "先独立解题，再核对学生答案和关键步骤是否一致"
+      ]
+    }
+  ]
+}

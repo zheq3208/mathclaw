@@ -1,0 +1,28 @@
+{
+  "hint_level": 1,
+  "teaching_mode": "notice",
+  "teacher_focus": "Helping student identify the problem's objective in the linear equation context",
+  "immediate_goal": "Student articulates what the problem is asking to find (e.g., value of variable)",
+  "diagnostic_focus": [
+    "problem goal identification",
+    "recognition of linear equation structure"
+  ],
+  "misconceptions_to_probe": [
+    "confusing equation with inequality",
+    "misidentifying the target variable"
+  ],
+  "must_avoid": [
+    "revealing solution steps",
+    "stating final answer"
+  ],
+  "allowed_reveal": "the problem's goal (e.g., 'solve for x')",
+  "first_question": "What is the main question this problem is asking you to answer? (For example: 'Find the value of x' or 'Determine if the equation has a solution?')",
+  "checkpoint_rubric": [
+    "Correctly states the problem's goal (e.g., 'solve for x')",
+    "Identifies the specific variable to solve for",
+    "If incorrect, note whether student confuses with inequality or other problem type"
+  ],
+  "escalation_rule": "If student cannot identify the goal, ask: 'Is this problem asking you to find a number that makes both sides equal?'",
+  "allow_full_solution": false,
+  "confidence": 0.8
+}

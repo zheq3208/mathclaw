@@ -1,0 +1,31 @@
+{
+  "session_id": "logo-test-gpt5",
+  "title": "New Research Chat",
+  "created_at": 1773287649.8480139,
+  "updated_at": 1773287653.4605675,
+  "messages": [
+    {
+      "role": "user",
+      "content": "?????????????????????????",
+      "timestamp": 1773287649.8484504,
+      "metadata": {
+        "attachments": [
+          {
+            "name": "logo.png",
+            "kind": "image",
+            "mime_type": "image/png",
+            "size": 1921323,
+            "absolute_path": "/root/autodl-tmp/mathclaw/logo.png",
+            "relative_path": "manual/logo.png",
+            "download_url": "/api/agent/attachments/file?path=manual/logo.png"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "I encountered an error during reasoning: Error code: 403 - {'error': {'message': 'This model is not available in your region.', 'code': 403}}",
+      "timestamp": 1773287653.4605634
+    }
+  ]
+}

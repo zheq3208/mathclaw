@@ -1,0 +1,32 @@
+[
+  {
+    "value": 0.0,
+    "solver_role": "solver_a",
+    "method": "unspecified",
+    "reasoning_outline": [],
+    "key_steps": [
+      "Exact solver fallback produced t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4."
+    ],
+    "final_answer": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+    "final_expression": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+    "assumptions": [
+      "candidate repaired from exact solver because model output lacked a final answer"
+    ],
+    "confidence": 0.0
+  },
+  {
+    "value": 0.0,
+    "solver_role": "solver_b",
+    "method": "unspecified",
+    "reasoning_outline": [],
+    "key_steps": [
+      "Exact solver fallback produced t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4."
+    ],
+    "final_answer": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+    "final_expression": "t=0, t=5/4 - sqrt(33)/4, t=5/4 + sqrt(33)/4",
+    "assumptions": [
+      "candidate repaired from exact solver because model output lacked a final answer"
+    ],
+    "confidence": 0.0
+  }
+]

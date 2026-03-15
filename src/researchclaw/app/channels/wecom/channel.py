@@ -24,6 +24,10 @@ from ..base import (
 
 logger = logging.getLogger(__name__)
 
+_WECOM_REPLY_TIMEOUT_SECONDS = 20
+_WECOM_MAX_CHARS_PER_MESSAGE = 1200
+
+
 WECOM_AVAILABLE = importlib.util.find_spec("wecom_aibot_sdk") is not None
 
 _MSG_TYPE_LABELS = {
@@ -256,6 +260,92 @@ class WecomChannel(BaseChannel):
         if frame is not None and chat_id:
             await self._save_chat_frame(chat_id, frame)
 
+    @staticmethod
+    def _event_type(event: Any) -> str:
+        raw = getattr(event, "type", None)
+        if raw is None and isinstance(event, dict):
+            raw = event.get("type")
+        return str(raw or "").strip().lower()
+
+    @staticmethod
+    def _event_content_items(event: Any) -> List[Any]:
+        data = getattr(event, "data", None)
+        if data is None and isinstance(event, dict):
+            data = event.get("data")
+
+        content = getattr(data, "content", None)
+        if content is None and isinstance(data, dict):
+            content = data.get("content")
+        if content is None and isinstance(event, dict):
+            content = event.get("content")
+        if content is None:
+            return []
+        if isinstance(content, (list, tuple)):
+            return list(content)
+        return [content]
+
+    @staticmethod
+    def _content_item_type(item: Any) -> str:
+        raw = getattr(item, "type", None)
+        if raw is None and isinstance(item, dict):
+            raw = item.get("type")
+        return (
+            raw.value
+            if isinstance(raw, ContentType)
+            else str(raw).strip().lower()
+            if raw
+            else ""
+        )
+
+    def _should_skip_intermediate_event(self, event: Any) -> bool:
+        event_type = self._event_type(event)
+        if event_type in {
+            "thinking",
+            "reasoning",
+            "tool_call",
+            "tool_result",
+            "tool_output",
+            "function_call",
+            "function_result",
+        }:
+            return True
+
+        content_items = self._event_content_items(event)
+        if not content_items:
+            return False
+
+        suppressed_types = {
+            "thinking",
+            "reasoning",
+            "tool_call",
+            "tool_output",
+            "tool_result",
+            "function_call",
+            "function_result",
+        }
+        return all(self._content_item_type(item) in suppressed_types for item in content_items)
+
+    async def on_event_message_completed(
+        self,
+        request: Any,
+        to_handle: str,
+        event: Any,
+        send_meta: Dict[str, Any],
+    ) -> None:
+        if self._should_skip_intermediate_event(event):
+            logger.debug(
+                "wecom skip intermediate event type=%s to_handle=%s",
+                self._event_type(event),
+                to_handle,
+            )
+            return
+        await super().on_event_message_completed(
+            request,
+            to_handle,
+            event,
+            send_meta,
+        )
+
     async def start(self) -> None:
         if not self.enabled:
             logger.debug("wecom channel disabled")
@@ -290,6 +380,78 @@ class WecomChannel(BaseChannel):
                 pass
         self._run_task = None
 
+
+    @staticmethod
+    def _split_text_chunks(text: str, max_chars: int = _WECOM_MAX_CHARS_PER_MESSAGE) -> list[str]:
+        content = str(text or '').strip()
+        if not content:
+            return []
+        if len(content) <= max_chars:
+            return [content]
+        chunks: list[str] = []
+        current = ''
+        for block in content.split('\n\n'):
+            piece = block.strip()
+            if not piece:
+                continue
+            candidate = piece if not current else current + '\n\n' + piece
+            if len(candidate) <= max_chars:
+                current = candidate
+                continue
+            if current:
+                chunks.append(current)
+                current = ''
+            while len(piece) > max_chars:
+                chunks.append(piece[:max_chars])
+                piece = piece[max_chars:]
+            current = piece
+        if current:
+            chunks.append(current)
+        return chunks or [content]
+
+    async def _send_frame_chunks(self, frame: Any, chunks: list[str]) -> bool:
+        if self._client is None or not chunks:
+            return False
+        try:
+            for index, chunk in enumerate(chunks):
+                stream_id = self._make_stream_id()
+                await asyncio.wait_for(
+                    self._client.reply_stream(
+                        frame,
+                        stream_id,
+                        chunk,
+                        finish=True,
+                    ),
+                    timeout=_WECOM_REPLY_TIMEOUT_SECONDS,
+                )
+                if index < len(chunks) - 1:
+                    await asyncio.sleep(0.3)
+            return True
+        except Exception:
+            logger.exception('wecom frame send failed')
+            return False
+
+    async def _send_chat_chunks(self, chat_id: str, chunks: list[str]) -> bool:
+        send_message = getattr(self._client, 'send_message', None) if self._client is not None else None
+        if not callable(send_message) or not chat_id or not chunks:
+            return False
+        try:
+            for chunk in chunks:
+                result = send_message(
+                    chat_id,
+                    {
+                        'msgtype': 'markdown',
+                        'markdown': {'content': chunk},
+                    },
+                )
+                if inspect.isawaitable(result):
+                    await asyncio.wait_for(result, timeout=_WECOM_REPLY_TIMEOUT_SECONDS)
+                await asyncio.sleep(0.3)
+            return True
+        except Exception:
+            logger.exception('wecom proactive send failed')
+            return False
+
     async def send(
         self,
         to_handle: str,
@@ -308,37 +470,16 @@ class WecomChannel(BaseChannel):
         if frame is None and chat_id:
             frame = await self._load_chat_frame(chat_id)
 
-        try:
-            if frame is not None:
-                stream_id = self._make_stream_id()
-                await self._client.reply_stream(
-                    frame,
-                    stream_id,
-                    text.strip(),
-                    finish=True,
-                )
-                return
+        chunks = self._split_text_chunks(text.strip())
+        if frame is not None and await self._send_frame_chunks(frame, chunks):
+            return
+        if chat_id and await self._send_chat_chunks(chat_id, chunks):
+            return
 
-            send_message = getattr(self._client, "send_message", None)
-            if callable(send_message) and chat_id:
-                result = send_message(
-                    chat_id,
-                    {
-                        "msgtype": "markdown",
-                        "markdown": {"content": text.strip()},
-                    },
-                )
-                if inspect.isawaitable(result):
-                    await result
-                return
-
-            logger.warning(
-                "wecom send skipped: no frame or proactive chat target for "
-                "to_handle=%s.",
-                to_handle,
-            )
-        except Exception:
-            logger.exception("wecom send failed")
+        logger.warning(
+            "wecom send skipped: no usable delivery path for to_handle=%s.",
+            to_handle,
+        )
 
     async def _run_client(self) -> None:
         try:

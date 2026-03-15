@@ -1,0 +1,33 @@
+{
+  "verification_compare": {
+    "status": "conflict",
+    "equation": "x**2 - 5*x + 6 = 0",
+    "variable": "x",
+    "expected_solutions": [
+      "2",
+      "3"
+    ],
+    "proposed_solutions": [
+      "4"
+    ],
+    "notes": []
+  },
+  "verification_status": "conflict",
+  "wrong_answer": true,
+  "process_incomplete": true,
+  "missing_steps": [
+    "The attempt jumps too quickly and does not expose the first derivation step."
+  ],
+  "likely_error_causes": [
+    "incomplete_reasoning",
+    "symbolic_manipulation_gap"
+  ],
+  "evidence_items": [
+    "Student final answer conflicts with the verified answer or exact check.",
+    "Student process is incomplete for diagnostic checking.",
+    "Reference answer: x=2, x=3"
+  ],
+  "method_tags": [
+    "equation_solving"
+  ]
+}

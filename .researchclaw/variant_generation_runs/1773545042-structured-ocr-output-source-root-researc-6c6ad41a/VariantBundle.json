@@ -1,0 +1,147 @@
+{
+  "case_brief": {
+    "problem_summary": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544779027`\n\n第 I 卷(选择题 共 58 分)",
+    "problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544779027`\n\n第 I 卷(选择题 共 58 分)",
+    "source_problem_text": "# Structured OCR Output\n\nSource: `/root/.researchclaw/media/unknown_file_1773544779027`\n\n第 I 卷(选择题 共 58 分)",
+    "variant_request": "Generate three follow-up variants for this question: one isomorphic, one easier, and one harder. Prioritize the historical weakness memory snapshot and the current solve/verify evidence.",
+    "requested_count": 3,
+    "question_type": "equation",
+    "chapter": "equations_and_inequalities",
+    "knowledge_points": [
+      "linear_equation"
+    ],
+    "prerequisite_gaps": [],
+    "target_skill": "this question: one isomorphic, one easier, and one harder",
+    "difficulty_score": 2.75,
+    "difficulty_band": "medium",
+    "method_tags": [],
+    "requires_visual_reasoning": false,
+    "memory_context": {
+      "student_id": "__global__",
+      "variant_source": "current_problem",
+      "targeted_knowledge_point": "linear_equation",
+      "targeted_weaknesses": [
+        "incomplete_reasoning",
+        "linear_equation procedural execution",
+        "step documentation"
+      ],
+      "active_knowledge_point_count": 5
+    }
+  },
+  "variant_set_title": "Linear Equation Practice Variants",
+  "variants": [
+    {
+      "variant_type": "isomorphic",
+      "problem_text": "??? 3S - 8 = 13",
+      "changes": [
+        "Adjusted the equation form while preserving inverse-operation practice."
+      ],
+      "intent": "same_concept_same_solution_frame",
+      "difficulty_goal": "same",
+      "coach_note": "this question: one isomorphic, one easier, and one harder",
+      "answer_outline": [
+        "Simplify the equation.",
+        "Isolate the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 1.8,
+        "band": "easy",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.75,
+          "band": "medium",
+          "relation": "easier"
+        }
+      },
+      "source": "fallback"
+    },
+    {
+      "variant_type": "easier",
+      "problem_text": "解方程:2x + 3 = 9",
+      "changes": [
+        "Simplified to an equation with the variable only on one side and positive constants, reducing the number of steps"
+      ],
+      "intent": "To build foundational skills with a simpler equation that requires fewer steps, focusing on clear step documentation.",
+      "difficulty_goal": "easier",
+      "coach_note": "Write down every step. Even though it's simpler, practice documenting your work to avoid skipping steps.",
+      "answer_outline": [
+        "Step 1: Subtract 3 from both sides: 2x = 6",
+        "Step 2: Divide both sides by 2: x = 3"
+      ],
+      "difficulty_report": {
+        "score": 1.8,
+        "band": "easy",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.75,
+          "band": "medium",
+          "relation": "easier"
+        }
+      },
+      "source": "qwen"
+    },
+    {
+      "variant_type": "harder",
+      "problem_text": "??? 2(S - 3) + 5 = 17???????????",
+      "changes": [
+        "Adjusted the equation form while preserving inverse-operation practice."
+      ],
+      "intent": "deeper_transfer_or_extra_constraint",
+      "difficulty_goal": "harder",
+      "coach_note": "this question: one isomorphic, one easier, and one harder",
+      "answer_outline": [
+        "Simplify the equation.",
+        "Isolate the variable.",
+        "Check the result if asked."
+      ],
+      "difficulty_report": {
+        "score": 1.9,
+        "band": "easy",
+        "question_type": "equation",
+        "reference": {
+          "score": 2.75,
+          "band": "medium",
+          "relation": "easier"
+        }
+      },
+      "source": "fallback"
+    }
+  ],
+  "validation": [
+    {
+      "variant_type": "isomorphic",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "easier",
+      "difficulty_band": "easy",
+      "notes": [
+        "difficulty_or_structure_mismatch:easier"
+      ]
+    },
+    {
+      "variant_type": "easier",
+      "source": "qwen",
+      "question_type": "equation",
+      "difficulty_relation": "easier",
+      "difficulty_band": "easy",
+      "notes": []
+    },
+    {
+      "variant_type": "harder",
+      "source": "fallback",
+      "question_type": "equation",
+      "difficulty_relation": "easier",
+      "difficulty_band": "easy",
+      "notes": [
+        "difficulty_or_structure_mismatch:easier"
+      ]
+    }
+  ],
+  "design_notes": [
+    "Designed to address the student's weaknesses in incomplete reasoning, procedural execution, and step documentation for linear equations.",
+    "The isomorphic variant maintains the same structure to reinforce the standard procedure.",
+    "The easier variant reduces complexity to build confidence while still requiring step documentation.",
+    "The harder variant introduces fractions to challenge the student with an additional step, promoting careful reasoning."
+  ]
+}

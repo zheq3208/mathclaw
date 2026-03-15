@@ -1,0 +1,1 @@
+The student guessed x=5 without showing any steps. The correct solution requires isolating x: subtract 3 from both sides (2x = 4), then divide by 2 (x = 2). Ask the student to restate the goal and write the first algebraic step explicitly.

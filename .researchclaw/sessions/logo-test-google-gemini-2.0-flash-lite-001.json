@@ -1,0 +1,31 @@
+{
+  "session_id": "logo-test-google-gemini-2.0-flash-lite-001",
+  "title": "New Research Chat",
+  "created_at": 1773287741.4276826,
+  "updated_at": 1773287744.5094206,
+  "messages": [
+    {
+      "role": "user",
+      "content": "?????????????",
+      "timestamp": 1773287741.4278107,
+      "metadata": {
+        "attachments": [
+          {
+            "name": "logo.png",
+            "kind": "image",
+            "mime_type": "image/png",
+            "size": 1921323,
+            "absolute_path": "/root/autodl-tmp/mathclaw/logo.png",
+            "relative_path": "manual/logo.png",
+            "download_url": "/api/agent/attachments/file?path=manual/logo.png"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "content": "I encountered an error during reasoning: Error code: 403 - {'error': {'message': 'This model is not available in your region.', 'code': 403}}",
+      "timestamp": 1773287744.5094159
+    }
+  ]
+}

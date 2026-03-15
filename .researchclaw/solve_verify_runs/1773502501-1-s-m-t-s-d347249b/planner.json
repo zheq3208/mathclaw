@@ -1,0 +1,28 @@
+{
+  "problem_summary": "Find the instantaneous velocity at t = 3 s for a particle with displacement function S(t) = 2t^3 - 5t^2",
+  "givens": [
+    "S(t) = 2t^3 - 5t^2",
+    "t = 3 s"
+  ],
+  "target": "instantaneous velocity at t = 3 s",
+  "question_type": "calculus",
+  "candidate_methods": [
+    "differentiate displacement function to obtain velocity",
+    "evaluate derivative at t = 3"
+  ],
+  "exact_check_targets": {
+    "equation": "S(t) = 2t^3 - 5t^2",
+    "expressions": [
+      "dS/dt = 6t^2 - 10t",
+      "6*(3)^2 - 10*3 = 24"
+    ],
+    "answer_format": "m/s"
+  },
+  "risks": [
+    "OCR error in displacement function (e.g., sign or exponent mismatch)",
+    "Arithmetic error in derivative evaluation (e.g., miscalculating 6*9 or 10*3)",
+    "Confusing velocity (first derivative) with acceleration (second derivative)"
+  ],
+  "preferred_variable": "t",
+  "requires_visual_reasoning": false
+}

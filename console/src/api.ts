@@ -1,4 +1,4 @@
-﻿import type {
+import type {
   AgentRunningConfig,
   ChannelItem,
   ChatAttachment,
@@ -6,6 +6,7 @@
   CronJobItem,
   EnvItem,
   McpClientItem,
+  MemoryOverview,
   PaperItem,
   ProviderItem,
   PushMessage,
@@ -463,6 +464,37 @@ export async function listWorkspaceFiles(): Promise<WorkspaceFileItem[]> {
 export async function getWorkspaceRelations(): Promise<any> {
   const res = await fetch("/api/workspace/relations");
   if (!res.ok) throw new Error("Workspace relations request failed");
+  return res.json();
+}
+
+export async function getMemoryOverview(
+  studentId?: string,
+): Promise<MemoryOverview> {
+  const path = studentId
+    ? `/api/memory?student_id=${encodeURIComponent(studentId)}`
+    : "/api/memory";
+  const res = await fetch(path);
+  if (!res.ok) throw new Error("Memory overview request failed");
+  return res.json();
+}
+
+export async function markMemoryItemMastered(
+  studentId: string,
+  itemType: "knowledge_point" | "weakness",
+  itemName: string,
+  note = "",
+): Promise<any> {
+  const res = await fetch("/api/memory/mastered", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      student_id: studentId,
+      item_type: itemType,
+      item_name: itemName,
+      note,
+    }),
+  });
+  if (!res.ok) throw new Error("Mark memory item mastered failed");
   return res.json();
 }
 

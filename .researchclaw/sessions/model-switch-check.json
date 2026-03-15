@@ -1,0 +1,18 @@
+{
+  "session_id": "model-switch-check",
+  "title": "New Research Chat",
+  "created_at": 1773421470.6135035,
+  "updated_at": 1773421485.6783137,
+  "messages": [
+    {
+      "role": "user",
+      "content": "请只回复四个字：收到切换",
+      "timestamp": 1773421470.6137404
+    },
+    {
+      "role": "assistant",
+      "content": "收到切换",
+      "timestamp": 1773421485.6783106
+    }
+  ]
+}

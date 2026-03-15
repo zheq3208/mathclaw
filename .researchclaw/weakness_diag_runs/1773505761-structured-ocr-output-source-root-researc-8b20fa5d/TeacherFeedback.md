@@ -1,0 +1,1 @@
+Student provided final answers without showing solution steps. To verify correctness and identify conceptual gaps, all intermediate algebraic steps must be documented. Focus on explicit symbolic manipulation for linear equation solutions.

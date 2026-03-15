@@ -55,6 +55,7 @@ dependencies = [
     "semanticscholar>=0.8",          # Semantic Scholar API
     "PyPDF2>=3.0",                   # PDF parsing
     "pdfplumber>=0.10",              # Advanced PDF extraction
+    "PyMuPDF>=1.27",                # PDF rendering for OCR evidence
     "bibtexparser>=2.0.0b",          # BibTeX parsing and generation
     "scholarly>=1.7",                # Google Scholar access
     "feedparser>=6.0",               # RSS feed parsing for paper alerts

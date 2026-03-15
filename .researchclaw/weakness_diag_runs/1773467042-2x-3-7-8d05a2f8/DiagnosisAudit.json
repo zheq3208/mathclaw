@@ -1,0 +1,28 @@
+{
+  "pipeline": "WeaknessDiag-Q3VL",
+  "run_dir": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8",
+  "model": "qwen3-vl-plus",
+  "status": "diagnosed",
+  "primary_weakness": "reading_or_prompt_misread",
+  "CaseBrief_json_path": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8/case_brief.json",
+  "LocalChecks_json_path": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8/local_checks.json",
+  "Process_json_path": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8/process.json",
+  "Learning_json_path": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8/learning.json",
+  "TeacherFeedback_md_path": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8/TeacherFeedback.md",
+  "WeaknessReport_json_path": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8/WeaknessReport.json",
+  "bootstrap_result": {
+    "pipeline": "SolveVerify-Q3VL",
+    "run_dir": "/root/.researchclaw/solve_verify_runs/1773467042-2x-3-7-cc5d55dd",
+    "model": "qwen3-vl-plus",
+    "candidate_count": 2,
+    "winner": "Solver B",
+    "status": "pass",
+    "planner_path": "/root/.researchclaw/solve_verify_runs/1773467042-2x-3-7-cc5d55dd/planner.json",
+    "candidates_path": "/root/.researchclaw/solve_verify_runs/1773467042-2x-3-7-cc5d55dd/candidates.json",
+    "critic_path": "/root/.researchclaw/solve_verify_runs/1773467042-2x-3-7-cc5d55dd/critic.json",
+    "Solved_md_path": "/root/.researchclaw/solve_verify_runs/1773467042-2x-3-7-cc5d55dd/Solved.md",
+    "VerificationReport_json_path": "/root/.researchclaw/solve_verify_runs/1773467042-2x-3-7-cc5d55dd/VerificationReport.json",
+    "SolutionAudit_json_path": "/root/.researchclaw/solve_verify_runs/1773467042-2x-3-7-cc5d55dd/SolutionAudit.json"
+  },
+  "BootstrapVerification_json_path": "/root/.researchclaw/weakness_diag_runs/1773467042-2x-3-7-8d05a2f8/bootstrap_verification.json"
+}

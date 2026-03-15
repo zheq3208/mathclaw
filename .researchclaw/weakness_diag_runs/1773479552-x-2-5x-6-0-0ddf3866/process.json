@@ -1,0 +1,18 @@
+{
+  "primary_error_stage": "reasoning",
+  "wrong_answer": true,
+  "process_incomplete": true,
+  "missing_steps": [
+    "The attempt jumps too quickly and does not expose the first derivation step."
+  ],
+  "evidence_items": [
+    "Student final answer conflicts with the verified answer or exact check.",
+    "Student process is incomplete for diagnostic checking.",
+    "Reference answer: x=2, x=3"
+  ],
+  "likely_error_causes": [
+    "incomplete_reasoning",
+    "symbolic_manipulation_gap"
+  ],
+  "confidence": 0.82
+}

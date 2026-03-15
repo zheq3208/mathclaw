@@ -1,0 +1,125 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "??? 2x + 3 = 7",
+  "planner": {
+    "value": 0.0,
+    "problem_summary": "??? 2x + 3 = 7",
+    "givens": [],
+    "target": "2x + 3 = 7",
+    "question_type": "equation",
+    "candidate_methods": [
+      "direct symbolic solving",
+      "sanity-check route"
+    ],
+    "exact_check_targets": {
+      "equation": "2x + 3 = 7",
+      "expressions": [
+        "??? 2x + 3 = 7"
+      ],
+      "answer_format": "numeric or symbolic"
+    },
+    "risks": [],
+    "preferred_variable": "x",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "2*x + 3 = 7",
+      "variable": "x",
+      "solutions": [
+        "2"
+      ]
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "Solver A",
+        "final_answer": "2",
+        "verification": {
+          "status": "pass",
+          "equation": "2*x + 3 = 7",
+          "variable": "x",
+          "expected_solutions": [
+            "2"
+          ],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "x = 2",
+          "normalized_formula": "x = 2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "Solver B",
+        "final_answer": "2",
+        "verification": {
+          "status": "pass",
+          "equation": "2*x + 3 = 7",
+          "variable": "x",
+          "expected_solutions": [
+            "2"
+          ],
+          "proposed_solutions": [
+            "2"
+          ],
+          "notes": []
+        },
+        "formula_issues": {
+          "original": "2",
+          "normalized_formula": "2",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "Solver A",
+        "verdict": "pass",
+        "strengths": [
+          "Clear step-by-step algebraic solution",
+          "Correct solution"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      },
+      {
+        "solver_role": "Solver B",
+        "verdict": "pass",
+        "strengths": [
+          "Addresses the ambiguity in the problem statement",
+          "Includes verification step for robustness",
+          "Correct solution"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      }
+    ],
+    "consensus_answer": "2",
+    "consensus_expression": "2",
+    "conflict_summary": [],
+    "recommended_winner": "Solver B",
+    "revision_needed": false
+  },
+  "arbiter": {
+    "status": "pass",
+    "final_answer": "2",
+    "final_expression": "2",
+    "concise_solution_markdown": "Solve $2x + 3 = 7$:\n- Subtract 3: $2x = 4$\n- Divide by 2: $x = 2$\nVerification: $2(2) + 3 = 7$ ✓",
+    "verification_summary": [
+      "Symbolic solver confirms solution x = 2 satisfies 2x + 3 = 7",
+      "Both solvers independently derived and verified x = 2",
+      "Back-substitution confirms correctness"
+    ],
+    "unresolved_risks": [],
+    "recommended_follow_up": "None — solution is unambiguous and verified."
+  }
+}

@@ -7,6 +7,7 @@ __all__ = [
     "control",
     "envs",
     "mcp",
+    "memory",
     "papers",
     "providers",
     "skills",

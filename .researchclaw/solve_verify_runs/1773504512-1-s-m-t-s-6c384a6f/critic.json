@@ -1,0 +1,23 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "solver_a",
+      "verdict": "conflict",
+      "strengths": [],
+      "issues": [],
+      "first_conflicting_step": ""
+    },
+    {
+      "solver_role": "solver_b",
+      "verdict": "conflict",
+      "strengths": [],
+      "issues": [],
+      "first_conflicting_step": ""
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [],
+  "recommended_winner": "solver_a",
+  "revision_needed": true
+}
