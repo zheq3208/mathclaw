@@ -1,0 +1,23 @@
+{
+  "problem_summary": "用户请求批改试卷，但未提供具体题目内容、答案及必要信息，无法执行批改任务。",
+  "givens": [],
+  "target": "批改试卷",
+  "question_type": "other",
+  "candidate_methods": [
+    "核对标准答案",
+    "检查解题步骤完整性",
+    "验证计算过程"
+  ],
+  "exact_check_targets": {
+    "equation": "无",
+    "expressions": [],
+    "answer_format": "未指定"
+  },
+  "risks": [
+    "题目信息缺失",
+    "可能依赖图像内容",
+    "答案格式不明确"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": true
+}

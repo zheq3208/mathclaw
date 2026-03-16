@@ -1,0 +1,141 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "批改我的试卷",
+  "planner": {
+    "problem_summary": "用户请求批改试卷，但未提供具体题目内容、答案及必要信息，无法执行批改任务。",
+    "givens": [],
+    "target": "批改试卷",
+    "question_type": "other",
+    "candidate_methods": [
+      "核对标准答案",
+      "检查解题步骤完整性",
+      "验证计算过程"
+    ],
+    "exact_check_targets": {
+      "equation": "无",
+      "expressions": [],
+      "answer_format": "未指定"
+    },
+    "risks": [
+      "题目信息缺失",
+      "可能依赖图像内容",
+      "答案格式不明确"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": true
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "无",
+      "variable": "x",
+      "solutions": []
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "无法批改试卷，因未提供题目内容、答案及必要信息",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "无法批改试卷",
+            "因未提供题目内容、答案及必要信息"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "无",
+          "normalized_formula": "无",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "无法批改，缺少题目内容及答案信息",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "无法批改",
+            "缺少题目内容及答案信息"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "无法批改，缺少题目内容及答案信息",
+          "normalized_formula": "无法批改，缺少题目内容及答案信息",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "正确识别题目信息缺失",
+          "推理逻辑清晰"
+        ],
+        "issues": [
+          "缺乏验证依据，因无标准答案"
+        ],
+        "first_conflicting_step": "输出阶段，但核心结论正确，仅证据不足"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "正确识别信息缺失"
+        ],
+        "issues": [
+          "使用全角标点，可能混淆解析"
+        ],
+        "first_conflicting_step": "final_answer中使用全角逗号"
+      }
+    ],
+    "consensus_answer": "无法批改试卷，因未提供题目内容、答案及必要信息",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "求解器B的输出包含全角标点，而求解器A没有",
+      "工具检查报告求解器B有格式问题"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "无法批改试卷，因未提供题目内容、答案及必要信息",
+    "final_expression": "无法批改试卷，因未提供题目内容、答案及必要信息",
+    "concise_solution_markdown": "您请求批改试卷，但未提供任何题目内容、您的作答或参考答案。批改需要明确的题目与对应解答才能进行核对与评分。请补充试卷具体内容后重新提交。",
+    "verification_summary": [
+      "两位求解器均正确指出信息缺失问题",
+      "求解器B因使用全角标点被工具检查标记为格式问题",
+      "无标准答案可比对，结论依赖逻辑判断而非计算验证"
+    ],
+    "unresolved_risks": [
+      "题面可能依赖图像（用户未上传）",
+      "答案格式要求不明确",
+      "缺乏可验证的输入数据"
+    ],
+    "recommended_follow_up": "请提供试卷题目原文、您的解答过程及标准答案（如有），以便进行准确批改。"
+  }
+}

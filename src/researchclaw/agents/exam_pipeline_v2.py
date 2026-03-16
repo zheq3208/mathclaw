@@ -589,25 +589,35 @@ def _problem_status(item: dict[str, Any]) -> tuple[str, str]:
     return "??", "??"
 
 
+def _with_stage_title(title: str, text: str) -> str:
+    body = str(text or "").strip()
+    if not body:
+        return body
+    prefix = f"{title}\n"
+    if body.startswith(prefix) or body.startswith(title):
+        return body
+    return f"{prefix}{body}"
+
+
 def format_stage_one(agent: Any, *, weakness_payload: dict[str, Any], solve_stage2: dict[str, Any] | None = None, ocr_stage2: dict[str, Any] | None = None) -> str:
     text = str(weakness_payload.get("user_text") or "").strip()
     if text:
-        return text
+        return _with_stage_title("### \u6279\u6539\u4e0e\u8584\u5f31\u70b9", text)
     if solve_stage2:
         fallback = str((solve_stage2 or {}).get("overall_comment") or "").strip()
         if fallback:
-            return fallback
-    return "????????????????"
+            return _with_stage_title("### \u6279\u6539\u4e0e\u8584\u5f31\u70b9", fallback)
+    return _with_stage_title("### \u6279\u6539\u4e0e\u8584\u5f31\u70b9", "\u6279\u6539\u4e0e\u8584\u5f31\u70b9\u6682\u65f6\u672a\u751f\u6210\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002")
 
 
 def format_stage_two(agent: Any, *, guided_payload: dict[str, Any]) -> str:
     text = str(guided_payload.get("user_text") or "").strip()
-    return text or "?????????????????"
+    return _with_stage_title("### \u5f15\u5bfc\u8bb2\u89e3", text or "\u5f15\u5bfc\u8bb2\u89e3\u6682\u65f6\u672a\u751f\u6210\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002")
 
 
 def format_stage_three(agent: Any, *, variant_payload: dict[str, Any]) -> str:
     text = str(variant_payload.get("user_text") or "").strip()
-    return text or "\u53d8\u5f0f\u9898\u6682\u65f6\u672a\u751f\u6210\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002"
+    return _with_stage_title("### \u53d8\u5f0f\u9898", text or "\u53d8\u5f0f\u9898\u6682\u65f6\u672a\u751f\u6210\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002")
 
 
 def maybe_handle_exam_pipeline_request(agent: Any, message: str, *, attachments: list[dict[str, Any]] | None = None, session_id: str | None = None, store_response: bool = True, return_bundle: bool = False) -> str | dict[str, Any] | None:
@@ -658,13 +668,12 @@ def maybe_handle_exam_pipeline_request(agent: Any, message: str, *, attachments:
                 results[name] = {"status": "error", "user_text": f"这次{labels.get(name, name)}阶段没有稳定完成：{exc}"}
 
     stage_messages = [
-        "已收到截图，开始批改。接下来会依次发送：批改与薄弱点、引导式讲解、变式题。",
         format_stage_one(agent, solve_stage2=solve_stage2, weakness_payload=results.get("weakness", {}), ocr_stage2=context.get("ocr_stage2", {})),
         format_stage_two(agent, guided_payload=results.get("guided", {})),
         format_stage_three(agent, variant_payload=results.get("variant", {})),
     ]
     bundle = {
-        "combined_response": "\n\n".join(stage_messages[1:]),
+        "combined_response": "\n\n".join(stage_messages),
         "stage_messages": stage_messages,
         "status": "ok",
         "run_dir": str(run_dir),

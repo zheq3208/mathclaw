@@ -1,0 +1,27 @@
+{
+  "boxes": [
+    {
+      "id": "b1",
+      "kind": "question_stem",
+      "bbox": [
+        73,
+        66,
+        456,
+        203
+      ],
+      "text_hint": "17题题干"
+    },
+    {
+      "id": "b2",
+      "kind": "question_stem",
+      "bbox": [
+        483,
+        64,
+        850,
+        302
+      ],
+      "text_hint": "18题题干"
+    }
+  ],
+  "page_note": ""
+}

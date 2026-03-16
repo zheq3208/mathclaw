@@ -12,6 +12,7 @@ import json
 import logging
 import mimetypes
 import re
+import time
 from pathlib import Path
 from typing import Any, Literal, Optional
 
@@ -2868,6 +2869,7 @@ class ScholarAgent:
                     stage_messages = [final_response]
                 for stage_message in stage_messages[:-1]:
                     yield {"type": "stage_message", "content": stage_message}
+                    time.sleep(0.3)
                 done_stage_messages = stage_messages[-1:] if stage_messages else []
                 self._finish_turn_trace(final_response or (done_stage_messages[0] if done_stage_messages else ""), status=str(exam_bundle.get("status") or "ok"))
                 yield {

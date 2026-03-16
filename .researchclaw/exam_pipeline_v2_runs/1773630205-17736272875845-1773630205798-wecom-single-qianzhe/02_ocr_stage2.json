@@ -1,0 +1,18 @@
+{
+  "paper_title": "",
+  "questions": [
+    {
+      "question_id": "17",
+      "question_text": "已知x²+y²-4x+2my+2m²-2m+1=0 (m∈R) 表示圆C的方程。\n(1) 求实数m的取值范围；\n(2) 当圆C的面积最大时，求过点A(4,-4)的圆的切线方程；\n(3) P为圆上任意一点，已知B(6,0)，在(2)的条件下，求|PA|²+|PB|²的最小值。",
+      "options": [],
+      "student_answer": ""
+    },
+    {
+      "question_id": "18",
+      "question_text": "如图所示的几何体中，PD垂直于梯形ABCD所在的平面，∠ADC=∠BAD=π/2，F为PA的中点，PD=√2，AB=AD=1/2 CD=1，四边形PDCE为矩形，线段PC交DE于点N。\n(1) 求证：AC//平面DEF；\n(2) 求二面角A-PB-C的正弦值；\n(3) 在线段EF上是否存在一点Q，使得BQ与平面BCP所成角的大小为π/6？若存在，求出FQ的长；若不存在，请说明理由。",
+      "options": [],
+      "student_answer": ""
+    }
+  ],
+  "page_summary": ""
+}

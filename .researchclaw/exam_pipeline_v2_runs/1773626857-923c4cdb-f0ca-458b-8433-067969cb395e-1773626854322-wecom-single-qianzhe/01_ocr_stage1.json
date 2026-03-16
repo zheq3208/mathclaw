@@ -1,0 +1,49 @@
+{
+  "boxes": [
+    {
+      "id": "q1",
+      "kind": "question",
+      "bbox": [
+        20,
+        100,
+        880,
+        125
+      ],
+      "text_hint": "题1题干选项"
+    },
+    {
+      "id": "q2",
+      "kind": "question",
+      "bbox": [
+        20,
+        130,
+        880,
+        155
+      ],
+      "text_hint": "题2题干选项"
+    },
+    {
+      "id": "q3",
+      "kind": "question",
+      "bbox": [
+        20,
+        160,
+        880,
+        185
+      ],
+      "text_hint": "题3题干选项"
+    },
+    {
+      "id": "q4",
+      "kind": "question",
+      "bbox": [
+        20,
+        190,
+        880,
+        215
+      ],
+      "text_hint": "题4题干选项"
+    }
+  ],
+  "page_note": "选择题1-4题文本区域"
+}

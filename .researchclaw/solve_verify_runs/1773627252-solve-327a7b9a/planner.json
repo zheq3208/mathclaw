@@ -1,0 +1,23 @@
+{
+  "problem_summary": "用户请求批改试卷，但未提供具体题目内容及答案",
+  "givens": [
+    "未提供具体题目内容",
+    "未提供预期答案"
+  ],
+  "target": "对试卷进行批改并提供反馈",
+  "question_type": "其他",
+  "candidate_methods": [
+    "无适用方法"
+  ],
+  "exact_check_targets": {
+    "equation": "无",
+    "expressions": [],
+    "answer_format": "未指定"
+  },
+  "risks": [
+    "题目信息缺失导致无法准确批改",
+    "可能依赖未提供的图像或版面信息"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": true
+}
