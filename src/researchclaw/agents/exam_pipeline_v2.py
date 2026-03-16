@@ -452,41 +452,54 @@ def _solve_stage_two(image_path: Path, original_prompt: str, solve_stage1_payloa
     return result
 
 
+
 def _weakness_stage(image_path: Path, original_prompt: str, solve_stage2_payload: dict[str, Any], memory_summary: str, run_dir: Path) -> dict[str, Any]:
     cfg = _load_solver_config()
-    system_prompt = "你是一名数学薄弱点诊断助手。请读取历史薄弱点、原图、用户原始需求和求解验证结果，先判断这次哪些内容是正确的、哪些内容是错误的，再用一小段中文说明最核心的薄弱点。你的输出会直接发给用户，所以不要写标题，不要写英文。"
-    user_prompt = f"用户原始需求：{original_prompt or '批改这张试卷'}\n历史薄弱点记忆：\n{memory_summary or '当前还没有明显的历史薄弱点记录。'}\n请先用简洁中文总结这次批改与验证的结论，再指出最核心的薄弱点和后续训练重点。\n请按这个结构输出：{json.dumps(_WEAKNESS_SCHEMA, ensure_ascii=False)}"
+    system_prompt = "你是一名数学老师。请根据这张试卷的批改与验证结果，直接对学生给出一段批改与薄弱点总结。用简体中文，不要 JSON，不要英文，不要自己加标题。风格要像老师批改反馈，先概括这次整体情况，再说最核心的薄弱点与后续建议。涉及公式、方程、向量、根号时，请使用 $...$ 包住为 LaTeX 格式。"
+    user_prompt = (
+        f"用户原始需求：{original_prompt or '批改这张试卷'}\n"
+        f"历史薄弱点记忆：\n{memory_summary or '当前还没有明显的历史薄弱点记录。'}\n\n"
+        "请直接输出一段给学生的批改与薄弱点总结。要尽量保持像老师当面讲评的感觉，内容尽量接近现在的风格：先说哪些地方做得好，再说错在哪里，最后落到一个最核心的薄弱点和一句后续训练建议。不要分成很多小点，不要输出大段分类结构，直接给完整自然的一段或两段中文即可。"
+    )
     user_prompt += _chain_suffix(solve_stage2_payload)
-    payload = _call_qwen_json(cfg=cfg, system_prompt=system_prompt, user_prompt=user_prompt, enable_thinking=False, supporting_images=[image_path])
+    user_text = _call_qwen_text(
+        cfg=cfg,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        enable_thinking=False,
+        supporting_images=[image_path],
+    )
     result = {
-        "all_correct": bool(payload.get("all_correct")),
-        "correct_points": [str(v).strip() for v in (payload.get("correct_points") or []) if str(v).strip()],
-        "error_points": [str(v).strip() for v in (payload.get("error_points") or []) if str(v).strip()],
-        "primary_weakness": str(payload.get("primary_weakness") or "").strip(),
-        "knowledge_points": [str(v).strip() for v in (payload.get("knowledge_points") or []) if str(v).strip()],
-        "practice_focus": [str(v).strip() for v in (payload.get("practice_focus") or []) if str(v).strip()],
-        "user_text": str(payload.get("user_text") or "").strip(),
+        "user_text": str(user_text or "").strip(),
     }
-    _write_json(run_dir / "05_weakness.json", result)
-    _write_text(run_dir / "05_weakness.txt", result["user_text"])
+    _write_json(run_dir / '05_weakness.json', result)
+    _write_text(run_dir / '05_weakness.txt', result['user_text'])
     return result
+
 
 
 def _guided_stage(image_path: Path, original_prompt: str, solve_stage2_payload: dict[str, Any], memory_summary: str, run_dir: Path) -> dict[str, Any]:
     cfg = _load_solver_config()
-    system_prompt = "你是一名数学老师。请读取历史薄弱点、原图、用户原始需求和求解验证结果，给出针对性的引导式讲解。讲解要建立在已经算出的求解过程之上，再补几句核心突破点，帮助学生理解怎么破题。你的输出会直接发给用户，所以不要写标题，不要写英文。"
-    user_prompt = f"用户原始需求：{original_prompt or '批改这张试卷'}\n历史薄弱点记忆：\n{memory_summary or '当前还没有明显的历史薄弱点记录。'}\n请给出一段直接发给学生的引导式讲解。讲解里要包含最基础的求解过程，再补充几句核心突破点。\n请按这个结构输出：{json.dumps(_GUIDED_SCHEMA, ensure_ascii=False)}"
+    system_prompt = "你是一名擅长讲题的数学老师。请根据这张试卷的求解与验证结果，给出面向学生的引导式讲解。用简体中文，不要 JSON，不要英文，不要自己加标题。讲解要包含最基本的求解过程，但重点是帮学生看清这道题该从哪里破题，以及这次为什么会错。涉及公式、方程、向量、根号时，请使用 $...$ 包住为 LaTeX 格式。"
+    user_prompt = (
+        f"用户原始需求：{original_prompt or '批改这张试卷'}\n"
+        f"历史薄弱点记忆：\n{memory_summary or '当前还没有明显的历史薄弱点记录。'}\n\n"
+        "请直接输出一段给学生的引导式讲解。风格尽量接近现在的讲解感觉：先把这道题的最基本解题思路讲明白，再点出这次最关键的卡点或易错点，最后补一句核心突破点或提醒。不要写成标签化 JSON 或大纲，直接输出完整自然的中文讲解即可。"
+    )
     user_prompt += _chain_suffix(solve_stage2_payload)
-    payload = _call_qwen_json(cfg=cfg, system_prompt=system_prompt, user_prompt=user_prompt, enable_thinking=False, supporting_images=[image_path])
+    user_text = _call_qwen_text(
+        cfg=cfg,
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+        enable_thinking=False,
+        supporting_images=[image_path],
+    )
     result = {
-        "hint_level": int(payload.get("hint_level") or 1),
-        "core_breakthrough_points": [str(v).strip() for v in (payload.get("core_breakthrough_points") or []) if str(v).strip()],
-        "user_text": str(payload.get("user_text") or "").strip(),
+        "user_text": str(user_text or "").strip(),
     }
-    _write_json(run_dir / "06_guided.json", result)
-    _write_text(run_dir / "06_guided.txt", result["user_text"])
+    _write_json(run_dir / '06_guided.json', result)
+    _write_text(run_dir / '06_guided.txt', result['user_text'])
     return result
-
 
 def _variant_stage(image_path: Path, original_prompt: str, solve_stage2_payload: dict[str, Any], memory_summary: str, run_dir: Path) -> dict[str, Any]:
     cfg = _load_solver_config()
