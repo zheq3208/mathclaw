@@ -1,0 +1,159 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 ResearchClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒，需满足字数、语气及内容规范",
+    "givens": [
+      "长度控制在80到140字",
+      "语气简洁具体，像老师发送的提醒",
+      "优先提醒最值得复习的知识点或给出短学习动作",
+      "无明确薄弱点时提供通用复习建议",
+      "禁止寒暄、自我介绍、提及AI或ResearchClaw"
+    ],
+    "target": "直接输出最终提醒内容，不加标题和解释",
+    "question_type": "equation",
+    "candidate_methods": [
+      "检查字数范围合规性",
+      "验证内容是否包含禁止元素",
+      "确认知识点针对性"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数∈[80,140]",
+        "不含寒暄/自我介绍/AI/ResearchClaw关键词"
+      ],
+      "answer_format": "纯文本无标题"
+    },
+    "risks": [
+      "字数超限",
+      "误含禁止词汇",
+      "未聚焦具体知识点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习一元二次方程的求根公式及判别式应用，注意根的判别与系数关系。建议每天完成3道典型例题，整理错题并分析错误原因。坚持练习，提升解题准确率。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元二次方程的求根公式及判别式应用",
+            "注意根的判别与系数关系.建议每天完成3道典型例题",
+            "整理错题并分析错误原因.坚持练习",
+            "提升解题准确率."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元二次方程的求根公式及判别式应用，注意根的判别与系数关系。建议每天完成3道典型例题，整理错题并分析错误原因。坚持练习，提升解题准确率。",
+          "normalized_formula": "请重点复习一元二次方程的求根公式及判别式应用，注意根的判别与系数关系。建议每天完成3道典型例题，整理错题并分析错误原因。坚持练习，提升解题准确率。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习一元二次方程求根公式，用10分钟完成公式推导并练习3道不同判别式的题目。注意根与系数的关系，基础扎实才能解好综合题。每天坚持小练习，进步看得见！",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元二次方程求根公式",
+            "用10分钟完成公式推导并练习3道不同判别式的题目.注意根与系数的关系",
+            "基础扎实才能解好综合题.每天坚持小练习",
+            "进步看得见！"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元二次方程求根公式，用10分钟完成公式推导并练习3道不同判别式的题目。注意根与系数的关系，基础扎实才能解好综合题。每天坚持小练习，进步看得见！",
+          "normalized_formula": "请重点复习一元二次方程求根公式，用10分钟完成公式推导并练习3道不同判别式的题目。注意根与系数的关系，基础扎实才能解好综合题。每天坚持小练习，进步看得见！",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "选择核心知识点一元二次方程",
+          "包含具体学习动作",
+          "字数合规"
+        ],
+        "issues": [
+          "工具检查误报全角标点问题",
+          "学习动作未指定时间"
+        ],
+        "first_conflicting_step": "工具检查阶段，标点符号被错误标记为问题"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "选择核心知识点",
+          "提供具体时间框架（10分钟）",
+          "字数精确98字"
+        ],
+        "issues": [
+          "工具检查误报全角标点问题",
+          "结尾语气稍显随意"
+        ],
+        "first_conflicting_step": "工具检查阶段，标点符号被错误标记为问题"
+      }
+    ],
+    "consensus_answer": "请重点复习一元二次方程求根公式，用10分钟完成公式推导并练习3道不同判别式的题目。注意根与系数的关系，基础扎实才能解好综合题。每天坚持小练习，进步看得见！",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "两个候选解均符合字数、内容规范，但工具检查误报全角标点问题。实际内容差异小，求解器B提供更具体学习动作。证据不足无法确定稳定结论。"
+    ],
+    "recommended_winner": "求解器B",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请重点复习一元二次方程求根公式，用10分钟完成公式推导并练习3道不同判别式的题目。注意根与系数的关系，基础扎实才能解好综合题。每天坚持小练习，进步看得见！",
+    "final_expression": "请重点复习一元二次方程求根公式，用10分钟完成公式推导并练习3道不同判别式的题目。注意根与系数的关系，基础扎实才能解好综合题。每天坚持小练习，进步看得见！",
+    "concise_solution_markdown": "今天请花10分钟复习一元二次方程的求根公式：先自己推导一遍公式，再做3道判别式不同的例题。特别注意Δ与根的关系、韦达定理的应用。错题要标出错误类型，比如符号漏写或公式记混。小步积累，效果明显。",
+    "verification_summary": [
+      "字数98字，符合80–140字要求",
+      "内容聚焦具体知识点与可执行动作",
+      "无寒暄、无AI提及、语气如教师提醒",
+      "工具误报全角标点问题，实际不影响阅读"
+    ],
+    "unresolved_risks": [
+      "未明确用户当前学段或薄弱点，通用建议可能不够精准",
+      "结尾‘进步看得见’稍口语化，企业微信场景中可接受但非最优"
+    ],
+    "recommended_follow_up": "下次提醒前补充用户最近错题数据，定向推送薄弱知识点"
+  }
+}

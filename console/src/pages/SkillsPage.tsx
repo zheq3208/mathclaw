@@ -92,6 +92,18 @@ const SKILL_DESCRIPTIONS: Record<string, string> = {
   xlsx: "读取和编辑表格",
 };
 
+const CORE_PIPELINE_SKILLS = [
+  { id: "ocr_document_processor", label: "OCR", description: "结构化识别试卷" },
+  { id: "math_solver_verifier", label: "Solve", description: "求解与验证" },
+  { id: "weakness_diagnoser", label: "Diagnose", description: "定位薄弱点" },
+  { id: "guiding_users", label: "Guide", description: "引导式讲解" },
+  { id: "variant_generator", label: "Variants", description: "生成变式题" },
+] as const;
+
+const CORE_PIPELINE_SKILL_IDS: Set<string> = new Set(
+  CORE_PIPELINE_SKILLS.map((skill) => skill.id),
+);
+
 function getSkillId(skill: SkillItem, fallback: string) {
   const pathName = skill.path?.split("/").filter(Boolean).pop();
   return pathName || fallback;
@@ -148,23 +160,34 @@ export default function SkillsPage() {
     void onLoad();
   }, []);
 
-  const orderedSkills = useMemo(() => {
-    return [...skills].sort((left, right) => {
-      const leftRank = left.deletable ? 1 : 0;
-      const rightRank = right.deletable ? 1 : 0;
-      if (leftRank !== rightRank) {
-        return leftRank - rightRank;
-      }
-      const leftName = getSkillLabel(
-        getSkillId(left, left.name || ""),
-        left.name || "",
-      );
-      const rightName = getSkillLabel(
-        getSkillId(right, right.name || ""),
-        right.name || "",
-      );
-      return leftName.localeCompare(rightName, "zh-Hans-CN");
+  const generatedSkills = useMemo(() => {
+    return [...skills]
+      .filter((skill, idx) => {
+        const rawName = skill.name || `skill-${idx}`;
+        const skillId = getSkillId(skill, rawName);
+        return !CORE_PIPELINE_SKILL_IDS.has(skillId)
+          && (skill.deletable === true || skill.generated === true);
+      })
+      .sort((left, right) => {
+        const leftName = getSkillLabel(
+          getSkillId(left, left.name || ""),
+          left.name || "",
+        );
+        const rightName = getSkillLabel(
+          getSkillId(right, right.name || ""),
+          right.name || "",
+        );
+        return leftName.localeCompare(rightName, "zh-Hans-CN");
+      });
+  }, [skills]);
+
+  const skillById = useMemo(() => {
+    const nextMap = new Map<string, SkillItem>();
+    skills.forEach((skill, idx) => {
+      const rawName = skill.name || `skill-${idx}`;
+      nextMap.set(getSkillId(skill, rawName), skill);
     });
+    return nextMap;
   }, [skills]);
 
   async function onToggle(skillId: string, nextChecked: boolean) {
@@ -280,7 +303,43 @@ export default function SkillsPage() {
       )}
 
       <div className="card-list animate-list">
-        {orderedSkills.map((skill: SkillItem, idx: number) => {
+        {CORE_PIPELINE_SKILLS.map((coreSkill) => {
+          const matchedSkill = skillById.get(coreSkill.id);
+          const isActive = true;
+          const title = matchedSkill?.name
+            ? `${coreSkill.id} - ${matchedSkill.name}`
+            : coreSkill.id;
+          return (
+            <div key={coreSkill.id} className="data-row">
+              <div className="data-row-info">
+                <div className="data-row-title">
+                  <Puzzle
+                    size={14}
+                    style={{ marginRight: 6, verticalAlign: "middle" }}
+                  />
+                  <span className="skill-name" title={title}>
+                    {coreSkill.label}
+                  </span>
+                  <span className="skill-state-pill is-on">
+                    {"\u5df2\u542f\u52a8"}
+                  </span>
+                  <Badge variant="neutral">{"\u56fa\u5b9a"}</Badge>
+                </div>
+                <div className="data-row-meta">{coreSkill.description}</div>
+              </div>
+              <div className="data-row-actions">
+                <Toggle
+                  className="skills-toggle"
+                  checked={isActive}
+                  disabled
+                  onChange={() => {}}
+                />
+              </div>
+            </div>
+          );
+        })}
+
+        {generatedSkills.map((skill: SkillItem, idx: number) => {
           const rawName = skill.name || `skill-${idx}`;
           const skillId = getSkillId(skill, rawName);
           const displayName = getSkillLabel(skillId, rawName);
@@ -290,8 +349,7 @@ export default function SkillsPage() {
             rawName,
           );
           const isActive = active.includes(skillId) || skill.enabled === true;
-          const title = rawName === skillId ? skillId : `${skillId} · ${rawName}`;
-          const isGenerated = skill.deletable === true || skill.generated === true;
+          const title = rawName === skillId ? skillId : `${skillId} - ${rawName}`;
           const categories = getSkillCategories(skill);
           return (
             <div key={skillId} className="data-row">
@@ -309,9 +367,7 @@ export default function SkillsPage() {
                   >
                     {isActive ? "已启动" : "未启动"}
                   </span>
-                  <Badge variant={isGenerated ? "info" : "neutral"}>
-                    {isGenerated ? "Creator" : "系统"}
-                  </Badge>
+                  <Badge variant="info">Creator</Badge>
                 </div>
                 {description && (
                   <div className="data-row-meta">{description}</div>
@@ -327,16 +383,14 @@ export default function SkillsPage() {
                 )}
               </div>
               <div className="data-row-actions">
-                {skill.deletable && (
-                  <button
-                    className="btn-secondary btn-icon skill-delete-btn"
-                    title="删除这个 Skill"
-                    disabled={deletingSkillId === skillId}
-                    onClick={() => onDelete(skill, displayName)}
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                )}
+                <button
+                  className="btn-secondary btn-icon skill-delete-btn"
+                  title="删除这个 Skill"
+                  disabled={deletingSkillId === skillId}
+                  onClick={() => onDelete(skill, displayName)}
+                >
+                  <Trash2 size={15} />
+                </button>
                 <Toggle
                   className="skills-toggle"
                   checked={isActive}

@@ -99,7 +99,7 @@ export default function McpPage() {
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setNewKey(e.target.value)
               }
-              placeholder="Client Key"
+              placeholder="客户端 Key"
               style={{ flex: "1 1 180px" }}
             />
             <input
@@ -155,13 +155,13 @@ export default function McpPage() {
                 </Badge>
               </div>
               <div className="data-row-meta">
-                Key: {item.key}
+                Key?{item.key}
                 <span style={{ margin: "0 6px" }}>·</span>
-                Transport: {item.transport || "-"}
+                传输?{item.transport || "-"}
                 {item.command && (
                   <>
                     <span style={{ margin: "0 6px" }}>·</span>
-                    Cmd: {item.command}
+                    命令?{item.command}
                   </>
                 )}
               </div>

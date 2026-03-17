@@ -46,7 +46,7 @@ export default function WorkspacePage() {
   const grouped = useMemo(() => {
     const out = new Map<string, WorkspaceFileItem[]>();
     for (const item of files) {
-      const group = item.category || "other";
+      const group = item.category || "未分组";
       if (!out.has(group)) out.set(group, []);
       out.get(group)!.push(item);
     }
@@ -155,10 +155,10 @@ export default function WorkspacePage() {
                 <IconBadge tone="blue" size="sm">
                   <MessageCircle size={12} />
                 </IconBadge>
-                sessions: {relations?.chat?.session_total ?? 0}
+                会话数：{relations?.chat?.session_total ?? 0}
               </div>
               <div className="workspace-rel-meta">
-                chats.json: {relations?.chat?.chats_file_total ?? 0}
+                chats.json：{relations?.chat?.chats_file_total ?? 0}
               </div>
             </div>
             <div className="workspace-rel-card">
@@ -167,7 +167,7 @@ export default function WorkspacePage() {
                 <IconBadge tone="violet" size="sm">
                   <Puzzle size={12} />
                 </IconBadge>
-                active: {relations?.skills?.active_count ?? 0}
+                已启用：{relations?.skills?.active_count ?? 0}
               </div>
               <div className="workspace-rel-meta">
                 {(relations?.skills?.active_skills || []).join(", ") || "-"}
@@ -181,7 +181,7 @@ export default function WorkspacePage() {
                 </IconBadge>
                 {relations?.cron?.enabled ?? 0}/{relations?.cron?.total ?? 0}
               </div>
-              <div className="workspace-rel-meta">enabled / total</div>
+              <div className="workspace-rel-meta">已启用 / 已配置</div>
             </div>
             <div className="workspace-rel-card">
               <div className="workspace-rel-title">心跳</div>
@@ -189,10 +189,10 @@ export default function WorkspacePage() {
                 <IconBadge tone="danger" size="sm">
                   <Heart size={12} />
                 </IconBadge>
-                {relations?.heartbeat?.enabled ? "enabled" : "disabled"}
+                {relations?.heartbeat?.enabled ? "已启用" : "未启用"}
               </div>
               <div className="workspace-rel-meta">
-                every: {relations?.heartbeat?.every || "-"} · target:{" "}
+                间隔：{relations?.heartbeat?.every || "-"} · 目标：{" "}
                 {relations?.heartbeat?.target || "-"}
               </div>
             </div>
@@ -202,14 +202,14 @@ export default function WorkspacePage() {
                 <IconBadge tone="teal" size="sm">
                   <Settings size={12} />
                 </IconBadge>
-                lang: {relations?.config?.language || "-"}
+                语言：{relations?.config?.language || "-"}
               </div>
               <div className="workspace-rel-meta">
-                channels:{" "}
+                频道：{" "}
                 {(relations?.config?.available_channels || []).join(", ") || "-"}
               </div>
               <div className="workspace-rel-meta">
-                last_dispatch: {relations?.config?.last_dispatch || "-"}
+                最近派发：{relations?.config?.last_dispatch || "-"}
               </div>
             </div>
           </div>

@@ -173,22 +173,86 @@ def _fallback_body(title: str, description: str, requirements: str) -> str:
     summary = requirements.strip().replace("\r", "")
     return (
         "# Role\n"
-        f"{title} focuses on this goal: {description or title}.\n\n"
+        f"?????{title}??????? AI ???????{description or title}?\n\n"
         "# When to Use\n"
-        f"- Use this skill when the user request matches: {summary}.\n"
-        "- Use it for explanation and guidance, not for running tools or writing code.\n\n"
+        f"- ????????????????{summary}?\n"
+        "- ???????????????????????????\n\n"
         "# Workflow\n"
-        "1. Restate the user goal in simple language.\n"
-        "2. Break the task into a short, reusable teaching flow.\n"
-        "3. Keep outputs structured and easy to follow.\n"
-        "4. Ask at most one clarifying question only when required.\n\n"
+        "1. ?????????????\n"
+        "2. ?????????????????\n"
+        "3. ????????????????\n"
+        "4. ???????????????????????\n\n"
         "# Guardrails\n"
-        "- Do not invent APIs, scripts, or automations.\n"
-        "- Do not claim capabilities outside text guidance.\n"
-        "- Keep the interaction focused on the requested learning task.\n\n"
+        "- ???? API???????????????\n"
+        "- ?????????????????????\n"
+        "- ????????????????\n\n"
         "# Response Style\n"
-        "- Be concise.\n"
-        "- Prefer checklists, short sections, and concrete examples.\n"
+        "- ??????\n"
+        "- ??????????????????\n"
+    )
+
+
+def _infer_title_from_requirement(requirements: str) -> str:
+    text = re.sub(r"\s+", "", requirements or "")
+    prefixes = (
+        "我想要",
+        "我需要",
+        "帮我",
+        "请帮我",
+        "请生成",
+        "生成",
+        "创建",
+        "做一个",
+        "做个",
+    )
+    trimmed = True
+    while trimmed:
+        trimmed = False
+        for prefix in prefixes:
+            if text.startswith(prefix):
+                text = text[len(prefix):]
+                trimmed = True
+    for prefix in ("一个", "一种"):
+        if text.startswith(prefix):
+            text = text[len(prefix):]
+    lower_text = text.lower()
+    skill_idx = lower_text.find("skill")
+    if skill_idx > 0:
+        text = text[:skill_idx]
+    title_idx = text.find("技能")
+    if title_idx > 0:
+        text = text[:title_idx]
+    for sep in ("，", "。", ",", ".", "；", ";", "：", ":", "！", "!", "？", "?"):
+        idx = text.find(sep)
+        if idx > 0:
+            text = text[:idx]
+            break
+    text = text.strip("-_/ ")
+    return (text[:18] or "自定义技能").strip()
+
+def _build_fallback_draft(
+    requirements: str,
+    model_name: str,
+    used: set[str] | None = None,
+) -> GeneratedSkillDraft:
+    title = _infer_title_from_requirement(requirements)
+    description = f"???????????????{title}"[:140]
+    categories = _infer_categories(title, requirements)
+    used = used or set()
+    slug = _unique_slug(title, used)
+    markdown = _compose_markdown(
+        title=title,
+        description=description,
+        body=_fallback_body(title, description, requirements),
+        model_name=model_name,
+        categories=categories,
+    )
+    return GeneratedSkillDraft(
+        slug=slug,
+        title=title,
+        description=description,
+        markdown=markdown,
+        categories=categories,
     )
 
 
@@ -204,6 +268,7 @@ def _compose_markdown(
         "---",
         f"name: {_yaml_scalar(title)}",
         f"description: {_yaml_scalar(description)}",
+        'emoji: ""',
         "generated: true",
         "deletable: true",
         'created_by: "skill_creator"',
@@ -225,10 +290,10 @@ def _normalize_skill_payload(
     raw_skills = payload.get("skills")
     if isinstance(raw_skills, dict):
         raw_skills = [raw_skills]
-    if not isinstance(raw_skills, list) or not raw_skills:
-        raise ValueError("Skill creator model did not return any skills")
 
     used = set(existing_slugs or set())
+    if not isinstance(raw_skills, list) or not raw_skills:
+        return [_build_fallback_draft(requirements, model_name, used)]
     drafts: list[GeneratedSkillDraft] = []
     for index, item in enumerate(raw_skills[:2], start=1):
         if not isinstance(item, dict):
@@ -238,7 +303,7 @@ def _normalize_skill_payload(
         slug = _unique_slug(str(item.get("slug") or title or description), used)
         body = _strip_frontmatter(str(item.get("markdown") or item.get("body") or ""))
         if not description:
-            description = f"Custom skill generated from: {requirements[:72].strip()}"
+            description = f"???????????????{title}"[:140]
         categories = _normalize_categories(item.get("categories"))
         if not categories:
             categories = _infer_categories(title, description, body, requirements)
@@ -260,7 +325,7 @@ def _normalize_skill_payload(
         )
 
     if not drafts:
-        raise ValueError("Skill creator model returned no usable skills")
+        return [_build_fallback_draft(requirements, model_name, used)]
     return drafts
 
 
@@ -303,37 +368,37 @@ async def _request_skill_payload(
     model_name = str(provider.get("model_name") or "").strip()
     if not base_url or not api_key or not model_name:
         raise RuntimeError("The qwen3-vl provider is missing base_url, api_key, or model_name")
-
     system_prompt = textwrap.dedent(
         f"""
-        You are Skill Creator for MathClaw, a middle-school and high-school math tutoring product.
-        Generate at most {preferred_count} markdown-only skills from the user requirement.
+        ?? MathClaw ? Skill Creator??????????????? markdown ?????
+        ???? {preferred_count} ????????? 1 ??????????????????????? 2 ??
 
-        Hard rules:
-        - Prefer 1 skill unless the requirement clearly spans two distinct reusable workflows.
-        - Return pure markdown skills only. No Python, no scripts, no tools, no API instructions.
-        - Write skills for an AI assistant, not for an end user.
-        - Keep each skill focused, concise, and reusable.
-        - For each skill, return a short title, a short description, a short category list, and the markdown BODY of SKILL.md.
-        - The markdown must NOT include YAML frontmatter.
-        - Categories must be 1-3 short Chinese tags chosen from the task intent, such as 讲解, 解题, 练习, 复习, 错题, 诊断, 总结.
-        - Each markdown body should include these sections:
+        ?????
+        - ?????? 1 ????????????
+        - ??? markdown skill????? Python?????????API ?????????
+        - ???? AI ?????????????????
+        - ?????????????????
+        - ?????????????1-3 ?????????? SKILL.md ? markdown ???
+        - markdown ?????? YAML frontmatter?
+        - ????????????????????????????????????????
+        - markdown ????????????
           # Role
           # When to Use
           # Workflow
           # Guardrails
           # Response Style
-        - Do not wrap the JSON in markdown fences.
+        - ??? JSON ?? markdown ????
 
-        Return JSON only in this exact shape:
+        ??? JSON??????????
         {{
           "skills": [
             {{
-              "title": "Short title",
+              "title": "????",
               "slug": "short-hyphen-slug",
-              "description": "One-line description",
-              "categories": ["讲解", "练习"],
-              "markdown": "# Role\\n..."
+              "description": "?????",
+              "categories": ["??", "??"],
+              "markdown": "# Role
+..."
             }}
           ]
         }}
@@ -342,10 +407,10 @@ async def _request_skill_payload(
 
     user_prompt = textwrap.dedent(
         f"""
-        User requirement:
+        ?????
         {requirements.strip()}
 
-        Return JSON only.
+        ????? JSON??????????
         """
     ).strip()
 

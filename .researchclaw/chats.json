@@ -7,7 +7,7 @@
       "meta": {},
       "name": "---\nsummary: \"Workspace template for HEARTBEAT.md\"",
       "session_id": "main",
-      "updated_at": "2026-03-15T13:00:17.605505Z",
+      "updated_at": "2026-03-17T09:38:39.710538Z",
       "user_id": "main"
     },
     {
@@ -37,7 +37,7 @@
       "meta": {},
       "name": "hello",
       "session_id": "wecom:single:QianZhe",
-      "updated_at": "2026-03-16T06:44:16.800211Z",
+      "updated_at": "2026-03-16T07:18:05.507751Z",
       "user_id": "QianZhe"
     },
     {
@@ -68,6 +68,26 @@
       "name": "[Cron] 11111",
       "session_id": "411d614f-3578-4326-8c00-cb926873ca79",
       "updated_at": "2026-03-15T13:00:17.608413Z",
+      "user_id": "main"
+    },
+    {
+      "channel": "wecom",
+      "created_at": "2026-03-16T07:17:24.897556Z",
+      "id": "a87734e3-76d4-407b-a4ec-7f578a3e6798",
+      "meta": {},
+      "name": "帮我搜一下北京市25年的高考数学试卷",
+      "session_id": "wecom:single:MaYanBiao",
+      "updated_at": "2026-03-16T10:32:04.301779Z",
+      "user_id": "MaYanBiao"
+    },
+    {
+      "channel": "console",
+      "created_at": "2026-03-16T13:00:23.407330Z",
+      "id": "d17a8a97-cb98-42d3-a265-c7302e50239e",
+      "meta": {},
+      "name": "[Cron] 11111",
+      "session_id": "7268d2ca-1c18-4cf9-bee5-c2043d133fa1",
+      "updated_at": "2026-03-16T13:00:23.407338Z",
       "user_id": "main"
     }
   ],

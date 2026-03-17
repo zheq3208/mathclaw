@@ -8,6 +8,9 @@ import {
   Plus,
   Save,
   X,
+  Bot,
+  Radio,
+  Clock3,
 } from "lucide-react";
 import {
   createCronJob,
@@ -19,7 +22,7 @@ import {
   toggleCronJob,
 } from "../api";
 import type { ChannelItem, CronJobItem, CronTaskType } from "../types";
-import { PageHeader, EmptyState, Badge, Toggle, DetailModal } from "../components/ui";
+import { PageHeader, EmptyState, Badge, Toggle, DetailModal, StatCard } from "../components/ui";
 import { ChannelGlyph, IconBadge } from "../components/icons";
 import { useI18n } from "../i18n";
 
@@ -182,6 +185,16 @@ export default function CronJobsPage() {
     return [...names].filter((name) => name.trim());
   }, [channels]);
 
+  const enabledCount = useMemo(() => jobs.filter((job) => job.enabled).length, [jobs]);
+  const agentCount = useMemo(
+    () => jobs.filter((job) => job.task_type === "agent").length,
+    [jobs],
+  );
+  const channelCount = useMemo(
+    () => new Set(jobs.map((job) => job.channel || "console")).size,
+    [jobs],
+  );
+
   async function onLoad() {
     const [jobList, channelList] = await Promise.all([
       getCronJobs(),
@@ -305,6 +318,35 @@ export default function CronJobsPage() {
           </>
         }
       />
+
+      {loaded && jobs.length > 0 && (
+        <>
+          <div className="stat-row">
+            <StatCard label="全部任务" value={jobs.length} icon={<Timer size={18} />} variant="brand" />
+            <StatCard label="已启用" value={enabledCount} icon={<Clock3 size={18} />} variant="success" />
+            <StatCard label="Agent 任务" value={agentCount} icon={<Bot size={18} />} variant="info" />
+            <StatCard label="覆盖频道" value={channelCount} icon={<Radio size={18} />} variant="warning" />
+          </div>
+
+          <div className="card">
+            <h3>当前任务概览</h3>
+            <div className="helper-list helper-grid">
+              <div className="helper-item">
+                <strong>默认时区</strong>
+                <span>{DEFAULT_TIMEZONE}</span>
+              </div>
+              <div className="helper-item">
+                <strong>可选频道</strong>
+                <span>{channelOptions.join(" / ")}</span>
+              </div>
+              <div className="helper-item">
+                <strong>使用建议</strong>
+                <span>需要定时批改、提醒或总结时优先使用 agent 任务；只有固定文案时再使用 text 任务。</span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
 
       {!loaded && jobs.length === 0 && (
         <EmptyState

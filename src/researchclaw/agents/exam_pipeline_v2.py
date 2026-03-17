@@ -453,13 +453,14 @@ def _solve_stage_two(image_path: Path, original_prompt: str, solve_stage1_payloa
 
 
 
+
 def _weakness_stage(image_path: Path, original_prompt: str, solve_stage2_payload: dict[str, Any], memory_summary: str, run_dir: Path) -> dict[str, Any]:
     cfg = _load_solver_config()
-    system_prompt = "你是一名数学老师。请根据这张试卷的批改与验证结果，直接对学生给出一段批改与薄弱点总结。用简体中文，不要 JSON，不要英文，不要自己加标题。风格要像老师批改反馈，先概括这次整体情况，再说最核心的薄弱点与后续建议。涉及公式、方程、向量、根号时，请使用 $...$ 包住为 LaTeX 格式。"
+    system_prompt = "你是一名数学老师。请根据这张试卷的批改与验证结果，直接对学生给出一段批改与薄弱点总结。输出给企业微信，请使用简体中文 Markdown，整体美观易读。可以适度使用 emoji、加粗、短列表、引用块，但不要堆砌。先肯定做得好的地方，再指出最核心的薄弱点，最后给出一条后续训练建议。涉及公式、方程、向量、根号时，请使用 $...$ 包住为 LaTeX 格式；不要把数学公式放进代码块。不要输出 JSON，不要英文，不要自己重复阶段标题。"
     user_prompt = (
         f"用户原始需求：{original_prompt or '批改这张试卷'}\n"
         f"历史薄弱点记忆：\n{memory_summary or '当前还没有明显的历史薄弱点记录。'}\n\n"
-        "请直接输出一段给学生的批改与薄弱点总结。要尽量保持像老师当面讲评的感觉，内容尽量接近现在的风格：先说哪些地方做得好，再说错在哪里，最后落到一个最核心的薄弱点和一句后续训练建议。不要分成很多小点，不要输出大段分类结构，直接给完整自然的一段或两段中文即可。"
+        "请直接输出一段给学生的批改与薄弱点总结，格式适合企业微信阅读。可以先用一句带 emoji 的点评开头，再用 2 到 4 条短列表说明亮点、错误和建议；如果有一个最核心的薄弱点，请单独强调。内容尽量保持老师讲评口吻，不要写成长篇大论，不要输出 JSON。"
     )
     user_prompt += _chain_suffix(solve_stage2_payload)
     user_text = _call_qwen_text(
@@ -477,14 +478,13 @@ def _weakness_stage(image_path: Path, original_prompt: str, solve_stage2_payload
     return result
 
 
-
 def _guided_stage(image_path: Path, original_prompt: str, solve_stage2_payload: dict[str, Any], memory_summary: str, run_dir: Path) -> dict[str, Any]:
     cfg = _load_solver_config()
-    system_prompt = "你是一名擅长讲题的数学老师。请根据这张试卷的求解与验证结果，给出面向学生的引导式讲解。用简体中文，不要 JSON，不要英文，不要自己加标题。讲解要包含最基本的求解过程，但重点是帮学生看清这道题该从哪里破题，以及这次为什么会错。涉及公式、方程、向量、根号时，请使用 $...$ 包住为 LaTeX 格式。"
+    system_prompt = "你是一名擅长讲题的数学老师。请根据这张试卷的求解与验证结果，给出面向学生的引导式讲解。输出给企业微信，请使用简体中文 Markdown，整体美观易读。可以适度使用 emoji、小标题、短列表、引用块；如需整理步骤，优先用有序列表，不要把数学公式放进代码块。讲解要包含最基本的求解过程，但重点是帮学生看清这道题该从哪里破题，以及这次为什么会错。涉及公式、方程、向量、根号时，请使用 $...$ 包住为 LaTeX 格式。不要输出 JSON，不要英文，不要自己重复阶段标题。"
     user_prompt = (
         f"用户原始需求：{original_prompt or '批改这张试卷'}\n"
         f"历史薄弱点记忆：\n{memory_summary or '当前还没有明显的历史薄弱点记录。'}\n\n"
-        "请直接输出一段给学生的引导式讲解。风格尽量接近现在的讲解感觉：先把这道题的最基本解题思路讲明白，再点出这次最关键的卡点或易错点，最后补一句核心突破点或提醒。不要写成标签化 JSON 或大纲，直接输出完整自然的中文讲解即可。"
+        "请直接输出一段给学生的引导式讲解，格式适合企业微信阅读。先用一句话点出这题该从哪里破题，再用 2 到 4 个有序步骤讲最基本的解法，最后补一个“易错提醒”或“核心突破点”。整体保持老师讲题口吻，不要写成长篇流水账，不要输出 JSON。"
     )
     user_prompt += _chain_suffix(solve_stage2_payload)
     user_text = _call_qwen_text(
@@ -501,13 +501,14 @@ def _guided_stage(image_path: Path, original_prompt: str, solve_stage2_payload: 
     _write_text(run_dir / '06_guided.txt', result['user_text'])
     return result
 
+
 def _variant_stage(image_path: Path, original_prompt: str, solve_stage2_payload: dict[str, Any], memory_summary: str, run_dir: Path) -> dict[str, Any]:
     cfg = _load_solver_config()
-    system_prompt = "你是一名数学练习设计助手。请阅读历史薄弱点、原图、用户原始需求和求解验证结果，直接生成三道给学生练习的题目。如果当前有错误，优先围绕当前错误的题目出题；如果当前都做对了，就优先围绕历史薄弱点出题。所有自然语言都必须是简体中文。你的输出会直接发给学生，所以不要写英文，不要写 JSON，不要只写概述，必须把三道题完整写出来。"
+    system_prompt = "你是一名数学练习设计助手。请阅读历史薄弱点、原图、用户原始需求和求解验证结果，直接生成三道给学生练习的题目。如果当前有错误，优先围绕当前错误的题目出题；如果当前都做对了，就优先围绕历史薄弱点出题。输出给企业微信，请使用简体中文 Markdown，整体美观易读。可以适度使用 emoji、加粗、小标题、短列表。不要写英文，不要写 JSON，不要只写概述，必须把三道题完整写出来，并在每题后给出一行“最终答案：...”。涉及公式、方程、向量、根号时，请使用 $...$ 包住为 LaTeX 格式。"
     user_prompt = (
         f"用户原始需求：{original_prompt or '批改这张试卷'}\n"
         f"历史薄弱点记忆：\n{memory_summary or '当前还没有明显的历史薄弱点记录。'}\n"
-        "请直接输出三道练习题，按 1、 2、 3 编号，分别对应：相同结构、降低难度、提高一点难度。每道题都要把题目完整写出来；如果需要提示，只能在每题后面补一句很短的中文提示。不要只写开场白。"
+        "请直接输出三道练习题，按 1、2、3 编号，分别对应：相同结构、降低难度、提高一点难度。每题都要完整写出题目，并在题目后补一句很短的提示，再单独写一行“最终答案：...”。整体排版适合企业微信阅读，不要只写开场白。"
     )
     user_prompt += _chain_suffix(solve_stage2_payload)
     user_text = _call_qwen_text(
@@ -520,11 +521,9 @@ def _variant_stage(image_path: Path, original_prompt: str, solve_stage2_payload:
     result = {
         "user_text": str(user_text or "").strip(),
     }
-    _write_json(run_dir / "07_variants.json", result)
-    _write_text(run_dir / "07_variants.txt", result["user_text"])
+    _write_json(run_dir / '07_variants.json', result)
+    _write_text(run_dir / '07_variants.txt', result['user_text'])
     return result
-
-
 
 def looks_like_exam_pipeline_request(agent: Any, message: str, attachments: list[dict[str, Any]] | None = None) -> bool:
     text = str(message or "").strip()
@@ -612,26 +611,26 @@ def _with_stage_title(title: str, text: str) -> str:
     return f"{prefix}{body}"
 
 
+
 def format_stage_one(agent: Any, *, weakness_payload: dict[str, Any], solve_stage2: dict[str, Any] | None = None, ocr_stage2: dict[str, Any] | None = None) -> str:
     text = str(weakness_payload.get("user_text") or "").strip()
     if text:
-        return _with_stage_title("### \u6279\u6539\u4e0e\u8584\u5f31\u70b9", text)
+        return _with_stage_title("### 📝 批改与薄弱点", text)
     if solve_stage2:
         fallback = str((solve_stage2 or {}).get("overall_comment") or "").strip()
         if fallback:
-            return _with_stage_title("### \u6279\u6539\u4e0e\u8584\u5f31\u70b9", fallback)
-    return _with_stage_title("### \u6279\u6539\u4e0e\u8584\u5f31\u70b9", "\u6279\u6539\u4e0e\u8584\u5f31\u70b9\u6682\u65f6\u672a\u751f\u6210\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002")
+            return _with_stage_title("### 📝 批改与薄弱点", fallback)
+    return _with_stage_title("### 📝 批改与薄弱点", "批改与薄弱点暂时未生成，请稍后重试。")
 
 
 def format_stage_two(agent: Any, *, guided_payload: dict[str, Any]) -> str:
     text = str(guided_payload.get("user_text") or "").strip()
-    return _with_stage_title("### \u5f15\u5bfc\u8bb2\u89e3", text or "\u5f15\u5bfc\u8bb2\u89e3\u6682\u65f6\u672a\u751f\u6210\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002")
+    return _with_stage_title("### 🧭 引导讲解", text or "引导讲解暂时未生成，请稍后重试。")
 
 
 def format_stage_three(agent: Any, *, variant_payload: dict[str, Any]) -> str:
     text = str(variant_payload.get("user_text") or "").strip()
-    return _with_stage_title("### \u53d8\u5f0f\u9898", text or "\u53d8\u5f0f\u9898\u6682\u65f6\u672a\u751f\u6210\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002")
-
+    return _with_stage_title("### 🧩 变式题", text or "变式题暂时未生成，请稍后重试。")
 
 def maybe_handle_exam_pipeline_request(agent: Any, message: str, *, attachments: list[dict[str, Any]] | None = None, session_id: str | None = None, store_response: bool = True, return_bundle: bool = False) -> str | dict[str, Any] | None:
     context = prepare_exam_pipeline_context(agent, message, attachments=attachments, session_id=session_id)

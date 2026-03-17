@@ -21,7 +21,7 @@ import {
 import { PageHeader, StatCard } from "../components/ui";
 
 export default function StatusPage() {
-  const [health, setHealth] = useState<string>("unknown");
+  const [health, setHealth] = useState<string>("未知");
   const [agentName, setAgentName] = useState<string>("-");
   const [running, setRunning] = useState<boolean>(false);
   const [toolCount, setToolCount] = useState<number>(0);
@@ -36,7 +36,7 @@ export default function StatusPage() {
       const h = await getHealth();
       setHealth(h.status);
     } catch {
-      setHealth("down");
+      setHealth("未知");
     }
 
     try {
@@ -45,7 +45,7 @@ export default function StatusPage() {
       setRunning(s.running);
       setToolCount(s.tool_count);
     } catch {
-      setAgentName("error");
+      setAgentName("未知");
     }
 
     try {
@@ -78,7 +78,7 @@ export default function StatusPage() {
     <div className="panel">
       <PageHeader
         title="系统状态"
-        description="查看 ResearchClaw 服务的运行状态"
+        description="查看 MathClaw 服务、API 和依赖的运行状态"
         actions={
           <button onClick={onRefreshStatus} disabled={loading}>
             <RefreshCw size={15} className={loading ? "spinner" : ""} />
@@ -121,7 +121,7 @@ export default function StatusPage() {
           variant="warning"
         />
         <StatCard
-          label="Heartbeat"
+          label="心跳"
           value={heartbeatEnabled ? "启用" : "关闭"}
           icon={<Heart size={20} />}
           variant={heartbeatEnabled ? "success" : "danger"}

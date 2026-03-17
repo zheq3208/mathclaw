@@ -1,0 +1,26 @@
+{
+  "all_correct": false,
+  "overall_comment": "第三题为平面几何证明题，需证AT平分XY；学生未作答，故判定为错误；核心知识点涉及圆的切线性质、弧中点对称性、调和点列或坐标法验证中点关系。",
+  "knowledge_points": [
+    "圆的切线性质",
+    "弧中点与角平分线关系",
+    "调和点列",
+    "坐标/向量法处理中点问题"
+  ],
+  "current_weaknesses": [
+    "未作答",
+    "缺乏几何构造与比例推导能力"
+  ],
+  "problems": [
+    {
+      "question_id": "三",
+      "judgement": "错误",
+      "student_answer": "",
+      "correct_answer": "AT平分线段XY",
+      "why": "学生未作答，无法得分；正确解法需利用D为弧BC中点⇒AD为∠BAC内角平分线且PB=PC（切线长相等），结合(B,C;P,Q)为调和点列，或建系计算X,Y,T坐标验证(X+Y)/2在AT上。",
+      "solution": "设ω为单位圆，A,B,C,D用复数表示，D=-√(bc)（弧中点），切线PB、QC方程可得P,Q；求BQ∩AC=X，CP∩AB=Y，BQ∩CP=T；计算得(X+Y)/2与A,T共线，即AT过XY中点。",
+      "knowledge_point": "调和分割与射影几何性质",
+      "is_wrong": true
+    }
+  ]
+}

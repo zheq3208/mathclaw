@@ -1,4 +1,4 @@
-﻿import {
+import {
   useMemo,
   useRef,
   useEffect,
@@ -14,6 +14,7 @@ import {
   BrainCircuit,
   Wrench,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   CheckCircle2,
   XCircle,
@@ -89,12 +90,6 @@ function normalizeChatAttachments(value: unknown): ChatAttachment[] | undefined 
   return items.length > 0 ? items : undefined;
 }
 
-function formatTs(ts?: number): string {
-  if (!ts) return "-";
-  const d = new Date(ts * 1000);
-  if (Number.isNaN(d.getTime())) return "-";
-  return d.toLocaleString();
-}
 
 function formatBytes(size: number): string {
   const units = ["B", "KB", "MB", "GB"];
@@ -149,19 +144,19 @@ function buildPromptWithAttachments(
     imageLines.push(line);
   });
 
-  const prefix = text || "Please analyze the attached files.";
-  const sections: string[] = [prefix, "Attached files:"];
+  const prefix = text || "请结合这些附件回答我的问题";
+  const sections: string[] = [prefix, "已附加文件"];
   if (imageLines.length > 0) {
-    sections.push("Images:");
+    sections.push("图片附件");
     sections.push(...imageLines);
   }
   if (pdfLines.length > 0) {
-    sections.push("PDFs:");
+    sections.push("PDF 附件");
     sections.push(...pdfLines);
   }
   sections.push(
-    "For images: do NOT call read_file on binary image paths.",
-    "For PDFs: use read_paper(source=<file_path>) to extract content.",
+    "如需查看图片或读取文件，请结合附件信息调用合适的工具。",
+    "如需读取 PDF，请使用 read_paper(source=<file_path>) 或等效工具。",
   );
 
   return sections.join("\n\n");
@@ -189,6 +184,7 @@ export default function ChatPage() {
   const [pendingFiles, setPendingFiles] = useState<PendingAttachment[]>([]);
   const [fileError, setFileError] = useState<string>("");
   const [dragActive, setDragActive] = useState(false);
+  const [historyCollapsed, setHistoryCollapsed] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -235,24 +231,24 @@ export default function ChatPage() {
         if (existing.has(id)) continue;
 
         if (next.length >= MAX_PENDING_FILES) {
-          errors.push(`At most ${MAX_PENDING_FILES} files can be attached.`);
+          errors.push(`最多只能添加 ${MAX_PENDING_FILES} 个附件`);
           break;
         }
 
         const kind = detectAttachmentKind(file);
         if (!kind) {
-          errors.push(`${file.name}: only image and PDF files are supported.`);
+          errors.push(`${file.name} 仅支持图片或 PDF 文件`);
           continue;
         }
 
         if (file.size > MAX_FILE_SIZE_BYTES) {
-          errors.push(`${file.name}: file is too large (max ${formatBytes(MAX_FILE_SIZE_BYTES)}).`);
+          errors.push(`${file.name} 大小不能超过 ${formatBytes(MAX_FILE_SIZE_BYTES)}`);
           continue;
         }
 
         const pending = toPendingAttachment(file);
         if (!pending) {
-          errors.push(`${file.name}: unsupported file.`);
+          errors.push(`${file.name} 附件处理失败`);
           continue;
         }
 
@@ -409,7 +405,7 @@ export default function ChatPage() {
         );
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : "Attachment upload failed";
+          err instanceof Error ? err.message : "文件上传失败";
         setFileError(message);
         return;
       } finally {
@@ -420,7 +416,7 @@ export default function ChatPage() {
     const payloadText = buildPromptWithAttachments(text, uploadedAttachments);
     const displayText = text
       || (uploadedAttachments.length > 0
-        ? `Attached ${uploadedAttachments.length} file${uploadedAttachments.length > 1 ? "s" : ""}.`
+        ? `已附加 ${uploadedAttachments.length} 个文件`
         : payloadText);
 
     const activeSessionId = sendChatMessage(displayText, {
@@ -491,238 +487,255 @@ export default function ChatPage() {
     appendPendingFiles(Array.from(e.dataTransfer.files ?? []));
   }
 
+
+
   return (
-    <div className="panel chat-layout">
-      <aside className="chat-history-panel">
-        <div className="chat-history-header">
-          <button className="btn-secondary btn-sm" onClick={onNewConversation}>
-            <PlusCircle size={14} />
-            New Chat
-          </button>
-          <button
-            className="btn-ghost btn-sm"
-            onClick={() => void loadSessionList()}
-            disabled={sessionsLoading}
-          >
-            <RefreshCw
-              size={14}
-              className={sessionsLoading ? "spin-icon" : undefined}
-            />
-            Refresh
-          </button>
-        </div>
+    <div className="chat-page-shell">
+      <div className="chat-layout-shell">
+        <button
+          type="button"
+          className={`chat-history-float-toggle${historyCollapsed ? " collapsed" : ""}`}
+          aria-label={historyCollapsed ? "展开历史记录" : "收起历史记录"}
+          title={historyCollapsed ? "展开历史记录" : "收起历史记录"}
+          onClick={() => setHistoryCollapsed((value) => !value)}
+        >
+          {historyCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
 
-        <div className="chat-history-list">
-          {sessions.length === 0 && (
-            <div className="chat-history-empty">No chat history yet.</div>
-          )}
-          {sessions.map((session) => (
-            <button
-              key={session.session_id}
-              className={`chat-history-item${
-                session.session_id === sessionId ? " active" : ""
-              }`}
-              onClick={() => void onOpenSession(session.session_id)}
-            >
-              <div className="chat-history-title">
-                {session.title || session.session_id}
-              </div>
-              <div className="chat-history-meta">
-                {formatTs(session.updated_at)} · {session.message_count ?? 0} msgs
-              </div>
-            </button>
-          ))}
-        </div>
-      </aside>
-
-      <div
-        className={`chat-container${dragActive ? " drag-active" : ""}`}
-        onDragEnter={onDragEnter}
-        onDragOver={onDragOver}
-        onDragLeave={onDragLeave}
-        onDrop={onDrop}
-      >
-        {dragActive && (
-          <div className="chat-drop-overlay">
-            <ImageIcon size={18} />
-            <span>Drop image or PDF files here</span>
-          </div>
-        )}
-
-        <div className="chat-toolbar">
-          <div className="chat-toolbar-session">
-            Active session: {sessionId || "(new)"}
-          </div>
-          <button className="btn-secondary btn-sm" onClick={onNewConversation}>
-            <PlusCircle size={14} />
-            New Chat
-          </button>
-        </div>
-
-        <div className="messages">
-          {messages.length === 0 && !chatLoading && (
-            <div className="chat-empty">
-              <div className="chat-empty-icon">
-                <MessageSquare size={28} />
-              </div>
-              <h3>Start a research conversation</h3>
-              <p>
-                Ask anything about papers, experiments, coding, writing, or upload
-                images/PDFs to provide extra context.
-              </p>
-            </div>
-          )}
-
-          {messages.map((msg, idx) => (
-            <div key={idx} className={`msg ${msg.role}`}>
-              <div className="msg-avatar">{msg.role === "user" ? "U" : "S"}</div>
-              <div className="msg-bubble">
-                {msg.thinking && <ThinkingBlock content={msg.thinking} />}
-                {msg.toolCalls && <ToolCallsBlock calls={msg.toolCalls} />}
-                {msg.attachments && msg.attachments.length > 0 && (
-                  <MessageAttachments
-                    attachments={msg.attachments}
-                    compact={msg.role === "user"}
-                  />
-                )}
-                <MessageContent content={msg.content} />
-              </div>
-            </div>
-          ))}
-
-          {chatLoading && (
-            <div className="msg assistant">
-              <div className="msg-avatar">S</div>
-              <div className="msg-bubble">
-                {streamThinking && (
-                  <ThinkingBlock content={streamThinking} streaming />
-                )}
-                {streamToolCalls.length > 0 && (
-                  <ToolCallsBlock calls={streamToolCalls} />
-                )}
-                {streamContent ? (
-                  <MessageContent content={streamContent} />
-                ) : (
-                  !streamThinking
-                  && streamToolCalls.length === 0 && (
-                    <span className="stream-cursor">
-                      <Loader2 size={14} className="spinner" />
-                    </span>
-                  )
-                )}
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        <div className="chat-input-wrap">
-          {pendingFiles.length > 0 && (
-            <div className="chat-pending-files">
-              {pendingFiles.map((item) => (
-                <div key={item.id} className="chat-pending-item">
-                  {item.kind === "image" && item.previewUrl ? (
-                    <img
-                      className="chat-pending-thumb"
-                      src={item.previewUrl}
-                      alt={item.file.name}
-                    />
-                  ) : (
-                    <div className="chat-pending-icon">
-                      <FileText size={16} />
-                    </div>
-                  )}
-                  <div className="chat-pending-meta">
-                    <div className="chat-pending-name">{item.file.name}</div>
-                    <div className="chat-pending-size">
-                      {item.kind.toUpperCase()} · {formatBytes(item.file.size)}
-                    </div>
+        <div className={`panel chat-layout${historyCollapsed ? " history-collapsed" : ""}`}>
+          <aside className={`chat-history-panel${historyCollapsed ? " collapsed" : ""}`}>
+            {!historyCollapsed && (
+              <>
+                <div className="chat-history-header">
+                  <div className="chat-history-actions">
+                    <button className="btn-secondary btn-sm" onClick={onNewConversation}>
+                      <PlusCircle size={14} />
+                      新对话
+                    </button>
+                    <button
+                      className="btn-ghost btn-sm"
+                      onClick={() => void loadSessionList()}
+                      disabled={sessionsLoading}
+                    >
+                      <RefreshCw
+                        size={14}
+                        className={sessionsLoading ? "spin-icon" : undefined}
+                      />
+                      刷新
+                    </button>
                   </div>
-                  <button
-                    type="button"
-                    className="chat-pending-remove"
-                    onClick={() => removePendingFile(item.id)}
-                    aria-label={`Remove ${item.file.name}`}
-                  >
-                    <X size={12} />
-                  </button>
+                </div>
+
+                <div className="chat-history-list">
+                  {sessions.length === 0 && (
+                    <div className="chat-history-empty">暂无聊天记录</div>
+                  )}
+                  {sessions.map((session) => (
+                    <button
+                      key={session.session_id}
+                      className={`chat-history-item${
+                        session.session_id === sessionId ? " active" : ""
+                      }`}
+                      onClick={() => void onOpenSession(session.session_id)}
+                    >
+                      <div className="chat-history-title">
+                        {session.title || session.session_id}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </aside>
+
+          <div
+            className={`chat-container${dragActive ? " drag-active" : ""}`}
+            onDragEnter={onDragEnter}
+            onDragOver={onDragOver}
+            onDragLeave={onDragLeave}
+            onDrop={onDrop}
+          >
+            {dragActive && (
+              <div className="chat-drop-overlay">
+                <ImageIcon size={18} />
+                <span>支持 PDF 和图片</span>
+              </div>
+            )}
+
+            <div className="chat-toolbar">
+              <div className="chat-toolbar-session">
+                当前会话：{sessionId || "未创建"}
+              </div>
+              <button className="btn-secondary btn-sm" onClick={onNewConversation}>
+                <PlusCircle size={14} />
+                新对话
+              </button>
+            </div>
+
+            <div className="messages">
+              {messages.length === 0 && !chatLoading && (
+                <div className="chat-empty">
+                  <div className="chat-empty-icon">
+                    <MessageSquare size={28} />
+                  </div>
+                  <h3>拖拽文件到此处</h3>
+                  <p>
+                    上传图片或 PDF，MathClaw 会帮你解析题目并继续解题。
+                  </p>
+                </div>
+              )}
+
+              {messages.map((msg, idx) => (
+                <div key={idx} className={`msg ${msg.role}`}>
+                  <div className="msg-avatar">{msg.role === "user" ? "U" : "M"}</div>
+                  <div className="msg-bubble">
+                    {msg.thinking && <ThinkingBlock content={msg.thinking} />}
+                    {msg.toolCalls && <ToolCallsBlock calls={msg.toolCalls} />}
+                    {msg.attachments && msg.attachments.length > 0 && (
+                      <MessageAttachments
+                        attachments={msg.attachments}
+                        compact={msg.role === "user"}
+                      />
+                    )}
+                    <MessageContent content={msg.content} />
+                  </div>
                 </div>
               ))}
+
+              {chatLoading && (
+                <div className="msg assistant">
+                  <div className="msg-avatar">M</div>
+                  <div className="msg-bubble">
+                    {streamThinking && (
+                      <ThinkingBlock content={streamThinking} streaming />
+                    )}
+                    {streamToolCalls.length > 0 && (
+                      <ToolCallsBlock calls={streamToolCalls} />
+                    )}
+                    {streamContent ? (
+                      <MessageContent content={streamContent} />
+                    ) : (
+                      !streamThinking &&
+                      streamToolCalls.length === 0 && (
+                        <span className="stream-cursor">
+                          <Loader2 size={14} className="spinner" />
+                        </span>
+                      )
+                    )}
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
-          )}
 
-          {fileError && <div className="chat-file-error">{fileError}</div>}
+            <div className="chat-input-wrap">
+              {pendingFiles.length > 0 && (
+                <div className="chat-pending-files">
+                  {pendingFiles.map((item) => (
+                    <div key={item.id} className="chat-pending-item">
+                      {item.kind === "image" && item.previewUrl ? (
+                        <img
+                          className="chat-pending-thumb"
+                          src={item.previewUrl}
+                          alt={item.file.name}
+                        />
+                      ) : (
+                        <div className="chat-pending-icon">
+                          <FileText size={16} />
+                        </div>
+                      )}
+                      <div className="chat-pending-meta">
+                        <div className="chat-pending-name">{item.file.name}</div>
+                        <div className="chat-pending-size">
+                          {item.kind.toUpperCase()} · {formatBytes(item.file.size)}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="chat-pending-remove"
+                        onClick={() => removePendingFile(item.id)}
+                        aria-label={`移除 ${item.file.name}`}
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
 
-          <div className="chat-input-bar">
-            <button
-              type="button"
-              className="btn-secondary chat-attach-btn"
-              onClick={onPickFiles}
-              disabled={chatLoading || uploadingFiles}
-              aria-label="Attach files"
-            >
-              <Paperclip size={16} />
-              Upload Files
-            </button>
+              {fileError && <div className="chat-file-error">{fileError}</div>}
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              multiple
-              accept="image/*,application/pdf,.pdf"
-              className="chat-file-input"
-              onChange={onFilePickerChange}
-            />
+              <div className="chat-input-bar">
+                <button
+                  type="button"
+                  className="btn-secondary chat-attach-btn"
+                  onClick={onPickFiles}
+                  disabled={chatLoading || uploadingFiles}
+                  aria-label="选择附件"
+                >
+                  <Paperclip size={16} />
+                  上传文件
+                </button>
 
-            <input
-              value={chatInput}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setChatInput(e.target.value)
-              }
-              placeholder="Ask a question, or upload image/PDF files..."
-              onKeyDown={onInputKeyDown}
-            />
-            {chatLoading ? (
-              <button onClick={handleStop} className="btn-stop">
-                <Square size={14} />
-                Stop
-              </button>
-            ) : (
-              <button onClick={() => void onSendChat()} disabled={!canSend}>
-                {uploadingFiles ? (
-                  <>
-                    <Loader2 size={16} className="spinner" />
-                    Uploading
-                  </>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*,application/pdf,.pdf"
+                  className="chat-file-input"
+                  onChange={onFilePickerChange}
+                />
+
+                <input
+                  value={chatInput}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setChatInput(e.target.value)
+                  }
+                  placeholder="输入问题，或上传图片/PDF..."
+                  onKeyDown={onInputKeyDown}
+                />
+                {chatLoading ? (
+                  <button onClick={handleStop} className="btn-stop">
+                    <Square size={14} />
+                    停止
+                  </button>
                 ) : (
-                  <>
-                    <Send size={16} />
-                    Send
-                  </>
+                  <button onClick={() => void onSendChat()} disabled={!canSend}>
+                    {uploadingFiles ? (
+                      <>
+                        <Loader2 size={16} className="spinner" />
+                        上传中
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        发送
+                      </>
+                    )}
+                  </button>
                 )}
-              </button>
+              </div>
+              <div className="chat-input-hint">
+                支持拖拽图片或 PDF 到这里，单次最多上传 6 个文件。
+              </div>
+            </div>
+
+            {sessionId && (
+              <div className="chat-session-label">
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: "var(--success)",
+                    display: "inline-block",
+                  }}
+                />
+                新对话{sessionId}
+              </div>
             )}
           </div>
-          <div className="chat-input-hint">
-            Supports images and PDFs. Click Upload Files or drag files into this
-            chat.
-          </div>
         </div>
-
-        {sessionId && (
-          <div className="chat-session-label">
-            <span
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: "50%",
-                background: "var(--success)",
-                display: "inline-block",
-              }}
-            />
-            Session: {sessionId}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -786,7 +799,7 @@ function ThinkingBlock({
     <div className="thinking-block">
       <div className="thinking-header" onClick={() => setExpanded((v) => !v)}>
         <BrainCircuit size={14} />
-        <span>{streaming ? "Thinking..." : "Reasoning"}</span>
+        <span>{streaming ? "生成中..." : "发送"}</span>
         {streaming && <Loader2 size={12} className="spinner" />}
         {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
       </div>

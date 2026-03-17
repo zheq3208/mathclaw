@@ -7,7 +7,7 @@ import { PageHeader, EmptyState } from "../components/ui";
 
 export default function PapersPage() {
   const [paperQuery, setPaperQuery] = useState(
-    "large language model reasoning",
+    "数学教育研究",
   );
   const [papers, setPapers] = useState<PaperItem[]>([]);
   const [paperLoading, setPaperLoading] = useState(false);
@@ -70,7 +70,7 @@ export default function PapersPage() {
       <div className="card-grid animate-list">
         {papers.map((paper, idx) => (
           <div key={idx} className="paper-card">
-            <h3>{paper.title || "Untitled"}</h3>
+            <h3>{paper.title || "未命名"}</h3>
             <div className="paper-meta">
               {paper.id && (
                 <span className="paper-meta-item">

@@ -2,13 +2,10 @@ import { NavLink, Route, Routes, useLocation } from "react-router-dom";
 import type { ReactNode } from "react";
 import {
   MessageSquare,
-  FileText,
   Radio,
-  MessageCircle,
   Timer,
   Heart,
   Activity,
-  FolderOpen,
   Brain,
   Puzzle,
   Cable,
@@ -32,269 +29,31 @@ import AgentConfigPage from "./pages/AgentConfigPage";
 import ModelsPage from "./pages/ModelsPage";
 import ConsoleCronBubble from "./components/ConsoleCronBubble";
 import { IconBadge } from "./components/icons";
-import { useI18n } from "./i18n";
 import mathClawLogo from "../../logo.png";
 
-type ShellNavItem = {
-  to: string;
-  label: string;
-  hint: string;
-  icon: ReactNode;
-};
-
-type Meta = {
-  title: string;
-  desc: string;
-  ctaLabel: string;
-  ctaTo: string;
-};
+type ShellNavItem = { to: string; label: string; hint: string; icon: ReactNode };
 
 const studentNav: ShellNavItem[] = [
-  {
-    to: "/chat",
-    label: "Solve Workspace",
-    hint: "AI chat with tool traces",
-    icon: (
-      <IconBadge tone="brand" size="sm">
-        <MessageSquare size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/papers",
-    label: "Paper Search",
-    hint: "ArXiv / Scholar retrieval",
-    icon: (
-      <IconBadge tone="teal" size="sm">
-        <FileText size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/sessions",
-    label: "Sessions",
-    hint: "History and replay",
-    icon: (
-      <IconBadge tone="green" size="sm">
-        <MessageCircle size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/cron-jobs",
-    label: "Study Plan",
-    hint: "Cron tasks and reminders",
-    icon: (
-      <IconBadge tone="amber" size="sm">
-        <Timer size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/status",
-    label: "Runtime Status",
-    hint: "Health and dependencies",
-    icon: (
-      <IconBadge tone="violet" size="sm">
-        <Activity size={14} />
-      </IconBadge>
-    ),
-  },
+  { to: "/chat", label: "解题工作台", hint: "AI 对话与工具轨迹", icon: <IconBadge tone="brand" size="sm"><MessageSquare size={14} /></IconBadge> },
+  { to: "/cron-jobs", label: "学习计划", hint: "定时任务与提醒", icon: <IconBadge tone="amber" size="sm"><Timer size={14} /></IconBadge> },
+  { to: "/status", label: "运行状态", hint: "健康检查与依赖", icon: <IconBadge tone="violet" size="sm"><Activity size={14} /></IconBadge> },
 ];
 
 const systemNav: ShellNavItem[] = [
-  {
-    to: "/channels",
-    label: "Channels",
-    hint: "Multi-channel connections",
-    icon: (
-      <IconBadge tone="blue" size="sm">
-        <Radio size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/heartbeat",
-    label: "Heartbeat",
-    hint: "Checks and alerts",
-    icon: (
-      <IconBadge tone="danger" size="sm">
-        <Heart size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/workspace",
-    label: "Workspace",
-    hint: "Files and key context",
-    icon: (
-      <IconBadge tone="slate" size="sm">
-        <FolderOpen size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/memory",
-    label: "Memory",
-    hint: "Global learning profile",
-    icon: (
-      <IconBadge tone="green" size="sm">
-        <Brain size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/skills",
-    label: "Skills",
-    hint: "Skill lifecycle",
-    icon: (
-      <IconBadge tone="brand" size="sm">
-        <Puzzle size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/mcp",
-    label: "MCP",
-    hint: "Tool gateway",
-    icon: (
-      <IconBadge tone="teal" size="sm">
-        <Cable size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/agent-config",
-    label: "Agent Config",
-    hint: "Prompt and strategy",
-    icon: (
-      <IconBadge tone="violet" size="sm">
-        <Settings size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/models",
-    label: "Models",
-    hint: "Model providers",
-    icon: (
-      <IconBadge tone="blue" size="sm">
-        <Cpu size={14} />
-      </IconBadge>
-    ),
-  },
-  {
-    to: "/environments",
-    label: "Env Vars",
-    hint: "Secrets and runtime vars",
-    icon: (
-      <IconBadge tone="amber" size="sm">
-        <KeyRound size={14} />
-      </IconBadge>
-    ),
-  },
+  { to: "/channels", label: "频道", hint: "多通道连接", icon: <IconBadge tone="blue" size="sm"><Radio size={14} /></IconBadge> },
+  { to: "/heartbeat", label: "心跳", hint: "检查与提醒", icon: <IconBadge tone="danger" size="sm"><Heart size={14} /></IconBadge> },
+  { to: "/memory", label: "记忆", hint: "跨会话学习画像", icon: <IconBadge tone="green" size="sm"><Brain size={14} /></IconBadge> },
+  { to: "/skills", label: "Skills", hint: "Skill 生命周期", icon: <IconBadge tone="brand" size="sm"><Puzzle size={14} /></IconBadge> },
+  { to: "/mcp", label: "MCP", hint: "MCP 工具连接", icon: <IconBadge tone="teal" size="sm"><Cable size={14} /></IconBadge> },
+  { to: "/agent-config", label: "Agent 配置", hint: "提示词与策略", icon: <IconBadge tone="violet" size="sm"><Settings size={14} /></IconBadge> },
+  { to: "/models", label: "模型配置", hint: "模型与提供商", icon: <IconBadge tone="blue" size="sm"><Cpu size={14} /></IconBadge> },
+  { to: "/environments", label: "环境变量", hint: "密钥与运行变量", icon: <IconBadge tone="amber" size="sm"><KeyRound size={14} /></IconBadge> },
 ];
 
-const pageMeta: Record<string, Meta> = {
-  "/chat": {
-    title: "MathClaw Solve Workspace",
-    desc: "Web-style shell on top of the original ResearchClaw console capabilities.",
-    ctaLabel: "New Chat",
-    ctaTo: "/chat",
-  },
-  "/papers": {
-    title: "Paper Search",
-    desc: "Original retrieval features are preserved with a new shell experience.",
-    ctaLabel: "Search Papers",
-    ctaTo: "/papers",
-  },
-  "/sessions": {
-    title: "Sessions and Replay",
-    desc: "Keep all existing session management and traceability functions.",
-    ctaLabel: "Refresh Sessions",
-    ctaTo: "/sessions",
-  },
-  "/cron-jobs": {
-    title: "Cron Plans",
-    desc: "Keep scheduling, reminders, and recurring automation behavior.",
-    ctaLabel: "New Job",
-    ctaTo: "/cron-jobs",
-  },
-  "/status": {
-    title: "System Status",
-    desc: "Keep API, runtime, and dependency health diagnostics.",
-    ctaLabel: "View Status",
-    ctaTo: "/status",
-  },
-  "/channels": {
-    title: "Channels",
-    desc: "Keep channel configuration and dispatch behavior.",
-    ctaLabel: "Manage Channels",
-    ctaTo: "/channels",
-  },
-  "/heartbeat": {
-    title: "Heartbeat",
-    desc: "Keep heartbeats and infrastructure checks.",
-    ctaLabel: "Run Check",
-    ctaTo: "/heartbeat",
-  },
-  "/workspace": {
-    title: "Workspace",
-    desc: "Keep file inspection and editor workflows.",
-    ctaLabel: "Refresh Workspace",
-    ctaTo: "/workspace",
-  },
-  "/memory": {
-    title: "Learning Memory",
-    desc: "Track active weaknesses, mastered points, and cross-session learning history.",
-    ctaLabel: "Refresh Memory",
-    ctaTo: "/memory",
-  },
-  "/skills": {
-    title: "Skills",
-    desc: "Keep skill loading, listing, and control.",
-    ctaLabel: "Refresh Skills",
-    ctaTo: "/skills",
-  },
-  "/mcp": {
-    title: "MCP Clients",
-    desc: "Keep MCP client configuration and connection details.",
-    ctaLabel: "Add Client",
-    ctaTo: "/mcp",
-  },
-  "/agent-config": {
-    title: "Agent Config",
-    desc: "Keep agent policy parameters and runtime config.",
-    ctaLabel: "Load Config",
-    ctaTo: "/agent-config",
-  },
-  "/models": {
-    title: "Models and Providers",
-    desc: "Keep provider management and hot-apply behavior.",
-    ctaLabel: "Add Provider",
-    ctaTo: "/models",
-  },
-  "/environments": {
-    title: "Environment Variables",
-    desc: "Keep secret keys and runtime variable management.",
-    ctaLabel: "Refresh Env",
-    ctaTo: "/environments",
-  },
-};
-
-function resolveMeta(pathname: string): Meta {
-  if (pathname === "/") return pageMeta["/chat"];
-  return pageMeta[pathname] ?? pageMeta["/chat"];
-}
 
 function SideLink({ item }: { item: ShellNavItem }) {
   return (
-    <NavLink
-      to={item.to}
-      className={({ isActive }) =>
-        `mc-nav-item${isActive ? " active" : ""}`
-      }
-    >
+    <NavLink to={item.to} className={({ isActive }) => `mc-nav-item${isActive ? " active" : ""}`}>
       <span className="mc-nav-icon">{item.icon}</span>
       <span className="mc-nav-text">
         <strong>{item.label}</strong>
@@ -306,19 +65,13 @@ function SideLink({ item }: { item: ShellNavItem }) {
 
 export default function App() {
   const location = useLocation();
-  const { locale, setLocale } = useI18n();
-  const meta = resolveMeta(location.pathname);
 
   return (
-    <div className="mc-shell">
+    <div className="mc-shell" data-build="20260317-r1">
       <aside className="mc-sidebar">
         <div className="mc-brand">
           <div className="mc-brand-mark">
-            <img
-              src={mathClawLogo}
-              alt="MathClaw Logo"
-              className="mc-brand-mark-img"
-            />
+            <img src={mathClawLogo} alt="MathClaw Logo" className="mc-brand-mark-img" />
           </div>
           <div className="mc-brand-copy">
             <div className="mc-brand-title">MathClaw</div>
@@ -326,64 +79,17 @@ export default function App() {
         </div>
 
         <div className="mc-nav-group">
-          <div className="mc-nav-label">Student Workspace</div>
-          {studentNav.map((item) => (
-            <SideLink key={item.to} item={item} />
-          ))}
+          <div className="mc-nav-label">学生工作台</div>
+          {studentNav.map((item) => <SideLink key={item.to} item={item} />)}
         </div>
 
         <div className="mc-nav-group mc-nav-group-bottom">
-          <div className="mc-nav-label">System Console</div>
-          {systemNav.map((item) => (
-            <SideLink key={item.to} item={item} />
-          ))}
-        </div>
-
-        <div className="mc-side-status">
-          <div className="mc-status-title">
-            <span className="mc-dot" /> ResearchClaw Running
-          </div>
-          <div className="mc-status-grid">
-            <span>Backend API</span>
-            <span>Online</span>
-            <span>MCP</span>
-            <span>Ready</span>
-            <span>Skills</span>
-            <span>Loaded</span>
-          </div>
-          <div className="mc-lang-switch">
-            <button
-              type="button"
-              className={`mc-lang-btn${locale === "zh" ? " active" : ""}`}
-              onClick={() => setLocale("zh")}
-            >
-              ZH
-            </button>
-            <button
-              type="button"
-              className={`mc-lang-btn${locale === "en" ? " active" : ""}`}
-              onClick={() => setLocale("en")}
-            >
-              EN
-            </button>
-          </div>
+          <div className="mc-nav-label">系统控制台</div>
+          {systemNav.map((item) => <SideLink key={item.to} item={item} />)}
         </div>
       </aside>
 
       <section className="mc-main-wrap">
-        <header className="mc-topbar">
-          <div>
-            <div className="mc-eyebrow">MathClaw x ResearchClaw</div>
-            <h1>{meta.title}</h1>
-            <p>{meta.desc}</p>
-          </div>
-          <div className="mc-topbar-actions">
-            <div className="mc-search-box">Search chats, papers, jobs, skills...</div>
-            <NavLink to={meta.ctaTo} className="mc-btn mc-btn-primary">
-              {meta.ctaLabel}
-            </NavLink>
-          </div>
-        </header>
 
         <main className="content mc-content">
           <ConsoleCronBubble />
@@ -409,4 +115,3 @@ export default function App() {
     </div>
   );
 }
-

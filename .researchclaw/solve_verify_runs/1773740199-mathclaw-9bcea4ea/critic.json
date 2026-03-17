@@ -1,0 +1,39 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "选择核心知识点一元二次方程",
+        "包含具体学习动作",
+        "字数合规"
+      ],
+      "issues": [
+        "工具检查误报全角标点问题",
+        "学习动作未指定时间"
+      ],
+      "first_conflicting_step": "工具检查阶段，标点符号被错误标记为问题"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "选择核心知识点",
+        "提供具体时间框架（10分钟）",
+        "字数精确98字"
+      ],
+      "issues": [
+        "工具检查误报全角标点问题",
+        "结尾语气稍显随意"
+      ],
+      "first_conflicting_step": "工具检查阶段，标点符号被错误标记为问题"
+    }
+  ],
+  "consensus_answer": "请重点复习一元二次方程求根公式，用10分钟完成公式推导并练习3道不同判别式的题目。注意根与系数的关系，基础扎实才能解好综合题。每天坚持小练习，进步看得见！",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两个候选解均符合字数、内容规范，但工具检查误报全角标点问题。实际内容差异小，求解器B提供更具体学习动作。证据不足无法确定稳定结论。"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}
