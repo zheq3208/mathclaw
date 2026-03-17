@@ -1,0 +1,36 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "选择了具体知识点二次函数",
+        "设计了动手实践的学习动作"
+      ],
+      "issues": [
+        "使用了Unicode上标字符(如²)",
+        "包含全角标点符号"
+      ],
+      "first_conflicting_step": "在设计学习动作时使用了特殊字符，未校验格式兼容性"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "覆盖了多个核心知识点",
+        "校验了字数和内容合规性"
+      ],
+      "issues": [
+        "包含全角标点符号"
+      ],
+      "first_conflicting_step": "在生成文本时使用了全角标点，未处理解析问题"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两份解均存在格式问题：求解器A使用Unicode上标字符导致解析风险，求解器B存在全角标点问题。证据不足确定最终合规性，需修订。"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}

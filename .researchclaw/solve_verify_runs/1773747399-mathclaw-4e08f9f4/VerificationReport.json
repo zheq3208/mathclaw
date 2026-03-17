@@ -1,0 +1,165 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 ResearchClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据用户最近学习情况生成符合企业微信要求的数学学习提醒",
+    "givens": [
+      "最近一次对话记录",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点",
+      "提醒需为中文",
+      "字数80-140字",
+      "语气简洁具体如老师提醒",
+      "优先提醒一个知识点或学习动作",
+      "无薄弱点时给通用建议",
+      "禁止寒暄、自我介绍、提及AI或ResearchClaw"
+    ],
+    "target": "直接输出符合要求的提醒内容，不加标题和解释",
+    "question_type": "文本生成应用题",
+    "candidate_methods": [
+      "分析薄弱点确定复习重点",
+      "生成符合字数和语气的文本",
+      "检查内容是否符合禁止项"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数80-140字",
+        "无禁止内容"
+      ],
+      "answer_format": "纯文本，无标题"
+    },
+    "risks": [
+      "字数超出范围",
+      "包含禁止词汇",
+      "语气不符合要求",
+      "未针对薄弱点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "今天重点复习二次函数顶点式与图像的关系，动手画出y=2(x-1)²+3的图像，标注顶点和对称轴。掌握这个，解题速度能提升不少。坚持每天练习，进步看得见！",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "今天重点复习二次函数顶点式与图像的关系",
+            "动手画出y=2*(x-1)²+3的图像",
+            "标注顶点和对称轴.掌握这个",
+            "解题速度能提升不少.坚持每天练习",
+            "进步看得见！"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "今天重点复习二次函数顶点式与图像的关系，动手画出y=2(x-1)²+3的图像，标注顶点和对称轴。掌握这个，解题速度能提升不少。坚持每天练习，进步看得见！",
+          "normalized_formula": "今天重点复习二次函数顶点式与图像的关系，动手画出y=2(x-1)²+3的图像，标注顶点和对称轴。掌握这个，解题速度能提升不少。坚持每天练习，进步看得见！",
+          "issue_count": 2,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请每天花15分钟重点复习一元二次方程求根公式及三角形面积公式，动手推导并完成三道典型例题。注意检查符号变化和步骤规范，坚持每日专项训练，有效巩固知识漏洞，稳步提升解题能力。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请每天花15分钟重点复习一元二次方程求根公式及三角形面积公式",
+            "动手推导并完成三道典型例题.注意检查符号变化和步骤规范",
+            "坚持每日专项训练",
+            "有效巩固知识漏洞",
+            "稳步提升解题能力."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请每天花15分钟重点复习一元二次方程求根公式及三角形面积公式，动手推导并完成三道典型例题。注意检查符号变化和步骤规范，坚持每日专项训练，有效巩固知识漏洞，稳步提升解题能力。",
+          "normalized_formula": "请每天花15分钟重点复习一元二次方程求根公式及三角形面积公式，动手推导并完成三道典型例题。注意检查符号变化和步骤规范，坚持每日专项训练，有效巩固知识漏洞，稳步提升解题能力。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "conflict",
+        "strengths": [
+          "选择了具体知识点二次函数",
+          "设计了动手实践的学习动作"
+        ],
+        "issues": [
+          "使用了Unicode上标字符(如²)",
+          "包含全角标点符号"
+        ],
+        "first_conflicting_step": "在设计学习动作时使用了特殊字符，未校验格式兼容性"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "覆盖了多个核心知识点",
+          "校验了字数和内容合规性"
+        ],
+        "issues": [
+          "包含全角标点符号"
+        ],
+        "first_conflicting_step": "在生成文本时使用了全角标点，未处理解析问题"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "两份解均存在格式问题：求解器A使用Unicode上标字符导致解析风险，求解器B存在全角标点问题。证据不足确定最终合规性，需修订。"
+    ],
+    "recommended_winner": "求解器B",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "请每天花15分钟重点复习一元二次方程求根公式及三角形面积公式，动手推导并完成三道典型例题。注意检查符号变化和步骤规范，坚持每日专项训练，有效巩固知识漏洞，稳步提升解题能力。",
+    "final_expression": "",
+    "concise_solution_markdown": "今天复习一元二次方程求根公式与三角形面积公式，动手推导并做三道例题，注意符号与步骤规范，每日坚持专项训练可有效巩固基础。",
+    "verification_summary": [
+      "两方案均含格式问题：求解器A使用Unicode上标字符（如²），求解器B含全角标点，影响解析兼容性",
+      "内容符合字数、语气与禁止项要求，但技术格式不达标"
+    ],
+    "unresolved_risks": [
+      "企业微信消息可能因特殊字符或全角标点导致显示异常或解析失败",
+      "未明确用户薄弱点，通用建议针对性有限"
+    ],
+    "recommended_follow_up": "请提供最近一次错题或知识点掌握情况，以便生成精准提醒；同时避免使用上标等特殊字符，改用文字描述（如‘平方’代替‘²’）"
+  }
+}
