@@ -1,0 +1,32 @@
+{
+  "problem_summary": "根据最近一次对话、批改结果和薄弱点，生成一条80-140字的中文数学学习提醒，语气简洁具体。",
+  "givens": [
+    "最近一次对话",
+    "最近一次批改结果",
+    "当前活跃的薄弱点或知识点"
+  ],
+  "target": "直接输出最终提醒内容，长度80-140字，无标题无解释",
+  "question_type": "文本生成",
+  "candidate_methods": [
+    "基于薄弱点生成具体提醒",
+    "提供通用复习建议"
+  ],
+  "exact_check_targets": {
+    "equation": "无",
+    "expressions": [
+      "长度80-140字",
+      "无寒暄",
+      "无自我介绍",
+      "不提AI",
+      "不提ResearchClaw"
+    ],
+    "answer_format": "80-140字中文文本"
+  },
+  "risks": [
+    "输出长度超出范围",
+    "包含禁止内容",
+    "语气不专业"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": false
+}

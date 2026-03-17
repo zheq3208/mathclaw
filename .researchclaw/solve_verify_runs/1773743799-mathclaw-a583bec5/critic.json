@@ -1,0 +1,39 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "内容具体，包含复习动作和具体步骤",
+        "无寒暄和禁止内容"
+      ],
+      "issues": [
+        "输出长度64字，低于80字要求",
+        "全角标点可能影响解析（工具检查指出）"
+      ],
+      "first_conflicting_step": "字数控制步骤：声称严格控制字数在80-140字区间，但实际输出仅64字"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "知识点选择合理，二次函数为典型薄弱点",
+        "动作具体，包含练习题量和检查重点"
+      ],
+      "issues": [
+        "输出长度79字，低于80字要求",
+        "声称压缩至98字但实际不足"
+      ],
+      "first_conflicting_step": "字数压缩步骤：声称逐字压缩至98字，但实际输出79字"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两个候选解均未满足80-140字长度要求",
+    "长度检查是核心约束，导致输出无效",
+    "实际字数A为64字，B为79字，均低于最小80字"
+  ],
+  "recommended_winner": "无",
+  "revision_needed": true
+}

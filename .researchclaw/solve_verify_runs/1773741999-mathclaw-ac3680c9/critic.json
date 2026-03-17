@@ -1,0 +1,35 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "无寒暄内容",
+        "无AI相关表述"
+      ],
+      "issues": [
+        "字数不足80字（实际70字）"
+      ],
+      "first_conflicting_step": "反复校验字数在80-140字区间"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "字数在80-140字范围内（98字）"
+      ],
+      "issues": [
+        "包含寒暄内容'同学，'"
+      ],
+      "first_conflicting_step": "移除所有寒暄及禁止元素"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "求解器A字数不足80字",
+    "求解器B包含禁止的寒暄内容"
+  ],
+  "recommended_winner": "无",
+  "revision_needed": true
+}

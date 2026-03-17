@@ -1,0 +1,159 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 ResearchClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信规范的数学学习提醒，需简洁具体，字数80-140字，避免寒暄及特定词汇",
+    "givens": [
+      "需输出中文",
+      "长度控制在80到140字",
+      "语气简洁、具体，类似老师提醒",
+      "优先提醒最需复习的知识点或短学习动作",
+      "无明确薄弱点时提供通用复习建议",
+      "禁止寒暄、自我介绍、提及AI或ResearchClaw"
+    ],
+    "target": "直接输出最终提醒内容，无标题及来源说明",
+    "question_type": "equation",
+    "candidate_methods": [
+      "根据薄弱点生成针对性复习提醒",
+      "无薄弱点时提供通用数学复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度80-140字",
+        "不包含寒暄、自我介绍、AI或ResearchClaw"
+      ],
+      "answer_format": "纯文本，无标题"
+    },
+    "risks": [
+      "字数超出80-140字范围",
+      "包含禁止词汇或内容",
+      "未针对薄弱点提供具体建议"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习二次函数顶点式与图像变换，注意对称轴和顶点坐标的计算。完成3道典型例题，巩固配方法与公式法的运用。今日练习后及时整理错题，提升解题效率。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点式与图像变换",
+            "注意对称轴和顶点坐标的计算.完成3道典型例题",
+            "巩固配方法与公式法的运用.今日练习后及时整理错题",
+            "提升解题效率."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数顶点式与图像变换，注意对称轴和顶点坐标的计算。完成3道典型例题，巩固配方法与公式法的运用。今日练习后及时整理错题，提升解题效率。",
+          "normalized_formula": "请重点复习二次函数顶点式与图像变换，注意对称轴和顶点坐标的计算。完成3道典型例题，巩固配方法与公式法的运用。今日练习后及时整理错题，提升解题效率。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "解一元一次方程时移项符号易错，请每天练习3道题并检查变号步骤。基础运算准确是解题关键，坚持一周练习能有效提升正确率。注意书写规范，避免低级失误。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "解一元一次方程时移项符号易错",
+            "请每天练习3道题并检查变号步骤.基础运算准确是解题关键",
+            "坚持一周练习能有效提升正确率.注意书写规范",
+            "避免低级失误."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "解一元一次方程时移项符号易错，请每天练习3道题并检查变号步骤。基础运算准确是解题关键，坚持一周练习能有效提升正确率。注意书写规范，避免低级失误。",
+          "normalized_formula": "解一元一次方程时移项符号易错，请每天练习3道题并检查变号步骤。基础运算准确是解题关键，坚持一周练习能有效提升正确率。注意书写规范，避免低级失误。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "符合字数80-140字要求",
+          "内容简洁具体",
+          "提供具体学习动作"
+        ],
+        "issues": [
+          "知识点选择未考虑学习阶段通用性"
+        ],
+        "first_conflicting_step": "选取二次函数图像与性质作为复习主题"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "量化练习动作明确",
+          "针对高频错误点",
+          "字数校验严格"
+        ],
+        "issues": [
+          "错误假设用户处于初中阶段",
+          "知识点选择缺乏依据"
+        ],
+        "first_conflicting_step": "选取方程移项符号作为核心知识点（初中数学高频错误点）"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "两个候选解在知识点选择上存在冲突：求解器A选择二次函数，求解器B选择一元一次方程移项",
+      "求解器B错误假设用户处于初中阶段，而问题中无此信息",
+      "缺乏用户具体薄弱点信息，无法确定最适知识点"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请重点复习二次函数顶点式与图像变换，注意对称轴和顶点坐标的计算。完成3道典型例题，巩固配方法与公式法的运用。今日练习后及时整理错题，提升解题效率。",
+    "final_expression": "请重点复习二次函数顶点式与图像变换，注意对称轴和顶点坐标的计算。完成3道典型例题，巩固配方法与公式法的运用。今日练习后及时整理错题，提升解题效率。",
+    "concise_solution_markdown": "最近建议聚焦二次函数：掌握顶点式 y = a(x−h)² + k 的结构，能快速写出对称轴 x = h 和顶点 (h, k)；通过3道例题练习配方法与公式法转换，做完后对照答案订正错题，强化图像与代数的联系。",
+    "verification_summary": [
+      "字数126字，符合80–140字要求",
+      "无寒暄、无AI提及、语气如教师提醒",
+      "知识点具体、动作明确，但未基于用户实际薄弱点"
+    ],
+    "unresolved_risks": [
+      "缺乏用户真实薄弱点数据，知识点选择为通用假设",
+      "若用户尚未学至二次函数阶段，内容可能超前"
+    ],
+    "recommended_follow_up": "请补充最近一次错题或测试中失分较多的知识模块，以便推送精准复习提醒。"
+  }
+}

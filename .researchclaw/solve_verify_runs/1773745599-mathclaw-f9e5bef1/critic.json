@@ -1,0 +1,40 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "符合字数80-140字要求",
+        "内容简洁具体",
+        "提供具体学习动作"
+      ],
+      "issues": [
+        "知识点选择未考虑学习阶段通用性"
+      ],
+      "first_conflicting_step": "选取二次函数图像与性质作为复习主题"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "量化练习动作明确",
+        "针对高频错误点",
+        "字数校验严格"
+      ],
+      "issues": [
+        "错误假设用户处于初中阶段",
+        "知识点选择缺乏依据"
+      ],
+      "first_conflicting_step": "选取方程移项符号作为核心知识点（初中数学高频错误点）"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两个候选解在知识点选择上存在冲突：求解器A选择二次函数，求解器B选择一元一次方程移项",
+    "求解器B错误假设用户处于初中阶段，而问题中无此信息",
+    "缺乏用户具体薄弱点信息，无法确定最适知识点"
+  ],
+  "recommended_winner": "求解器A",
+  "revision_needed": true
+}

@@ -1,0 +1,156 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 ResearchClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据最近一次对话、批改结果和薄弱点，生成一条80-140字的中文数学学习提醒，语气简洁具体。",
+    "givens": [
+      "最近一次对话",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点"
+    ],
+    "target": "直接输出最终提醒内容，长度80-140字，无标题无解释",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "基于薄弱点生成具体提醒",
+      "提供通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "无",
+      "expressions": [
+        "长度80-140字",
+        "无寒暄",
+        "无自我介绍",
+        "不提AI",
+        "不提ResearchClaw"
+      ],
+      "answer_format": "80-140字中文文本"
+    },
+    "risks": [
+      "输出长度超出范围",
+      "包含禁止内容",
+      "语气不专业"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "无",
+      "variable": "x",
+      "solutions": []
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习勾股定理的逆定理应用，完成3道实际问题练习。注意区分定理条件与结论，画图辅助理解。错题标注关键步骤，明日抽5分钟回顾。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习勾股定理的逆定理应用",
+            "完成3道实际问题练习.注意区分定理条件与结论",
+            "画图辅助理解.错题标注关键步骤",
+            "明日抽5分钟回顾."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习勾股定理的逆定理应用，完成3道实际问题练习。注意区分定理条件与结论，画图辅助理解。错题标注关键步骤，明日抽5分钟回顾。",
+          "normalized_formula": "请重点复习勾股定理的逆定理应用，完成3道实际问题练习。注意区分定理条件与结论，画图辅助理解。错题标注关键步骤，明日抽5分钟回顾。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习二次函数顶点式的推导与应用，掌握配方法求顶点坐标。完成3道实际问题练习，注意最大值条件的分析步骤。错题及时标注在笔记本，重点检查计算过程的符号处理。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点式的推导与应用",
+            "掌握配方法求顶点坐标.完成3道实际问题练习",
+            "注意最大值条件的分析步骤.错题及时标注在笔记本",
+            "重点检查计算过程的符号处理."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "无",
+          "normalized_formula": "无",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "conflict",
+        "strengths": [
+          "内容具体，包含复习动作和具体步骤",
+          "无寒暄和禁止内容"
+        ],
+        "issues": [
+          "输出长度64字，低于80字要求",
+          "全角标点可能影响解析（工具检查指出）"
+        ],
+        "first_conflicting_step": "字数控制步骤：声称严格控制字数在80-140字区间，但实际输出仅64字"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "知识点选择合理，二次函数为典型薄弱点",
+          "动作具体，包含练习题量和检查重点"
+        ],
+        "issues": [
+          "输出长度79字，低于80字要求",
+          "声称压缩至98字但实际不足"
+        ],
+        "first_conflicting_step": "字数压缩步骤：声称逐字压缩至98字，但实际输出79字"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "两个候选解均未满足80-140字长度要求",
+      "长度检查是核心约束，导致输出无效",
+      "实际字数A为64字，B为79字，均低于最小80字"
+    ],
+    "recommended_winner": "无",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "",
+    "final_expression": "",
+    "concise_solution_markdown": "请重点复习二次函数顶点式的推导与应用，掌握配方法求顶点坐标。完成3道实际问题练习，注意最大值条件的分析步骤。错题及时标注在笔记本，重点检查计算过程的符号处理。",
+    "verification_summary": [
+      "两个候选解字数均不足80字（A为64字，B为79字），违反核心长度约束",
+      "未提供明确薄弱点数据，依赖通用知识点合理但执行不达标"
+    ],
+    "unresolved_risks": [
+      "缺乏真实批改结果与薄弱点信息，导致提醒内容泛化",
+      "字数控制失效，影响企业微信场景下的信息完整性"
+    ],
+    "recommended_follow_up": "补充最近一次批改结果与活跃薄弱点数据后重生成"
+  }
+}
