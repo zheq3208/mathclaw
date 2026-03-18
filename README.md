@@ -222,6 +222,34 @@ curl -X POST http://127.0.0.1:6006/api/config/quickstart \
   }'
 ```
 
+### 7.6 百炼 Qwen + 企业微信 + 网络搜索
+
+如果你要一次性启用百炼模型、企业微信和 Tavily 网络搜索，可以直接使用下面这条：
+
+```bash
+curl -X POST http://127.0.0.1:6006/api/config/quickstart \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "dashscope",
+    "api_key": "<YOUR_DASHSCOPE_API_KEY>",
+    "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "model_name": "qwen3-vl-plus",
+    "supports_vision": true,
+    "wecom_enabled": true,
+    "wecom_bot_id": "<YOUR_WECOM_BOT_ID>",
+    "wecom_secret": "<YOUR_WECOM_SECRET>",
+    "wecom_bot_prefix": "",
+    "wecom_welcome_message": "你好，我是 MathClaw。",
+    "enable_tavily": true,
+    "tavily_api_key": "<YOUR_TAVILY_API_KEY>"
+  }'
+```
+
+说明：
+
+- `QQ`、`企业微信`、`Tavily`、`Playwright MCP`、`Filesystem MCP` 这些开关可以同时启用
+- 建议尽量一次性提交完整配置，而不是把不同示例分多次调用，否则后一次调用可能会覆盖前一次开关
+
 ## 8. 接口返回值怎么看
 
 `POST /api/config/quickstart` 会返回这些关键信息：
