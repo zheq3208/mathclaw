@@ -77,7 +77,7 @@ uv.lock
 venv/
 .venv/
 providers.json
-
+.mathclaw
 # Logs
 logs/
 *.log
