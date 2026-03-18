@@ -2,12 +2,12 @@
 
 ## Working Directory
 
-All ResearchClaw data and configuration files are stored in the working directory. The default is `~/.researchclaw/`.
+All MathClaw data and configuration files are stored in the working directory. The default is `~/.mathclaw/`.
 
 ### Directory Structure
 
 ```
-~/.researchclaw/
+~/.mathclaw/
 ├── config.yaml          # Main config file
 ├── channels.yaml        # Channel configuration
 ├── mcp.yaml             # MCP configuration
@@ -55,7 +55,7 @@ Sensitive configurations can be set via environment variables:
 
 | Variable                   | Description            |
 | -------------------------- | ---------------------- |
-| `RESEARCHCLAW_WORKING_DIR` | Working directory path |
+| `MATHCLAW_WORKING_DIR` | Working directory path |
 | `OPENAI_API_KEY`           | OpenAI API Key         |
 | `ANTHROPIC_API_KEY`        | Anthropic API Key      |
 
@@ -64,6 +64,6 @@ Sensitive configurations can be set via environment variables:
 Manage configuration using CLI commands:
 
 ```bash
-researchclaw config show     # Show current config
-researchclaw config set key value  # Set a config value
+mathclaw config show     # Show current config
+mathclaw config set key value  # Set a config value
 ```

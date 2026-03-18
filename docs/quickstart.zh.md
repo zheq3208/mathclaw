@@ -10,20 +10,20 @@
 ### 方式一：pip 安装（推荐）
 
 ```bash
-pip install researchclaw
+pip install mathclaw
 ```
 
 ### 方式二：一键安装脚本（macOS / Linux）
 
 ```bash
-curl -fsSL https://researchclaw.dev/install.sh | bash
+curl -fsSL https://mathclaw.dev/install.sh | bash
 ```
 
 ### 方式三：Docker
 
 ```bash
-docker pull researchclaw/researchclaw:latest
-docker run -p 8088:8088 -v researchclaw-data:/app/working researchclaw/researchclaw:latest
+docker pull mathclaw/mathclaw:latest
+docker run -p 8088:8088 -v mathclaw-data:/app/working mathclaw/mathclaw:latest
 ```
 
 ## 初始化
@@ -31,7 +31,7 @@ docker run -p 8088:8088 -v researchclaw-data:/app/working researchclaw/researchc
 首次使用前，需要初始化工作目录：
 
 ```bash
-researchclaw init --defaults
+mathclaw init --defaults
 ```
 
 这会创建默认的配置文件和工作目录。
@@ -39,7 +39,7 @@ researchclaw init --defaults
 ## 启动
 
 ```bash
-researchclaw app
+mathclaw app
 ```
 
 启动后访问 `http://localhost:8088` 进入控制台。

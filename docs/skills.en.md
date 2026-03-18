@@ -1,10 +1,10 @@
 # Skills
 
-Skills are ResearchClaw's extensible capability system, providing the AI assistant with specialized research abilities.
+Skills are MathClaw's extensible capability system, providing the AI assistant with specialized research abilities.
 
 ## Built-in Skills
 
-ResearchClaw includes several research-related skills:
+MathClaw includes several research-related skills:
 
 - **Paper Search**: Search papers on ArXiv, Semantic Scholar, and more
 - **Paper Tracking**: Periodically track new papers in specified fields or keywords

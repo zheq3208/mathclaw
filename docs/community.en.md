@@ -1,12 +1,12 @@
 # Community
 
-Welcome to the ResearchClaw community!
+Welcome to the MathClaw community!
 
 ## Get Involved
 
 ### GitHub
 
-- [Repository](https://github.com/MingxinYang/ResearchClaw) — Source code, Issues, Pull Requests
+- [Repository](https://github.com/MingxinYang/MathClaw) — Source code, Issues, Pull Requests
 - Submit Issues to report bugs or suggest features
 - Submit Pull Requests to contribute code
 

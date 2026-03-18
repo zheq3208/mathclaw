@@ -6,5 +6,5 @@ source .venv/bin/activate
 pip install --upgrade pip
 pip install -e .
 
-echo "Installed ResearchClaw in editable mode."
-echo "Run: source .venv/bin/activate && researchclaw --help"
+echo "Installed MathClaw in editable mode."
+echo "Run: source .venv/bin/activate && mathclaw --help"

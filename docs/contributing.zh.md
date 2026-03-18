@@ -1,6 +1,6 @@
 # 贡献指南
 
-感谢你对 ResearchClaw 的贡献兴趣！
+感谢你对 MathClaw 的贡献兴趣！
 
 ## 开发环境
 
@@ -8,8 +8,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/MingxinYang/ResearchClaw.git
-cd ResearchClaw
+git clone https://github.com/MingxinYang/MathClaw.git
+cd MathClaw
 
 # 创建虚拟环境
 python -m venv .venv

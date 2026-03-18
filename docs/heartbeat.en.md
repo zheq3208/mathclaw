@@ -1,6 +1,6 @@
 # Heartbeat
 
-Heartbeat is ResearchClaw's periodic timer mechanism for executing scheduled tasks.
+Heartbeat is MathClaw's periodic timer mechanism for executing scheduled tasks.
 
 ## How It Works
 
