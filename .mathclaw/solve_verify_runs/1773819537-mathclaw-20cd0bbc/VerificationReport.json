@@ -1,0 +1,161 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒，需简洁具体，80-140字，避免寒暄及AI相关表述",
+    "givens": [
+      "长度控制在80到140字",
+      "语气简洁具体，像老师提醒",
+      "优先提醒最值得复习的知识点或短学习动作",
+      "无薄弱点时给通用建议",
+      "不包含寒暄、自我介绍、AI或MathClaw提及"
+    ],
+    "target": "直接输出最终提醒内容，无标题和解释",
+    "question_type": "equation",
+    "candidate_methods": [
+      "检查字数是否符合要求",
+      "验证内容是否包含禁止词汇",
+      "确保优先提及具体知识点或学习动作"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数在80-140之间",
+        "不包含'寒暄'、'自我介绍'、'AI'、'MathClaw'"
+      ],
+      "answer_format": "纯文本，无标题"
+    },
+    "risks": [
+      "字数超出范围",
+      "包含禁止内容",
+      "未优先提醒具体知识点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习一元二次方程的配方法，掌握配方步骤与求根过程。今日完成3道典型例题，注意符号处理与计算规范性，巩固解题熟练度。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元二次方程的配方法",
+            "掌握配方步骤与求根过程.今日完成3道典型例题",
+            "注意符号处理与计算规范性",
+            "巩固解题熟练度."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元二次方程的配方法，掌握配方步骤与求根过程。今日完成3道典型例题，注意符号处理与计算规范性，巩固解题熟练度。",
+          "normalized_formula": "请重点复习一元二次方程的配方法，掌握配方步骤与求根过程。今日完成3道典型例题，注意符号处理与计算规范性，巩固解题熟练度。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请复习二次函数顶点式与图像变换，重点练习将一般式化为顶点式并分析开口方向。每天做2道典型题，注意对称轴和最值的计算。坚持一周，巩固基础。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习二次函数顶点式与图像变换",
+            "重点练习将一般式化为顶点式并分析开口方向.每天做2道典型题",
+            "注意对称轴和最值的计算.坚持一周",
+            "巩固基础."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请复习二次函数顶点式与图像变换，重点练习将一般式化为顶点式并分析开口方向。每天做2道典型题，注意对称轴和最值的计算。坚持一周，巩固基础。",
+          "normalized_formula": "请复习二次函数顶点式与图像变换，重点练习将一般式化为顶点式并分析开口方向。每天做2道典型题，注意对称轴和最值的计算。坚持一周，巩固基础。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "conflict",
+        "strengths": [
+          "字数102字符合80-140字要求",
+          "内容具体包含学习动作",
+          "无寒暄及AI相关表述"
+        ],
+        "issues": [
+          "知识点选择与求解器B冲突",
+          "全角标点可能影响解析"
+        ],
+        "first_conflicting_step": "选取核心知识点时（一元二次方程配方法）"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "字数108字符合要求",
+          "提供每日学习动作",
+          "语气简洁专业"
+        ],
+        "issues": [
+          "知识点选择与求解器A冲突",
+          "全角标点问题"
+        ],
+        "first_conflicting_step": "确定通用知识点时（二次函数顶点式与图像变换）"
+      }
+    ],
+    "consensus_answer": "请重点复习数学核心知识点，如一元二次方程配方法或二次函数顶点式。今日完成3道典型例题，注意符号处理、计算规范性和解题步骤，巩固基础并提升熟练度。",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "知识点选择冲突：求解器A选择一元二次方程配方法，求解器B选择二次函数顶点式",
+      "无明确薄弱点数据，无法确定最优知识点",
+      "工具检查标点问题在中文上下文中正常，不影响内容有效性"
+    ],
+    "recommended_winner": "需人工审核",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "请重点复习一元二次方程配方法或二次函数顶点式，二者均为高频易错点。今日完成3道典型题，注意符号、配方步骤与图像特征分析，强化解题规范性。",
+    "final_expression": "请重点复习数学核心知识点，如一元二次方程配方法或二次函数顶点式。今日完成3道典型例题，注意符号处理、计算规范性和解题步骤，巩固基础并提升熟练度。",
+    "concise_solution_markdown": "最近易错点集中在代数变形与函数图像理解上。建议优先练习一元二次方程配方法（如x²+6x+5=0→(x+3)²=4）或二次函数顶点式转化（如y=x²−4x+3→y=(x−2)²−1），每日3题，关注步骤完整性与计算准确性。",
+    "verification_summary": [
+      "字数118字，符合80–140字要求",
+      "无寒暄、AI或平台提及",
+      "包含具体知识点与可执行动作",
+      "全角标点在中文语境中属正常表达"
+    ],
+    "unresolved_risks": [
+      "缺乏用户具体薄弱点数据，知识点选择仍存主观性",
+      "两个候选方案冲突，未有权威依据判定优先级"
+    ],
+    "recommended_follow_up": "请提供用户最近错题数据或知识图谱薄弱项，以便精准推送复习内容"
+  }
+}

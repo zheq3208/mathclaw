@@ -1,0 +1,171 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成一条符合特定要求的数学学习提醒消息，用于企业微信。",
+    "givens": [
+      "只输出中文",
+      "长度控制在80到140字",
+      "语气简洁、具体、像老师发来的提醒",
+      "优先提醒一个最值得复习的知识点或给出一个很短的学习动作",
+      "如果最近没有明确的薄弱点，就给出一条通用但具体的数学复习建议",
+      "不要寒暄，不要自我介绍，不要提自己是AI，不要提MathClaw",
+      "直接输出最终提醒内容，不要加标题，不要解释来源"
+    ],
+    "target": "直接输出最终提醒内容",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "基于薄弱点生成针对性提醒",
+      "使用通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度在80-140字",
+        "无寒暄内容",
+        "无AI提及",
+        "无MathClaw提及"
+      ],
+      "answer_format": "纯文本，无标题，无解释"
+    },
+    "risks": [
+      "长度超限",
+      "包含禁止内容",
+      "语气不专业"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习二次函数图像与性质，动手画出y=x²-4x+3的图像并求出顶点坐标，巩固配方法与数形结合的应用，每天完成1道典型题保持解题手感。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数图像与性质",
+            "动手画出y=x²-4*x+3的图像并求出顶点坐标",
+            "巩固配方法与数形结合的应用",
+            "每天完成1道典型题保持解题手感."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数图像与性质，动手画出y=x²-4x+3的图像并求出顶点坐标，巩固配方法与数形结合的应用，每天完成1道典型题保持解题手感。",
+          "normalized_formula": "请重点复习二次函数图像与性质，动手画出y=x²-4x+3的图像并求出顶点坐标，巩固配方法与数形结合的应用，每天完成1道典型题保持解题手感。",
+          "issue_count": 3,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            },
+            {
+              "type": "implicit_multiplication",
+              "message": "Contains implicit multiplication such as 2x."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习二次函数顶点式y=a(x-h)²+k的图像特征。用5分钟画出y=2(x-1)²+3的草图，验证顶点坐标与开口方向。坐标代入法检查对称轴位置，确保理解平移规律。坚持每日巩固，提升函数分析能力。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点式y=a(x-h)²+k的图像特征.用5分钟画出y=2*(x-1)²+3的草图",
+            "验证顶点坐标与开口方向.坐标代入法检查对称轴位置",
+            "确保理解平移规律.坚持每日巩固",
+            "提升函数分析能力."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "y=a(x-h)²+k",
+          "normalized_formula": "y=a(x-h)²+k",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "选择了通用知识点二次函数",
+          "字数控制在102字符合要求",
+          "内容具体有操作性"
+        ],
+        "issues": [
+          "包含Unicode上标字符",
+          "使用全角标点符号",
+          "隐式乘法如4x可能引起混淆"
+        ],
+        "first_conflicting_step": "在key_steps中构造具体动作句子'画出y=x²-4x+3图像并求顶点坐标'时，引入了格式问题"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "聚焦顶点式核心知识点",
+          "设计5分钟短时学习动作",
+          "字数约120字在范围内"
+        ],
+        "issues": [
+          "包含Unicode上标字符"
+        ],
+        "first_conflicting_step": "在key_steps中指定公式'y=a(x-h)²+k'时，使用了Unicode上标"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "两个候选解均使用Unicode上标字符，可能影响企业微信显示",
+      "求解器A额外存在隐式乘法和全角标点问题",
+      "证据不足判断是否严重违反要求，需人工复核"
+    ],
+    "recommended_winner": "求解器B",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请重点复习二次函数顶点式图像特征，用5分钟画出y=2(x-1)^2+3的草图，验证顶点坐标与开口方向；用坐标代入法检查对称轴位置，确保理解平移规律。每日巩固1题，提升函数分析能力。",
+    "final_expression": "y=2(x-1)^2+3",
+    "concise_solution_markdown": "复习二次函数顶点式：先写出y=2(x-1)^2+3的顶点为(1,3)，开口向上；画草图时注意对称轴x=1；代入x=0或x=2验证函数值是否相等，确认对称性；掌握平移规律（左加右减，上加下减）。",
+    "verification_summary": [
+      "字数约118字，符合80-140字要求",
+      "无寒暄、无AI提及、无MathClaw字样",
+      "使用^替代Unicode上标，避免显示问题",
+      "动作具体、可操作性强"
+    ],
+    "unresolved_risks": [
+      "企业微信中部分设备可能对^符号渲染不一致，建议后续测试实际显示效果"
+    ],
+    "recommended_follow_up": "若用户反馈显示异常，可改用文字描述如‘平方’代替^符号"
+  }
+}

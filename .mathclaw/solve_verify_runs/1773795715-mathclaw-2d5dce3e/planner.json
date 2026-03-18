@@ -1,0 +1,30 @@
+{
+  "problem_summary": "生成符合企业微信规范的数学学习提醒，需基于薄弱点或知识点提供具体复习建议，严格控制字数与内容格式",
+  "givens": [
+    "最近一次对话记录",
+    "最近一次批改结果",
+    "当前活跃薄弱知识点数据"
+  ],
+  "target": "输出80-140字的纯文本提醒内容，语气简洁具体，优先聚焦单一知识点或学习动作",
+  "question_type": "equation",
+  "candidate_methods": [
+    "薄弱点优先级排序",
+    "字数合规性校验",
+    "禁用内容过滤"
+  ],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [
+      "字数严格控制在80-140字符",
+      "无寒暄/自我介绍/AI/平台名称提及"
+    ],
+    "answer_format": "纯文本字符串"
+  },
+  "risks": [
+    "字数超限",
+    "包含禁用词汇",
+    "未指定具体知识点"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": false
+}

@@ -25,18 +25,25 @@ export function StatCard({
   value,
   icon,
   variant = "brand",
+  className = "",
+  valueClassName = "",
 }: {
   label: string;
   value: string | number;
   icon: ReactNode;
   variant?: "brand" | "success" | "warning" | "info" | "danger";
+  className?: string;
+  valueClassName?: string;
 }) {
+  const cardClassName = ["stat-card", className].filter(Boolean).join(" ");
+  const statValueClassName = ["stat-value", valueClassName].filter(Boolean).join(" ");
+
   return (
-    <div className="stat-card">
+    <div className={cardClassName}>
       <div className={`stat-icon ${variant}`}>{icon}</div>
       <div className="stat-content">
         <div className="stat-label">{label}</div>
-        <div className="stat-value">{value}</div>
+        <div className={statValueClassName}>{value}</div>
       </div>
     </div>
   );
@@ -102,7 +109,7 @@ export function EmptyState({
 }
 
 /* ---------- Loading ---------- */
-export function Loading({ text = "加载中..." }: { text?: string }) {
+export function Loading({ text = "???..." }: { text?: string }) {
   return (
     <div className="loading-overlay">
       <div className="spinner" />
@@ -152,7 +159,7 @@ export function DetailModal({
         <div className="detail-panel-header">
           <h3>{title}</h3>
           <button className="btn-ghost btn-sm" onClick={onClose}>
-            ✕
+            ?
           </button>
         </div>
         {children}

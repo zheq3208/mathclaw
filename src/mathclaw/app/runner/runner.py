@@ -138,6 +138,7 @@ class AgentRunner:
         message: str,
         session_id: str | None = None,
         attachments: list[dict[str, Any]] | None = None,
+        **kwargs: Any,
     ) -> str:
         """Send a message to the agent and get a response.
 
@@ -158,6 +159,7 @@ class AgentRunner:
                 message,
                 session_id=session_id,
                 attachments=attachments or [],
+                **kwargs,
             ),
         )
 
@@ -170,6 +172,7 @@ class AgentRunner:
         message: str,
         session_id: str | None = None,
         attachments: list[dict[str, Any]] | None = None,
+        **kwargs: Any,
     ):
         """Stream a response from the agent, yielding SSE event dicts.
 
@@ -197,6 +200,7 @@ class AgentRunner:
                     message,
                     session_id=session_id,
                     attachments=attachments or [],
+                    **kwargs,
                 ):
                     q.put(event)
             except Exception as e:

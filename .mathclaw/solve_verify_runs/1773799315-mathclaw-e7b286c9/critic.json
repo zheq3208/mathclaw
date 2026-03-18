@@ -1,0 +1,39 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "针对二次函数应用题提供具体复习建议",
+        "字数控制在120字左右符合要求"
+      ],
+      "issues": [
+        "包含全角标点可能影响系统解析",
+        "假设课本P45例3为薄弱点但无数据支持"
+      ],
+      "first_conflicting_step": "最终答案生成时使用全角标点"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "选择高频知识点确保普适性",
+        "提供量化学习动作增强操作性"
+      ],
+      "issues": [
+        "包含全角标点可能影响系统解析",
+        "假设二次函数顶点式为薄弱点但无数据支持"
+      ],
+      "first_conflicting_step": "最终答案生成时使用全角标点"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两份候选解均基于无薄弱点数据提供通用建议，但知识点选择不同",
+    "工具检查均指出全角标点问题，但中文环境下标点应为全角，可能为误报",
+    "缺乏预期解导致无法验证内容正确性，证据不足"
+  ],
+  "recommended_winner": "无",
+  "revision_needed": true
+}

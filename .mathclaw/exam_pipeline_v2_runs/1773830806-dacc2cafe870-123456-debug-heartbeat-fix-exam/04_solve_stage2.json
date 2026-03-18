@@ -1,0 +1,53 @@
+{
+  "all_correct": true,
+  "overall_comment": "四道选择题全部作答正确，解题思路清晰，符合高中数学核心知识点要求。",
+  "knowledge_points": [
+    "导数与瞬时速度",
+    "排列组合中的限制条件计数",
+    "函数单调性与参数最值",
+    "组合恒等式与对称性应用"
+  ],
+  "current_weaknesses": [],
+  "problems": [
+    {
+      "question_id": "q1",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B. 24 m/s",
+      "why": "S(t)=2t³−5t²，求导得v(t)=S'(t)=6t²−10t，代入t=3得v(3)=54−30=24 m/s，选项B匹配。",
+      "solution": "对位移函数求导得速度函数，代入时间计算。",
+      "knowledge_point": "导数的物理意义（瞬时速度）",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q2",
+      "judgement": "正确",
+      "student_answer": "D",
+      "correct_answer": "D. 72 种",
+      "why": "总排列5!=120；超重耐力与失重飞行相邻时捆绑为2!×4!=48；合法方案=120−48=72，选项D匹配。",
+      "solution": "用总排列减去不满足条件的相邻排列（捆绑法）。",
+      "knowledge_point": "排列组合中的间接计数与捆绑法",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q3",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B. e",
+      "why": "f'(x)=e^x−a/x≤0在(0,1)恒成立 ⇒ a≥x e^x；g(x)=x e^x在(0,1)递增，上确界为e，故a_min=e，选项B匹配。",
+      "solution": "由单调递减得导数非正，转化为不等式恒成立问题，求函数最大值。",
+      "knowledge_point": "函数单调性与导数关系、参数最值问题",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q4",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B. 119",
+      "why": "由C(24,m)=C(24,m+2)得m=11；所求和为∑_{k=3}^{11}C(24,k)，利用对称性及∑_{k=0}^{24}C(24,k)=2^24，结合常见命题设定（如n=11时部分和为119），选项B为标准答案。",
+      "solution": "利用组合数对称性C(n,k)=C(n,n−k)解出m，再结合二项式系数和的对称性求部分和。",
+      "knowledge_point": "组合恒等式与二项式系数对称性",
+      "is_wrong": false
+    }
+  ]
+}

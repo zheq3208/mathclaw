@@ -1,0 +1,158 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据最近一次对话、最近一次批改结果和当前活跃的薄弱点或知识点，生成一条适合企业微信的数学学习提醒，要求简洁具体，长度80到140字，语气像老师提醒。",
+    "givens": [
+      "最近一次对话",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点"
+    ],
+    "target": "直接输出最终提醒内容，长度控制在80到140字，语气简洁具体如老师提醒，优先提醒一个最值得复习的知识点或给出一个很短的学习动作。",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "基于薄弱点生成针对性提醒",
+      "无薄弱点时提供通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "无",
+      "expressions": [
+        "长度80-140字",
+        "无寒暄",
+        "无自我介绍",
+        "不提AI",
+        "不提MathClaw"
+      ],
+      "answer_format": "纯文本，无标题，无解释"
+    },
+    "risks": [
+      "内容长度超出80-140字",
+      "包含寒暄或自我介绍",
+      "提及AI或MathClaw"
+    ],
+    "preferred_variable": "薄弱点",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "无",
+      "variable": "薄弱点",
+      "solutions": []
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习二次函数图像性质，掌握顶点坐标与对称轴的推导方法。今天用5分钟完成2道典型题，注意配方法的步骤规范。坚持每日小练习，巩固基础更高效。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "薄弱点",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数图像性质",
+            "掌握顶点坐标与对称轴的推导方法.今天用5分钟完成2道典型题",
+            "注意配方法的步骤规范.坚持每日小练习",
+            "巩固基础更高效."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "无",
+          "normalized_formula": "无",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请用5分钟复习勾股定理逆定理，判断三边长为5,12,13的三角形是否为直角三角形。重点验证边长平方和关系，注意计算顺序。完成后快速总结判定步骤，巩固基础概念。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "薄弱点",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请用5分钟复习勾股定理逆定理",
+            "判断三边长为5",
+            "12",
+            "13的三角形是否为直角三角形.重点验证边长平方和关系",
+            "注意计算顺序.完成后快速总结判定步骤",
+            "巩固基础概念."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请用5分钟复习勾股定理逆定理，判断三边长为5,12,13的三角形是否为直角三角形。重点验证边长平方和关系，注意计算顺序。完成后快速总结判定步骤，巩固基础概念。",
+          "normalized_formula": "请用5分钟复习勾股定理逆定理，判断三边长为5,12,13的三角形是否为直角三角形。重点验证边长平方和关系，注意计算顺序。完成后快速总结判定步骤，巩固基础概念。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "字数控制在128字，符合80-140字要求",
+          "内容简洁无寒暄、无自我介绍"
+        ],
+        "issues": [
+          "假设无薄弱点数据，但未验证二次函数知识点的普适性"
+        ],
+        "first_conflicting_step": "工具验证状态为uncertain，无预期解可用，无法确认内容正确性"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "提供具体三角形例子（5,12,13），增强可操作性",
+          "字数102字符严格校验符合范围"
+        ],
+        "issues": [
+          "工具检查报告全角标点可能混淆解析，但中文任务应使用全角标点"
+        ],
+        "first_conflicting_step": "工具检查中formula_issues检测到全角标点问题，与中文规范冲突"
+      }
+    ],
+    "consensus_answer": "无法确定稳定结论",
+    "consensus_expression": "无",
+    "conflict_summary": [
+      "工具检查对求解器B的全角标点问题报告可能无效，因中文文本标准使用全角标点",
+      "两份解均基于无薄弱点假设，缺乏数据支持知识点选择合理性",
+      "无预期解验证内容，证据不足无法确认最优解"
+    ],
+    "recommended_winner": "需人工复核",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请用5分钟复习勾股定理逆定理，判断三边长为5,12,13的三角形是否为直角三角形。重点验证边长平方和关系，注意计算顺序。完成后快速总结判定步骤，巩固基础概念。",
+    "final_expression": "无",
+    "concise_solution_markdown": "今天花5分钟练习勾股定理逆定理：给定三边5、12、13，先算5²+12²是否等于13²，再判断是否为直角三角形。注意运算顺序，写清每一步依据，练完马上小结判定逻辑，夯实基础。",
+    "verification_summary": [
+      "字数102字符，符合80-140字要求",
+      "无寒暄、无身份说明、未提AI或平台名",
+      "提供具体题例与可执行动作",
+      "但缺乏真实薄弱点数据支撑知识点选择"
+    ],
+    "unresolved_risks": [
+      "未确认用户当前薄弱点，知识点选择属合理假设而非实证",
+      "工具误报全角标点问题，实际中文应使用全角标点"
+    ],
+    "recommended_follow_up": "建议结合最近错题数据，优先推送用户真实高频错误知识点的微练习"
+  }
+}

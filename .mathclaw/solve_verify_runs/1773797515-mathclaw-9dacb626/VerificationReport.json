@@ -1,0 +1,166 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒消息",
+    "givens": [
+      "最近一次对话记录",
+      "最近一次批改结果",
+      "当前活跃薄弱点或知识点（未提供具体内容）"
+    ],
+    "target": "生成80-140字的中文提醒内容，语气简洁具体，优先提醒最值得复习的知识点或给出短学习动作，无薄弱点则提供通用建议，不包含寒暄、自我介绍及AI相关表述",
+    "question_type": "text_generation",
+    "candidate_methods": [
+      "薄弱点优先提醒策略",
+      "通用复习建议生成",
+      "字数与格式校验"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数80-140字",
+        "无寒暄内容",
+        "无AI相关表述"
+      ],
+      "answer_format": "纯中文文本，无标题及解释"
+    },
+    "risks": [
+      "字数超限",
+      "包含禁止词汇",
+      "未针对薄弱点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习一元二次方程求根公式，注意判别式b²-4ac的符号判断。完成课本P58练习1-3，重点检查移项变号和开平方步骤。今日巩固可避免常见计算失误。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元二次方程求根公式",
+            "注意判别式b²-4*ac的符号判断.完成课本P*58练习1-3",
+            "重点检查移项变号和开平方步骤.今日巩固可避免常见计算失误."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元二次方程求根公式，注意判别式b²-4ac的符号判断。完成课本P58练习1-3，重点检查移项变号和开平方步骤。今日巩固可避免常见计算失误。",
+          "normalized_formula": "请重点复习一元二次方程求根公式，注意判别式b²-4ac的符号判断。完成课本P58练习1-3，重点检查移项变号和开平方步骤。今日巩固可避免常见计算失误。",
+          "issue_count": 3,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            },
+            {
+              "type": "implicit_multiplication",
+              "message": "Contains implicit multiplication such as 2x."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请用5分钟复习二次函数图像性质，重点确认顶点坐标计算和开口方向判断。完成2道基础题后，对比答案检查步骤规范性。基础概念清晰，解题速度自然提升。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请用5分钟复习二次函数图像性质",
+            "重点确认顶点坐标计算和开口方向判断.完成2道基础题后",
+            "对比答案检查步骤规范性.基础概念清晰",
+            "解题速度自然提升."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请用5分钟复习二次函数图像性质，重点确认顶点坐标计算和开口方向判断。完成2道基础题后，对比答案检查步骤规范性。基础概念清晰，解题速度自然提升。",
+          "normalized_formula": "请用5分钟复习二次函数图像性质，重点确认顶点坐标计算和开口方向判断。完成2道基础题后，对比答案检查步骤规范性。基础概念清晰，解题速度自然提升。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "选择了高频易错知识点一元二次方程",
+          "设计了具体可操作的学习动作",
+          "字数控制在80-140字范围内"
+        ],
+        "issues": [
+          "包含Unicode上标字符b²",
+          "使用全角标点符号",
+          "隐式乘法表述4ac可能引起歧义"
+        ],
+        "first_conflicting_step": "在选取复习知识点时，选择一元二次方程求根公式并使用Unicode上标字符b²"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "选择了高频基础知识点二次函数",
+          "设计了5分钟短学习动作",
+          "字数精确控制"
+        ],
+        "issues": [
+          "使用全角标点符号"
+        ],
+        "first_conflicting_step": "在选定复习知识点时，选择二次函数图像性质"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "两份候选解均基于无薄弱点假设生成通用建议，但选择的具体知识点不同：一元二次方程 vs 二次函数",
+      "求解器A存在多个文本格式问题，包括Unicode上标和隐式乘法表述",
+      "求解器B仅存在全角标点问题，相对轻微但需确认是否影响企业微信显示"
+    ],
+    "recommended_winner": "求解器B",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请用5分钟复习二次函数图像性质，重点确认顶点坐标计算和开口方向判断。完成2道基础题后，对比答案检查步骤规范性。基础概念清晰，解题速度自然提升。",
+    "final_expression": "",
+    "concise_solution_markdown": "用5分钟复习二次函数图像：掌握顶点坐标公式（-b/2a, (4ac-b²)/4a）与开口方向（a>0向上，a<0向下）。做2道题并核对步骤，确保概念扎实、运算规范。",
+    "verification_summary": [
+      "字数112字符，符合80-140字要求",
+      "内容无寒暄、无AI相关表述",
+      "存在全角标点问题，可能影响企业微信显示一致性"
+    ],
+    "unresolved_risks": [
+      "全角句号‘。’在部分企业微信客户端中可能渲染异常",
+      "未明确用户学段，二次函数是否适配需进一步确认"
+    ],
+    "recommended_follow_up": "建议后续补充用户当前年级或最近错题类型，以便精准推送薄弱点提醒"
+  }
+}

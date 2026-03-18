@@ -1,0 +1,97 @@
+{
+  "language": "zh",
+  "show_tool_details": true,
+  "heartbeat_every": "30m",
+  "provider": "openai",
+  "model_name": "qwen3.5-plus-2026-02-15",
+  "api_key": "sk-77ab5a421f24483fa2358773ef947a00",
+  "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "supports_vision": true,
+  "extra": {
+    "supports_vision": true
+  },
+  "mcp": {
+    "clients": {
+      "tavily": {
+        "name": "Tavily Search",
+        "description": "Remote Tavily MCP for web search and extraction.",
+        "enabled": true,
+        "transport": "streamable_http",
+        "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=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",
+        "headers": {},
+        "command": "",
+        "args": [],
+        "env": {},
+        "cwd": ""
+      },
+      "playwright": {
+        "name": "Playwright Browser",
+        "description": "Browser automation for dynamic exam and education sites.",
+        "enabled": true,
+        "transport": "stdio",
+        "url": "",
+        "headers": {},
+        "command": "npx",
+        "args": [
+          "-y",
+          "@playwright/mcp@latest",
+          "--headless",
+          "--no-sandbox"
+        ],
+        "env": {},
+        "cwd": ""
+      },
+      "filesystem": {
+        "name": "Exam Filesystem",
+        "description": "Safe file access for exam archives and working directories.",
+        "enabled": false,
+        "transport": "stdio",
+        "url": "",
+        "headers": {},
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-filesystem",
+          "/root/autodl-tmp/mathclaw",
+          "/root/autodl-tmp/mathclaw/.mathclaw",
+          "/root/autodl-tmp/mathclaw/.mathclaw/exam_bank"
+        ],
+        "env": {},
+        "cwd": ""
+      }
+    }
+  },
+  "channels": {
+    "qq": {
+      "enabled": true,
+      "app_id": "1903428203",
+      "client_secret": "4zuqnkqz9KVhu7LZo4KbtBUo8ToAXuIh",
+      "bot_prefix": ""
+    },
+    "wecom": {
+      "enabled": true,
+      "bot_id": "aibDIqGLkJuXVVdcXg7eYxEplVabkIdsowG",
+      "secret": "yuC5wLKyO8xuObYbIvmsWnjhGvh6zgPgsekzuKTq7lg",
+      "bot_prefix": "",
+      "welcome_message": ""
+    }
+  },
+  "agents": {
+    "defaults": {
+      "heartbeat": {
+        "enabled": true,
+        "every": "30m",
+        "target": "wecom",
+        "channel": "wecom",
+        "user_id": "QianZhe",
+        "session_id": "wecom:single:QianZhe"
+      }
+    }
+  },
+  "debug_skill_footer": false,
+  "last_dispatch": {
+    "channel": "wecom",
+    "user_id": "QianZhe",
+    "session_id": "wecom:single:QianZhe"
+  }
+}

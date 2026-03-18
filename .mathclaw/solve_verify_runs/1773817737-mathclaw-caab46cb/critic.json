@@ -1,0 +1,41 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "选择了通用知识点二次函数",
+        "字数控制在102字符合要求",
+        "内容具体有操作性"
+      ],
+      "issues": [
+        "包含Unicode上标字符",
+        "使用全角标点符号",
+        "隐式乘法如4x可能引起混淆"
+      ],
+      "first_conflicting_step": "在key_steps中构造具体动作句子'画出y=x²-4x+3图像并求顶点坐标'时，引入了格式问题"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "聚焦顶点式核心知识点",
+        "设计5分钟短时学习动作",
+        "字数约120字在范围内"
+      ],
+      "issues": [
+        "包含Unicode上标字符"
+      ],
+      "first_conflicting_step": "在key_steps中指定公式'y=a(x-h)²+k'时，使用了Unicode上标"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两个候选解均使用Unicode上标字符，可能影响企业微信显示",
+    "求解器A额外存在隐式乘法和全角标点问题",
+    "证据不足判断是否严重违反要求，需人工复核"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}

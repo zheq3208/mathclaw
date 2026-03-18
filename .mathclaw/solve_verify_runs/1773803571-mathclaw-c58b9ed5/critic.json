@@ -1,0 +1,36 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "solver_a",
+      "verdict": "conflict",
+      "strengths": [
+        "无显著优点"
+      ],
+      "issues": [
+        "final_answer 为空，违反必须输出提醒内容的要求"
+      ],
+      "first_conflicting_step": "生成 final_answer 时未提供任何内容"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "内容聚焦一元二次方程知识点",
+        "包含每日2题的具体学习动作建议"
+      ],
+      "issues": [
+        "实际字数仅60字，低于80字下限",
+        "包含全角标点可能影响系统解析"
+      ],
+      "first_conflicting_step": "在长度校验步骤中声称已校验，但实际字数不足"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "solver_a 未生成任何内容，直接违反输出要求",
+    "求解器B 生成内容但长度不足80字，且标点格式有问题"
+  ],
+  "recommended_winner": "无",
+  "revision_needed": true
+}

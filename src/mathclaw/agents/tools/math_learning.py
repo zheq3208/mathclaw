@@ -1956,6 +1956,7 @@ _CN_MEMORY_LABELS = {
     'integer_operations': '????',
     'arithmetic_operations': '????',
     'weakness_diag': '?????',
+    'manual_seed': 'æå¨æ·»å ',
     'micro_quiz': '????',
     'mastery_update': '?????',
     'manual_mastered': '???????',
@@ -2158,9 +2159,9 @@ _CN_MEMORY_LABELS_20260315 = {
     'micro_quiz': '微测复查',
     'weakness_diag': '薄弱点诊断',
 }
-_BASE_GET_GLOBAL_MEMORY_20260315 = get_global_learning_memory
-_BASE_UPDATE_GLOBAL_MEMORY_20260315 = update_global_learning_memory
-_BASE_MARK_GLOBAL_MEMORY_MASTERED_20260315 = mark_global_memory_mastered
+_BASE_GET_GLOBAL_MEMORY_20260315 = _ORIGINAL_GET_GLOBAL_LEARNING_MEMORY_20260315
+_BASE_UPDATE_GLOBAL_MEMORY_20260315 = _ORIGINAL_UPDATE_GLOBAL_LEARNING_MEMORY_20260315
+_BASE_MARK_GLOBAL_MEMORY_MASTERED_20260315 = _ORIGINAL_MARK_GLOBAL_MEMORY_MASTERED_20260315
 
 def _normalize_memory_text_cn_20260315(value: Any) -> str:
     text = str(value or '').strip()

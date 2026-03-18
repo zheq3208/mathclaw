@@ -1,0 +1,75 @@
+{
+  "query": "一下高中导数入门资料 数学",
+  "raw_text": "帮我找一下高中导数入门资料",
+  "year": null,
+  "stage": "generic",
+  "resource_types": [
+    "resource"
+  ],
+  "topic_terms": [
+    "导数"
+  ],
+  "session_id": "debug-heartbeat-fix-search",
+  "verified_title": "",
+  "excerpt": "[跳转到内容](#bodyContent) [![](/static/images/icons/wikibooks.svg) ![维基教科书](/static/images/mobile/copyright/wikibooks-wordmark-zh.svg) ![](/static/images/mobile/copyright/wikibooks-tagline-zh.svg)](/wiki/Wikibooks:%E9%A6%96…",
+  "results": [
+    {
+      "title": "高中数学/微积分初步/一阶导数的概念与求导法则 - 维基教科书",
+      "url": "https://zh.wikibooks.org/wiki/%E9%AB%98%E4%B8%AD%E6%95%B0%E5%AD%A6/%E5%BE%AE%E7%A7%AF%E5%88%86%E5%88%9D%E6%AD%A5/%E4%B8%80%E9%98%B6%E5%AF%BC%E6%95%B0%E7%9A%84%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%B1%82%E5%AF%BC%E6%B3%95%E5%88%99",
+      "snippet": "Crystal Project Warehause\n我们将常见函数的导函数公式总结如下\n：\n\nCrystal Project Warehause\n{\\displaystyle C'=0}\n{\\displaystyle (x^{n})'=nx^{n-1}\\quad (n\\in \\mathbb {Q} )}\n{\\displaystyle (\\sin x)'=\\cos x}\n{\\displaystyle (\\cos x)'=-\\sin x}\n{\\displaystyle (\\ln x)'={\\frac {1}{x}}}\n{\\displaystyle (\\log _{a}x)'={\\frac {1}{x}}\\log _{a}e}\n\n此公式列表也叫做导数公式表（table of derivatives）。\n\nCrystal Project Warehause\n2个可导函数的四则运算结果的导数公式如下：\n\nCrystal Project Warehause\n{\\displaystyle (f(x)\\pm g(x))'=f'(x)\\pm g'(x)}\n{\\displaystyle (f(x)\\cdot g(x))'=f'(x)\\cdot g(x)+f(x)\\cdot g'(x)}\n{\\displaystyle ({\\frac {f(x)}{g(x)}})'={\\frac {f'(x)\\cdot g(x)-f(x)\\cdot g'(x)}{(g(x))^{2}}}}\n\nCrystal Clear action info\n提示：注意导数乘法公式和除法公式中加减号的差异。\n\nCrystal Clear action info [...] 维基教科书\n\n## 目录\n\n# 高中数学/微积分初步/一阶导数的概念与求导法则\n\n## 阅读指南\n\nCrystal Clear app gnome\n希望快速了解或快速回顾高中数学的读者可以只看基础知识部分。其余部分是为需要参加学科考试或需要一定知识提升的读者准备的。\n\nCrystal Clear app gnome\n\n导数主要用于解决求函数的极值、平滑曲线的切线。本节只涉及导数的基本定义和计算公式，顺便提及了洛必达法则。导数的更多具体运用（求切线方程、求最值、求单调区间等）会留到后面几节继续学习。\n\n### 预备知识\n\n阅读本节，一般需要先学习有关极限及其计算的知识，特别是常见函数的导函数公式的推导过程需要使用极限运算规律。如果读者暂时不希望了解导数公式的由来，只想关心导数是什么及其公式用法，也可以先跳过极限的学习。\n\n### 考试要求\n\n在中国大陆，导数这个知识点曾一度排除在高考范围以外。1978年中国大陆高考制度恢复正常后，微积分入门知识也跟着加入高考内容大纲。但是由于当时的中学缺乏微积分教与学的经验，学生普遍反映难学，所以不久后变为只考察简单的极限计算，其它微积分学知识仅供学生自由选学。从2001年推广的试验本教材又重新将导数等知识纳入考试大纲。\n\n## 基础知识\n\n### 知识引入\n\n导数是一种差商（difference quotient）的极限，也被翻译为微商。最常见的例子就是物理量随时间的瞬时变化率。\n\n### 导数的定义与直接计算\n\n假定函数f(x)在某一点a及其领域上有定义，若函数值在该点附近的平均变化率的极限\n\nlim\n\nh\n→\n0 [...] 假定函数f(x)在某一点a及其领域上有定义，若函数值在该点附近的平均变化率的极限\n\nlim\n\nh\n→\n0\n\nf\n(\na\n+\nh\n)\n−\nf\n(\na\n)\nh\n{\\displaystyle \\lim \\_{h\\to 0}{\\frac {f(a+h)-f(a)}{h}}}\n{\\displaystyle \\lim _{h\\to 0}{\\frac {f(a+h)-f(a)}{h}}}存在，就将此极限称为f(x)在点a处的导数（derivative），记作“\n\nf\n′\n(\na\n)\n{\\displaystyle f'(a)}\n{\\displaystyle f'(a)}”；若此极限不存在，就称f(x)在a不存在导数，简称在a点不可导。\n\n{\\displaystyle \\lim _{h\\to 0}{\\frac {f(a+h)-f(a)}{h}}}\n{\\displaystyle f'(a)}\n\n函数在点a上的导数，就是对应的平面曲线在点(a, f(a))处的切线斜率。\n\nCrystal Clear action info\n提示：为区别后面会接触到的二阶与高阶导数，我们将这里定义的导数称为函数的一阶导数。\n\nCrystal Clear action info\n\nCrystal Clear action info\n提示：可以类比极限和单侧极限的关系，定义出2种单侧导数：左导数为\n\nf\n\n−\n′\n(\na\n)\n=\n\nlim\n\nh\n→\n\n0\n\n−\n\nf\n(\na\n+\nh\n)\n−\nf\n(\na\n)\nh\n{\\displaystyle f'\\_{-}(a)=\\lim \\_{h\\to 0^{-}}{\\frac {f(a+h)-f(a)}{h}}}\n{\\displaystyle f'_{-}(a)=\\lim _{h\\to 0^{-}}{\\frac {f(a+h)-f(a)}{h}}}，右导数为\n\nf",
+      "score": 34,
+      "source_host": "zh.wikibooks.org",
+      "matched_terms": [
+        "导数",
+        "数学",
+        "资料"
+      ]
+    },
+    {
+      "title": "高中数学导数知识点总结及典型例题 - Bilibili",
+      "url": "https://search.bilibili.com/all",
+      "snippet": "【导数】单调性+极值+最值+图象！半小时解决，保姆级基础讲解！\n\n### 【导数】单调性+极值+最值+图象！半小时解决，保姆级基础讲解！\n\n68分钟刷完《导数大题》 所有题型\n\n### 68分钟刷完《导数大题》 所有题型\n\n高等数学基础4：导数定义、性质、计算和必考考点\n\n### 高等数学基础4：导数定义、性质、计算和必考考点\n\n你凭本事刷到了这个视频！【高中数学】从零开始1.3小时掌握导数全部知识点\n\n### 你凭本事刷到了这个视频！【高中数学】从零开始1.3小时掌握导数全部知识点\n\n【高二】导数公式+切线+单调性极值！一课搞定！\n\n### 【高二】导数公式+切线+单调性极值！一课搞定！\n\n【导数·运算】搞了30题求导！我给自己挖坑了！为了谁呢？\n\n### 【导数·运算】搞了30题求导！我给自己挖坑了！为了谁呢？\n\n（2022高考一轮复习）导数知识点总复习+所有题型全归纳+历年真题讲解\n\n### （2022高考一轮复习）导数知识点总复习+所有题型全归纳+历年真题讲解\n\n【进阶】导数复习大合集\n\n### 【进阶】导数复习大合集\n\n（4.2-4.4）导数的计算\n\n### （4.2-4.4）导数的计算\n\n导数的十种类型（十种数学思想）\n\n### 导数的十种类型（十种数学思想）\n\n【导数大题】入门到入土，所有题型全面梳理！\n\n### 【导数大题】入门到入土，所有题型全面梳理！\n\n5个小时刷完《导数大题全系列》所有题型\n\n### 5个小时刷完《导数大题全系列》所有题型\n\n最经典的导数大题之一，值得反复练习5次以上的导数大题。\n\n### 最经典的导数大题之一，值得反复练习5次以上的导数大题。\n\n高中数学导数构造函数问题构造函数综合问题\n\n### 高中数学导数构造函数问题构造函数综合问题\n\n（2.1-2.4）导数的计算\n\n### （2.1-2.4）导数的计算 [...] （2.1-2.4）导数的计算\n\n### （2.1-2.4）导数的计算\n\n【高中数学选择性必修二】全集视频，基础知识+典型例题，持续更新中…\n\n### 【高中数学选择性必修二】全集视频，基础知识+典型例题，持续更新中…\n\n「导数含参单调性讨论」一小时大串讲！\n\n### 「导数含参单调性讨论」一小时大串讲！\n\n【硬核干货】导数计算：通俗口诀+常用例子带你零基础16分钟全掌握！\n\n### 【硬核干货】导数计算：通俗口诀+常用例子带你零基础16分钟全掌握！\n\n导数有关知识点总结\n\n### 导数有关知识点总结\n\n导数小题云刷题，来练练手！核心方法基本全覆盖！\n\n### 导数小题云刷题，来练练手！核心方法基本全覆盖！\n\n高二数学选修第二册—新课+题型\n\n### 高二数学选修第二册—新课+题型\n\n【高考数学母题】7.函数与导数之导数大题：恒成立求参+求极值范围丨 赵礼显-高中数学\n\n### 【高考数学母题】7.函数与导数之导数大题：恒成立求参+求极值范围丨 赵礼显-高中数学\n\n10分钟刷完《导数基本运算》 所有题型\n\n### 10分钟刷完《导数基本运算》 所有题型\n\n2026届高三：《导数》速成（三）-零点问题(3)\n\n### 2026届高三：《导数》速成（三）-零点问题(3)\n\n两小时速通高考数学！带大家掌握高考最容易考的最基础的知识点，快速上手高考题!\n\n### 两小时速通高考数学！带大家掌握高考最容易考的最基础的知识点，快速上手高考题!\n\n【佟硕公益数学】导数选填题--知识点补充(配合导数大题系列课食用)\n\n### 【佟硕公益数学】导数选填题--知识点补充(配合导数大题系列课食用)\n\n导数：不动脑子第一问，两种考法白捡分｜赵礼显-高考数学\n\n### 导数：不动脑子第一问，两种考法白捡分｜赵礼显-高考数学\n\n【压轴】两道题学完导数与原函数所有性质·对称奇偶周期·超喜欢考 [...] 【压轴】两道题学完导数与原函数所有性质·对称奇偶周期·超喜欢考\n\n### 【压轴】两道题学完导数与原函数所有性质·对称奇偶周期·超喜欢考\n\n《导数速成宝典》【函数同构 20分钟高能秘籍】超精华导数第三讲「复合同构」我一招秒了，你呢？\n\n### 《导数速成宝典》【函数同构 20分钟高能秘籍】超精华导数第三讲「复合同构」我一招秒了，你呢？\n\n【导数大题】高考热点！5种题型全解析！\n\n### 【导数大题】高考热点！5种题型全解析！\n\n【高考数学母题】6.利用导数研究函数性质：单调性→探究函数极值点→解决不等式问题丨 赵礼显-高中数学\n\n### 【高考数学母题】6.利用导数研究函数性质：单调性→探究函数极值点→解决不等式问题丨 赵礼显-高中数学\n\n导数 做过和整理的题型篇，一小时速讲\n\n### 导数 做过和整理的题型篇，一小时速讲\n\n【从零学导数(已完结】零基础听完必满分的系统导数课程！刷到就是大数据在眷顾你！看完，下次考试直接拿满分！【数飞】\n\n### 【从零学导数(已完结】零基础听完必满分的系统导数课程！刷到就是大数据在眷顾你！看完，下次考试直接拿满分！【数飞】\n\n专升本必刷100题之《导数》(已更完)\n\n### 专升本必刷100题之《导数》(已更完)\n\n（高考一轮复习）导数知识点总复习+所有题型全归纳+历年真题讲解\n\n### （高考一轮复习）导数知识点总复习+所有题型全归纳+历年真题讲解\n\n高考导数基础、常规题型，一个视频搞定！\n\n### 高考导数基础、常规题型，一个视频搞定！\n\n【高考数学母题】1. 函数与导数必考题型：基本不等式问题！丨赵礼显-高中数学\n\n### 【高考数学母题】1. 函数与导数必考题型：基本不等式问题！丨赵礼显-高中数学\n\n77分钟刷完《130分必备导数大题》所有题型\n\n### 77分钟刷完《130分必备导数大题》所有题型",
+      "score": 34,
+      "source_host": "search.bilibili.com",
+      "matched_terms": [
+        "导数",
+        "数学",
+        "资料"
+      ]
+    },
+    {
+      "title": "高中数学导数入门，0基础，一看就懂（完结散花）",
+      "url": "https://www.bilibili.com/video/BV1Tq4y1x7qd",
+      "snippet": "【合集】up主手把手教你，5000元/月的兼职！都是干货，兼职家教一学就会！！！大学生如何去做家教合集每周更新中\n\n【超简单微积分】一天时间带你啃透微积分！轻松拿捏数学、考试、机器学习等等！\n\n来自高考最强导数压轴的压迫感\n\n函数的积分\n\n高中数学必修一【全166集】B站最好的2025最新高中数学课程，数学必修一详细讲解（高清视频+配套讲义）包含高一数学所有知识点考点，零基础也能学会高中数学！！ [...] # 高中数学导数入门，0基础，一看就懂（完结散花）\n\n【高中数学】【新高二】超详细的高中数学选择性必修二教材全解 通俗易懂，从基础到精通，轻松学好高中数学，建议收藏！！附送完整版讲义！！\n\n高中数学必修二【全120集】B站最好的2026最新高中数学课程，数学必修二详细讲解（高清视频+配套讲义）包含高一数学所有知识点考点，零基础也能学会高中数学！！\n\n【全90集】B站最好的2026最新高中数学课程，数学必修一详细讲解，附视频配套完整版讲义！包含高一数学所有知识点考点，零基础也能学会！\n\n【高中数学·必修二】高中数学必修二详细讲解，高一下学期提前学！2026最新高中数学课程（高清视频+配套讲义）包含高中数学必修二所有知识点考点！复习、预习必备！\n\n微积分入门指南：像物理学家一样使用微积分（普通话）\n\n【全268集】我花3w买的高中数学课，高一到高三完整版课程，堪称B站最完整的数学课，全程干货，拿走不谢！\n\n反比例函数入门，零基础都可以学会\n\n【高中数学·必修二】全180集 高中数学必修二详细讲解，高一下学期提前学！2026最新高中数学课程（高清视频+配套讲义）包含高中数学必修二所有知识点考点！\n\n【高中】三角函数必考！题型保姆级讲解、高中数学必看、高考\n\n学霸私藏！高中数学五大禁术，学会你就无敌了\n\n数学必修二保姆级系统课，一看就会！逆袭必看！\n\n导数最热门零点大题：8种最常见题型全解！（极值点偏移、比值换元、ALG不等式......）\n\n被吹得神乎其神的「洛必达法则」，在导数压轴题中到底怎么用？【巅峰训练】\n\n开个大天坑..这集开始从零讲【导数】！｜导数01\n\n学了这么长时间的导数，你会求导了吗？\n\n【合集】up主手把手教你，5000元/月的兼职！都是干货，兼职家教一学就会！！！大学生如何去做家教合集每周更新中",
+      "score": 34,
+      "source_host": "www.bilibili.com",
+      "matched_terms": [
+        "导数",
+        "数学",
+        "资料"
+      ]
+    },
+    {
+      "title": "中英高中数学教材导函数内容的比较研究",
+      "url": "https://pdf.hanspub.org/ces2025134_13094757.pdf",
+      "snippet": "2 创新教育研究 compilation of teaching materials, and put forward corresponding suggestions: increase the intro-duction of reasonable situations and enrich the teaching content; combine the connection between knowledge and do a good job in teaching design; enrich the knowledge of mathematical inquiry and stimulate interest in learning; strengthen the planning of textbook exercises to promote students’ improvement. Keywords High School Mathematics Textbooks, Derived Function, Difficulty Model Copyright © 2025 by author(s) and Hans Publishers Inc. This work is licensed under the Creative Commons Attribution International License (CC BY 4.0).  1. 引言 教材是课程的具体体现形式之一，同时教材是课程的关键载体，其难度水平对教师的教与学生的学有 着直接的联系。函数内容是贯穿高中数学课程的主线，函数中导函数的应用更是重中之重，导函数是对 之前所学内容的进一步加工与延伸，为后续解决复杂函数问题做好准备，是学生在学完初等函数之后，又 [...] University, Huanggang Hubei Received: Jan. 11th, 2025; accepted: Mar. 24th, 2025; published: Apr. 1st, 2025 Abstract In different editions of high school mathematics textbooks, the arrangement of derivative function content is different, so the content of high school mathematics about derivative functions is mainly studied in Renjiao A edition, Beijing Normal University edition and Yingjiao PA edition, and the con-tent of derivative functions is compared from four levels: textbook content arrangement, exercise type, exercise difficulty and course depth, and the difficulty model is used to analyze the difficulty of exercises and course depth. It is found that the three have their own characteristics in the 宋青燕 等 DOI: 10.12677/ces.2025.134208 2 创新教育研究 compilation of teaching materials, and [...] 1.2 瞬时变化率 §2 导数的概念及其几何意义 2.1 导数的概念 2.2 导数的几何意义 §3 导数的计算 §4 导数的四则运算法则 4.1 导数的加法与减法法则 4.2 导数的乘法与除法法则 §5 简单复合函数的求导法则 §6 用导数研究函数的性质 6.1 函数的单调性 6.2 函数的极值 6.3 函数的最值 §7 导数的应用 7.1 实际问题中导数的意义 7.2 实际问题中的最值问题 §8 数学探究活动 (二)：探究函数性质 观察表3 中英教PA 版微分章节的编排分为纯数学1 和2 两本教材，该章节所涉及的内容较多，并 宋青燕 等 DOI: 10.12677/ces.2025.134208 4 创新教育研究 分成两个章节，英教PA 版对于导函数的划分比较细致，相比于人教A 版和北师大版多了曲线的切线的 法线求解、二阶求导等内容。 Table 3. Differential chapter settings of the English Education PA version 表3. 英教PA 版导数章节设置 纯数学1 学生用书 纯数学2 学生用书 第8 章 导数 第7 章 导数 8.1 曲线坡度 7.1 增函数和减函数(函数的单调性) 8.2 平均变化率和瞬时变化率 7.2 驻点(函数的极值点) 8.3 导数的计算 7.3 绘制梯度函数图 8.4 函数求导 7.4 用微分建模(导数的应用) 8.5 复合函数的求导 8.6 曲线的梯度、切线、法线 8.7 二阶求导 3.1.2. 知识呈现方式的比较 教材是怎样展示知识， 是每位教育研究者需要细心揣摩的重难点， 一方面为教师提供了教学参考， 另外教师可以结合例题或者情境问题选择适合学生当前知识经验的情景问题，更好地促进学生的理解 和进一步探究学习。人教A 版在一元函数的导数及其应用的知识引入方面借助运动员高台跳水的问",
+      "score": 26,
+      "source_host": "pdf.hanspub.org",
+      "matched_terms": [
+        "导数",
+        "数学"
+      ]
+    },
+    {
+      "title": "高中数学之——导数基础入门篇",
+      "url": "https://zhuanlan.zhihu.com/p/681489212",
+      "snippet": "导数是高中数学中一个非常重要的概念，它不仅涉及到函数的瞬时变化率，还广泛应用于研究函数的性质、解决实际问题等方面。掌握导数的概念和计算方法，对于",
+      "score": 26,
+      "source_host": "zhuanlan.zhihu.com",
+      "matched_terms": [
+        "导数",
+        "数学"
+      ]
+    }
+  ]
+}

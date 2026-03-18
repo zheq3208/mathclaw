@@ -1,0 +1,155 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成一条符合企业微信要求的数学学习提醒消息，需简洁具体，长度80-140字，避免寒暄和AI提及。",
+    "givens": [
+      "根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点生成提醒",
+      "只输出中文",
+      "长度控制在80到140字",
+      "语气简洁、具体、像老师发来的提醒",
+      "优先提醒一个最值得复习的知识点或给出很短的学习动作",
+      "若无明确薄弱点则提供通用但具体的数学复习建议",
+      "不要寒暄、不要自我介绍、不要提自己是AI、不要提MathClaw",
+      "直接输出最终提醒内容，不加标题，不解释来源"
+    ],
+    "target": "直接输出最终提醒内容",
+    "question_type": "文本生成任务",
+    "candidate_methods": [
+      "基于薄弱点生成针对性提醒",
+      "提供通用数学复习建议",
+      "校验长度和格式合规性"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度80-140字",
+        "无寒暄内容",
+        "无AI或MathClaw提及"
+      ],
+      "answer_format": "纯中文文本，80-140字"
+    },
+    "risks": [
+      "长度超出80-140字范围",
+      "包含禁止内容如寒暄或AI提及",
+      "未针对薄弱点生成有效提醒"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习一元二次方程求根公式和配方法，完成课本P45的3道例题。特别注意判别式与根的关系，避免符号错误。每天花10分钟练习，巩固计算步骤，提升解题准确率，减少粗心失误。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元二次方程求根公式和配方法",
+            "完成课本P*45的3道例题.特别注意判别式与根的关系",
+            "避免符号错误.每天花10分钟练习",
+            "巩固计算步骤",
+            "提升解题准确率",
+            "减少粗心失误."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "一元二次方程求根公式与配方法专项练习",
+          "normalized_formula": "一元二次方程求根公式与配方法专项练习",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习二次函数图像与性质，掌握顶点坐标公式及对称轴求法。建议先回顾课本P45-48例题，完成课后习题第2、5题，注意步骤规范。今日任务完成后请截图反馈。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数图像与性质",
+            "掌握顶点坐标公式及对称轴求法.建议先回顾课本P*45-48例题",
+            "完成课后习题第2、5题",
+            "注意步骤规范.今日任务完成后请截图反馈."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数图像与性质，掌握顶点坐标公式及对称轴求法。建议先回顾课本P45-48例题，完成课后习题第2、5题，注意步骤规范。今日任务完成后请截图反馈。",
+          "normalized_formula": "请重点复习二次函数图像与性质，掌握顶点坐标公式及对称轴求法。建议先回顾课本P45-48例题，完成课后习题第2、5题，注意步骤规范。今日任务完成后请截图反馈。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "pass",
+        "strengths": [
+          "字数精确82字符合80-140字要求",
+          "内容简洁无寒暄无AI提及",
+          "提供具体学习动作和时间量化"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "结构化提醒清晰",
+          "提供具体课本页码和题号"
+        ],
+        "issues": [
+          "final_answer中包含全角标点可能混淆解析"
+        ],
+        "first_conflicting_step": "在key_steps中设计'课本P45-48'时，连字符使用半角导致标点问题"
+      }
+    ],
+    "consensus_answer": "请重点复习一元二次方程求根公式和配方法，完成课本P45的3道例题。特别注意判别式与根的关系，避免符号错误。每天花10分钟练习，巩固计算步骤，提升解题准确率，减少粗心失误。",
+    "consensus_expression": "一元二次方程求根公式与配方法专项练习",
+    "conflict_summary": [
+      "求解器B的final_answer被工具检查发现包含全角标点问题，而求解器A无此问题",
+      "工具检查显示求解器B有格式问题，影响解析可靠性"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "pass",
+    "final_answer": "请重点复习一元二次方程求根公式和配方法，完成课本P45的3道例题。特别注意判别式与根的关系，避免符号错误。每天花10分钟练习，巩固计算步骤，提升解题准确率，减少粗心失误。",
+    "final_expression": "一元二次方程求根公式与配方法专项练习",
+    "concise_solution_markdown": "最近易错点集中在一元二次方程的求解过程。请重点复习求根公式与配方法，完成课本P45的3道例题，注意判别式判断根的情况，警惕符号错误。每天抽10分钟专项练习，规范步骤、提升准确率。",
+    "verification_summary": [
+      "字数82字，符合80-140字要求",
+      "无寒暄、无AI提及、无MathClaw相关内容",
+      "内容具体，含知识点、动作、时间量化与常见错误提醒"
+    ],
+    "unresolved_risks": [
+      "求解器B的final_answer被工具检查发现包含全角标点问题，而求解器A无此问题",
+      "工具检查显示求解器B有格式问题，影响解析可靠性"
+    ],
+    "recommended_follow_up": "下次批改后若发现函数图像理解薄弱，可切换至二次函数性质专项提醒"
+  }
+}

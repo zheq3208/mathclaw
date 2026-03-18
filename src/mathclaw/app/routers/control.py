@@ -192,3 +192,24 @@ async def heartbeat_status():
         "age_seconds": age,
         "healthy": age is not None and age <= 2 * 3600,
     }
+
+
+@router.post("/heartbeat/run")
+async def run_heartbeat_now(req: Request):
+    runner = getattr(req.app.state, "runner", None)
+    if runner is None:
+        raise HTTPException(status_code=500, detail="Runner not available")
+
+    channel_manager = getattr(req.app.state, "channel_manager", None)
+
+    try:
+        from ..crons.heartbeat import run_heartbeat_once
+
+        await run_heartbeat_once(
+            runner=runner,
+            channel_manager=channel_manager,
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+    return {"started": True}

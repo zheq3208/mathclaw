@@ -1,0 +1,31 @@
+{
+  "problem_summary": "生成符合企业微信要求的数学学习提醒消息",
+  "givens": [
+    "最近一次对话记录",
+    "最近一次批改结果",
+    "当前活跃薄弱点或知识点（未提供具体内容）"
+  ],
+  "target": "生成80-140字的中文提醒内容，语气简洁具体，优先提醒最值得复习的知识点或给出短学习动作，无薄弱点则提供通用建议，不包含寒暄、自我介绍及AI相关表述",
+  "question_type": "text_generation",
+  "candidate_methods": [
+    "薄弱点优先提醒策略",
+    "通用复习建议生成",
+    "字数与格式校验"
+  ],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [
+      "字数80-140字",
+      "无寒暄内容",
+      "无AI相关表述"
+    ],
+    "answer_format": "纯中文文本，无标题及解释"
+  },
+  "risks": [
+    "字数超限",
+    "包含禁止词汇",
+    "未针对薄弱点"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": false
+}

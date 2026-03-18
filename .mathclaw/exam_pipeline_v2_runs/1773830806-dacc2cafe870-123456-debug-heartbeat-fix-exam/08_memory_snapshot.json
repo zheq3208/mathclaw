@@ -1,0 +1,184 @@
+{
+  "memory_path": "/root/autodl-tmp/mathclaw/.mathclaw/memory/math_learning/global_learning_memory.json",
+  "students": {
+    "__global__": {
+      "student_id": "__global__",
+      "updated_at": "2026-03-18T01:57:49.379890Z",
+      "weaknesses": {
+        "分式方程移项符号易错": {
+          "severity": 0.448,
+          "status": "正在改善",
+          "count": 1,
+          "last_result": "错误",
+          "last_seen_at": "2026-03-18T01:57:47.375547Z",
+          "knowledge_points": [
+            "分式方程"
+          ],
+          "prerequisite_gaps": [
+            "整式移项规则"
+          ],
+          "practice_focus": [
+            "移项符号检查",
+            "先写定义域再求解"
+          ],
+          "recent_notes": [
+            "识别到分式方程相关风险，已纳入全局学习记忆。"
+          ],
+          "sources": [
+            "weakness_diag"
+          ],
+          "mastery_streak": 0
+        }
+      },
+      "mastered_weaknesses": {
+        "列方程时漏条件": {
+          "severity": 0.12,
+          "status": "已掌握",
+          "count": 1,
+          "last_result": "错误",
+          "last_seen_at": "2026-03-18T01:57:47.375547Z",
+          "knowledge_points": [
+            "一次函数图像判读"
+          ],
+          "prerequisite_gaps": [],
+          "practice_focus": [
+            "列方程后检查题目条件"
+          ],
+          "recent_notes": [
+            "该薄弱点已进入掌握归档，后续将持续跟踪。"
+          ],
+          "sources": [
+            "mastery_update"
+          ],
+          "mastery_streak": 3,
+          "mastered_at": "2026-03-18T01:57:49.379890Z",
+          "archive_reason": "mastery_update"
+        }
+      },
+      "knowledge_points": {
+        "分式方程": {
+          "risk_score": 0.58,
+          "status": "继续观察",
+          "history_count": 1,
+          "last_result": "错误",
+          "updated_at": "2026-03-18T01:57:47.375547Z",
+          "weakness_links": [
+            "分式方程移项符号易错"
+          ],
+          "practice_focus": [
+            "移项符号检查",
+            "先写定义域再求解"
+          ],
+          "mastery_streak": 0
+        }
+      },
+      "mastered_knowledge_points": {
+        "一次函数图像判读": {
+          "risk_score": 0.12,
+          "status": "已掌握",
+          "history_count": 1,
+          "last_result": "正确",
+          "updated_at": "2026-03-18T01:57:48.379890Z",
+          "weakness_links": [],
+          "practice_focus": [
+            "图像斜率和截距联动判断"
+          ],
+          "mastery_streak": 3,
+          "mastered_at": "2026-03-18T01:57:48.379890Z",
+          "archive_reason": "mastery_update"
+        }
+      },
+      "prerequisite_gaps": {
+        "整式移项规则": {
+          "count": 1,
+          "updated_at": "2026-03-18T01:57:47.375547Z",
+          "knowledge_points": [
+            "分式方程"
+          ],
+          "weakness_links": [
+            "分式方程移项符号易错"
+          ],
+          "status": "",
+          "last_result": ""
+        }
+      },
+      "practice_focus": [
+        "移项符号检查",
+        "先写定义域再求解"
+      ],
+      "recent_events": [
+        {
+          "timestamp": "2026-03-18T01:57:47.375547Z",
+          "conversation_id": "demo-global-memory",
+          "source": "薄弱点诊断",
+          "result": "错误",
+          "primary_weakness": "分式方程移项符号易错",
+          "secondary_weaknesses": [],
+          "knowledge_points": [
+            "分式方程"
+          ],
+          "prerequisite_gaps": [
+            "整式移项规则"
+          ],
+          "practice_focus": [
+            "移项符号检查",
+            "先写定义域再求解"
+          ],
+          "note": "识别到分式方程相关风险，已纳入全局学习记忆。",
+          "evidence": [
+            "demo_exam_analysis"
+          ],
+          "archived": {
+            "weaknesses": [],
+            "knowledge_points": [],
+            "revived": []
+          }
+        },
+        {
+          "timestamp": "2026-03-18T01:57:48.379890Z",
+          "conversation_id": "",
+          "source": "掌握度更新",
+          "result": "已掌握",
+          "primary_weakness": "",
+          "secondary_weaknesses": [],
+          "knowledge_points": [
+            "一次函数图像判读"
+          ],
+          "prerequisite_gaps": [],
+          "practice_focus": [],
+          "note": "一次函数图像判读已进入掌握归档。",
+          "evidence": [],
+          "archived": {
+            "weaknesses": [],
+            "knowledge_points": [
+              "一次函数图像判读"
+            ]
+          }
+        },
+        {
+          "timestamp": "2026-03-18T01:57:49.379890Z",
+          "conversation_id": "",
+          "source": "掌握度更新",
+          "result": "已掌握",
+          "primary_weakness": "列方程时漏条件",
+          "secondary_weaknesses": [],
+          "knowledge_points": [],
+          "prerequisite_gaps": [],
+          "practice_focus": [],
+          "note": "列方程时漏条件已进入掌握归档。",
+          "evidence": [],
+          "archived": {
+            "weaknesses": [
+              "列方程时漏条件"
+            ],
+            "knowledge_points": []
+          }
+        }
+      ]
+    }
+  },
+  "student_ids": [
+    "__global__"
+  ],
+  "updated_at": "2026-03-18T01:57:49.379890Z"
+}

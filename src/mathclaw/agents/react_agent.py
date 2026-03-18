@@ -2140,6 +2140,12 @@ class ScholarAgent:
                 messages[idx] = replacement
             return
 
+    @staticmethod
+    def _is_heartbeat_mode(session_id: str | None = None, **kwargs: Any) -> bool:
+        if bool(kwargs.get("heartbeat_mode", False)):
+            return True
+        return str(session_id or "").strip().lower().startswith("heartbeat:")
+
     def reply(
         self,
         message: str,
@@ -2172,6 +2178,7 @@ class ScholarAgent:
                 return cmd_result
 
         attachments = self._normalize_attachments(kwargs.get("attachments"))
+        heartbeat_mode = self._is_heartbeat_mode(session_id=session_id, **kwargs)
         self._begin_turn_trace(
             message,
             session_id=session_id,
@@ -2214,75 +2221,81 @@ class ScholarAgent:
             )
 
         attachments = self._normalize_attachments(kwargs.get("attachments"))
+        heartbeat_mode = self._is_heartbeat_mode(session_id=session_id, **kwargs)
 
         # Add message to memory
         self.memory.add_message("user", message, session_id=session_id)
 
-        exam_pipeline_response = self._maybe_handle_exam_pipeline_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=True,
-        )
-        if exam_pipeline_response is not None:
-            return exam_pipeline_response
+        if not heartbeat_mode:
+            exam_pipeline_response = self._maybe_handle_exam_pipeline_request(
+                message,
+                attachments=attachments,
+                session_id=session_id,
+                store_response=True,
+            )
+            if exam_pipeline_response is not None:
+                return exam_pipeline_response
 
-        resource_response = self._maybe_handle_resource_lookup_request(
-            message,
-            session_id=session_id,
-            store_response=True,
-        )
-        if resource_response is not None:
-            return resource_response
+            resource_response = self._maybe_handle_resource_lookup_request(
+                message,
+                session_id=session_id,
+                store_response=True,
+            )
+            if resource_response is not None:
+                return resource_response
 
-        guided_explanation_response = self._maybe_handle_guided_explanation_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=True,
-        )
-        if guided_explanation_response is not None:
-            return guided_explanation_response
+            guided_explanation_response = self._maybe_handle_guided_explanation_request(
+                message,
+                attachments=attachments,
+                session_id=session_id,
+                store_response=True,
+            )
+            if guided_explanation_response is not None:
+                return guided_explanation_response
 
-        variant_generation_response = self._maybe_handle_variant_generation_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=True,
-        )
-        if variant_generation_response is not None:
-            return variant_generation_response
+            variant_generation_response = self._maybe_handle_variant_generation_request(
+                message,
+                attachments=attachments,
+                session_id=session_id,
+                store_response=True,
+            )
+            if variant_generation_response is not None:
+                return variant_generation_response
 
-        weakness_diag_response = self._maybe_handle_weakness_diagnosis_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=True,
-        )
-        if weakness_diag_response is not None:
-            return weakness_diag_response
+            weakness_diag_response = self._maybe_handle_weakness_diagnosis_request(
+                message,
+                attachments=attachments,
+                session_id=session_id,
+                store_response=True,
+            )
+            if weakness_diag_response is not None:
+                return weakness_diag_response
 
-        solve_verify_response = self._maybe_handle_solve_verify_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=True,
-        )
-        if solve_verify_response is not None:
-            return solve_verify_response
+            solve_verify_response = self._maybe_handle_solve_verify_request(
+                message,
+                attachments=attachments,
+                session_id=session_id,
+                store_response=True,
+            )
+            if solve_verify_response is not None:
+                return solve_verify_response
 
         # Build messages for the model
         messages = self._build_messages(
             user_message=message,
             attachments=attachments,
+            heartbeat_mode=heartbeat_mode,
         )
 
         # Prepare tool kwargs
         model_kwargs: dict[str, Any] = {}
         if self._tool_schemas:
             model_kwargs["tools"] = self._tool_schemas
+        if heartbeat_mode:
+            model_kwargs["extra_body"] = {"enable_thinking": False}
+        max_iters = min(self.max_iters, 2) if heartbeat_mode else self.max_iters
 
-        for iteration in range(self.max_iters):
+        for iteration in range(max_iters):
             try:
                 response = self.model(messages, **model_kwargs)
 
@@ -2496,6 +2509,7 @@ class ScholarAgent:
         self,
         user_message: str | None = None,
         attachments: list[dict[str, Any]] | None = None,
+        heartbeat_mode: bool = False,
     ) -> list[dict[str, Any]]:
         """Build the message list for the LLM from memory and system prompt."""
         self._refresh_skill_docs()
@@ -2504,7 +2518,7 @@ class ScholarAgent:
         # CoPaw-style skill compatibility: inject skill guidance for current turn.
         # This allows doc-only skills (SKILL.md without Python entry points) to
         # shape behavior while keeping tools as the execution backend.
-        if self._skill_docs:
+        if self._skill_docs and not heartbeat_mode:
             selection_debug = explain_skill_selection(
                 query=user_message or "",
                 skills=self._skill_docs,
@@ -2837,6 +2851,7 @@ class ScholarAgent:
             return
 
         attachments = self._normalize_attachments(kwargs.get("attachments"))
+        heartbeat_mode = self._is_heartbeat_mode(session_id=session_id, **kwargs)
         self._begin_turn_trace(
             message,
             session_id=session_id,
@@ -2846,145 +2861,147 @@ class ScholarAgent:
 
 
 
-        if self._can_handle_exam_pipeline_request(message, attachments):
-            exam_bundle = self._maybe_handle_exam_pipeline_request(
+        if not heartbeat_mode:
+            if self._can_handle_exam_pipeline_request(message, attachments):
+                exam_bundle = self._maybe_handle_exam_pipeline_request(
+                    message,
+                    attachments=attachments,
+                    session_id=session_id,
+                    store_response=True,
+                    return_bundle=True,
+                )
+                if exam_bundle is not None:
+                    if isinstance(exam_bundle, str):
+                        final_response = exam_bundle
+                        self._finish_turn_trace(final_response, status="ok")
+                        yield {"type": "done", "content": final_response}
+                        for hook in self._hooks:
+                            if hasattr(hook, "post_reply"):
+                                hook.post_reply(message, final_response)
+                        return
+                    stage_messages = [str(item).strip() for item in (exam_bundle.get("stage_messages") or []) if str(item).strip()]
+                    final_response = str(exam_bundle.get("combined_response") or "").strip()
+                    if not stage_messages and final_response:
+                        stage_messages = [final_response]
+                    for stage_message in stage_messages[:-1]:
+                        yield {"type": "stage_message", "content": stage_message}
+                        time.sleep(0.3)
+                    done_stage_messages = stage_messages[-1:] if stage_messages else []
+                    self._finish_turn_trace(final_response or (done_stage_messages[0] if done_stage_messages else ""), status=str(exam_bundle.get("status") or "ok"))
+                    yield {
+                        "type": "done",
+                        "content": final_response or (done_stage_messages[0] if done_stage_messages else ""),
+                        "stage_messages": done_stage_messages,
+                        "suppress_emit": True,
+                    }
+                    for hook in self._hooks:
+                        if hasattr(hook, "post_reply"):
+                            hook.post_reply(message, final_response or (done_stage_messages[0] if done_stage_messages else ""))
+                    return
+
+            resource_response = self._maybe_handle_resource_lookup_request(
+                message,
+                session_id=session_id,
+                store_response=False,
+            )
+            if resource_response is not None:
+                self.memory.add_message(
+                    "assistant",
+                    resource_response,
+                    session_id=session_id,
+                )
+                self._finish_turn_trace(resource_response, status="ok")
+                yield {"type": "content", "content": resource_response}
+                yield {"type": "done", "content": resource_response}
+                for hook in self._hooks:
+                    if hasattr(hook, "post_reply"):
+                        hook.post_reply(message, resource_response)
+                return
+
+            guided_explanation_response = self._maybe_handle_guided_explanation_request(
                 message,
                 attachments=attachments,
                 session_id=session_id,
-                store_response=True,
-                return_bundle=True,
+                store_response=False,
             )
-            if exam_bundle is not None:
-                if isinstance(exam_bundle, str):
-                    final_response = exam_bundle
-                    self._finish_turn_trace(final_response, status="ok")
-                    yield {"type": "done", "content": final_response}
-                    for hook in self._hooks:
-                        if hasattr(hook, "post_reply"):
-                            hook.post_reply(message, final_response)
-                    return
-                stage_messages = [str(item).strip() for item in (exam_bundle.get("stage_messages") or []) if str(item).strip()]
-                final_response = str(exam_bundle.get("combined_response") or "").strip()
-                if not stage_messages and final_response:
-                    stage_messages = [final_response]
-                for stage_message in stage_messages[:-1]:
-                    yield {"type": "stage_message", "content": stage_message}
-                    time.sleep(0.3)
-                done_stage_messages = stage_messages[-1:] if stage_messages else []
-                self._finish_turn_trace(final_response or (done_stage_messages[0] if done_stage_messages else ""), status=str(exam_bundle.get("status") or "ok"))
-                yield {
-                    "type": "done",
-                    "content": final_response or (done_stage_messages[0] if done_stage_messages else ""),
-                    "stage_messages": done_stage_messages,
-                    "suppress_emit": True,
-                }
+            if guided_explanation_response is not None:
+                self.memory.add_message(
+                    "assistant",
+                    guided_explanation_response,
+                    session_id=session_id,
+                )
+                self._finish_turn_trace(guided_explanation_response, status="ok")
+                yield {"type": "content", "content": guided_explanation_response}
+                yield {"type": "done", "content": guided_explanation_response}
                 for hook in self._hooks:
                     if hasattr(hook, "post_reply"):
-                        hook.post_reply(message, final_response or (done_stage_messages[0] if done_stage_messages else ""))
+                        hook.post_reply(message, guided_explanation_response)
                 return
 
-        resource_response = self._maybe_handle_resource_lookup_request(
-            message,
-            session_id=session_id,
-            store_response=False,
-        )
-        if resource_response is not None:
-            self.memory.add_message(
-                "assistant",
-                resource_response,
+            variant_generation_response = self._maybe_handle_variant_generation_request(
+                message,
+                attachments=attachments,
                 session_id=session_id,
+                store_response=False,
             )
-            self._finish_turn_trace(resource_response, status="ok")
-            yield {"type": "content", "content": resource_response}
-            yield {"type": "done", "content": resource_response}
-            for hook in self._hooks:
-                if hasattr(hook, "post_reply"):
-                    hook.post_reply(message, resource_response)
-            return
+            if variant_generation_response is not None:
+                self.memory.add_message(
+                    "assistant",
+                    variant_generation_response,
+                    session_id=session_id,
+                )
+                self._finish_turn_trace(variant_generation_response, status="ok")
+                yield {"type": "content", "content": variant_generation_response}
+                yield {"type": "done", "content": variant_generation_response}
+                for hook in self._hooks:
+                    if hasattr(hook, "post_reply"):
+                        hook.post_reply(message, variant_generation_response)
+                return
 
-        guided_explanation_response = self._maybe_handle_guided_explanation_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=False,
-        )
-        if guided_explanation_response is not None:
-            self.memory.add_message(
-                "assistant",
-                guided_explanation_response,
+            weakness_diag_response = self._maybe_handle_weakness_diagnosis_request(
+                message,
+                attachments=attachments,
                 session_id=session_id,
+                store_response=False,
             )
-            self._finish_turn_trace(guided_explanation_response, status="ok")
-            yield {"type": "content", "content": guided_explanation_response}
-            yield {"type": "done", "content": guided_explanation_response}
-            for hook in self._hooks:
-                if hasattr(hook, "post_reply"):
-                    hook.post_reply(message, guided_explanation_response)
-            return
+            if weakness_diag_response is not None:
+                self.memory.add_message(
+                    "assistant",
+                    weakness_diag_response,
+                    session_id=session_id,
+                )
+                self._finish_turn_trace(weakness_diag_response, status="ok")
+                yield {"type": "content", "content": weakness_diag_response}
+                yield {"type": "done", "content": weakness_diag_response}
+                for hook in self._hooks:
+                    if hasattr(hook, "post_reply"):
+                        hook.post_reply(message, weakness_diag_response)
+                return
 
-        variant_generation_response = self._maybe_handle_variant_generation_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=False,
-        )
-        if variant_generation_response is not None:
-            self.memory.add_message(
-                "assistant",
-                variant_generation_response,
+            solve_verify_response = self._maybe_handle_solve_verify_request(
+                message,
+                attachments=attachments,
                 session_id=session_id,
+                store_response=False,
             )
-            self._finish_turn_trace(variant_generation_response, status="ok")
-            yield {"type": "content", "content": variant_generation_response}
-            yield {"type": "done", "content": variant_generation_response}
-            for hook in self._hooks:
-                if hasattr(hook, "post_reply"):
-                    hook.post_reply(message, variant_generation_response)
-            return
-
-        weakness_diag_response = self._maybe_handle_weakness_diagnosis_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=False,
-        )
-        if weakness_diag_response is not None:
-            self.memory.add_message(
-                "assistant",
-                weakness_diag_response,
-                session_id=session_id,
-            )
-            self._finish_turn_trace(weakness_diag_response, status="ok")
-            yield {"type": "content", "content": weakness_diag_response}
-            yield {"type": "done", "content": weakness_diag_response}
-            for hook in self._hooks:
-                if hasattr(hook, "post_reply"):
-                    hook.post_reply(message, weakness_diag_response)
-            return
-
-        solve_verify_response = self._maybe_handle_solve_verify_request(
-            message,
-            attachments=attachments,
-            session_id=session_id,
-            store_response=False,
-        )
-        if solve_verify_response is not None:
-            self.memory.add_message(
-                "assistant",
-                solve_verify_response,
-                session_id=session_id,
-            )
-            self._finish_turn_trace(solve_verify_response, status="ok")
-            yield {"type": "content", "content": solve_verify_response}
-            yield {"type": "done", "content": solve_verify_response}
-            for hook in self._hooks:
-                if hasattr(hook, "post_reply"):
-                    hook.post_reply(message, solve_verify_response)
-            return
+            if solve_verify_response is not None:
+                self.memory.add_message(
+                    "assistant",
+                    solve_verify_response,
+                    session_id=session_id,
+                )
+                self._finish_turn_trace(solve_verify_response, status="ok")
+                yield {"type": "content", "content": solve_verify_response}
+                yield {"type": "done", "content": solve_verify_response}
+                for hook in self._hooks:
+                    if hasattr(hook, "post_reply"):
+                        hook.post_reply(message, solve_verify_response)
+                return
 
         messages = self._build_messages(
             user_message=message,
             attachments=attachments,
+            heartbeat_mode=heartbeat_mode,
         )
         full_content = ""
 
@@ -2992,8 +3009,11 @@ class ScholarAgent:
         stream_model_kwargs: dict[str, Any] = {}
         if self._tool_schemas:
             stream_model_kwargs["tools"] = self._tool_schemas
+        if heartbeat_mode:
+            stream_model_kwargs["extra_body"] = {"enable_thinking": False}
+        max_iters = min(self.max_iters, 2) if heartbeat_mode else self.max_iters
 
-        for iteration in range(self.max_iters):
+        for iteration in range(max_iters):
             try:
                 # If model supports streaming, use it
                 if hasattr(self.model, "stream"):

@@ -1,0 +1,41 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "选择了高频易错知识点一元二次方程",
+        "设计了具体可操作的学习动作",
+        "字数控制在80-140字范围内"
+      ],
+      "issues": [
+        "包含Unicode上标字符b²",
+        "使用全角标点符号",
+        "隐式乘法表述4ac可能引起歧义"
+      ],
+      "first_conflicting_step": "在选取复习知识点时，选择一元二次方程求根公式并使用Unicode上标字符b²"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "选择了高频基础知识点二次函数",
+        "设计了5分钟短学习动作",
+        "字数精确控制"
+      ],
+      "issues": [
+        "使用全角标点符号"
+      ],
+      "first_conflicting_step": "在选定复习知识点时，选择二次函数图像性质"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两份候选解均基于无薄弱点假设生成通用建议，但选择的具体知识点不同：一元二次方程 vs 二次函数",
+    "求解器A存在多个文本格式问题，包括Unicode上标和隐式乘法表述",
+    "求解器B仅存在全角标点问题，相对轻微但需确认是否影响企业微信显示"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}

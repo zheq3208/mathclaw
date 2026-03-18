@@ -1,0 +1,41 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "选择了具体的复习知识点",
+        "设计了学习动作和时间周期",
+        "过滤了禁用词汇"
+      ],
+      "issues": [
+        "实际字数64字，低于80字要求",
+        "校验字数步骤出错"
+      ],
+      "first_conflicting_step": "逐字校验字数在80-140范围内"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "选择了高频易错知识点",
+        "指定了精确字数",
+        "语气符合教师身份"
+      ],
+      "issues": [
+        "实际字数63字，低于80字要求",
+        "字数声称98字但实际不符"
+      ],
+      "first_conflicting_step": "逐字校验字数并删除冗余表述"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两份候选解均未满足80-140字要求，实际字数均低于80",
+    "字数校验步骤存在错误",
+    "在无明确薄弱点时选择知识点主观，但核心问题为字数不符"
+  ],
+  "recommended_winner": "无",
+  "revision_needed": true
+}

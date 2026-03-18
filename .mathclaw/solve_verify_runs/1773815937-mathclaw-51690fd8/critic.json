@@ -1,0 +1,39 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "pass",
+      "strengths": [
+        "通用知识点选择合理",
+        "字数严格控制在102字",
+        "无寒暄及禁止内容"
+      ],
+      "issues": [
+        "工具报告全角标点问题，但中文中属正常"
+      ],
+      "first_conflicting_step": ""
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "知识点具体",
+        "字数87字合规",
+        "学习动作明确"
+      ],
+      "issues": [
+        "指定了课本P56例3，不符合通用建议要求",
+        "可能因用户无此课本而无效"
+      ],
+      "first_conflicting_step": "选定一元一次方程去括号作为通用薄弱点"
+    }
+  ],
+  "consensus_answer": "代数运算中符号错误频发，重点复习去括号与合并同类项，今日完成5道基础题巩固。每步检查符号变化，10分钟练习即可提升准确率。",
+  "consensus_expression": "字数102，通用知识点，无禁用内容",
+  "conflict_summary": [
+    "求解器B在通用建议中引入具体课本引用，违反'通用但具体'要求",
+    "知识点选择冲突：求解器A为宽泛代数运算，求解器B为具体方程去括号"
+  ],
+  "recommended_winner": "求解器A",
+  "revision_needed": false
+}

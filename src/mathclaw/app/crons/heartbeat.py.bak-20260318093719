@@ -1,0 +1,340 @@
+"""Heartbeat: run agent with HEARTBEAT.md as query at scheduled intervals.
+
+Uses config functions for paths and settings. Supports active hours
+filtering and optional dispatch to either the last active channel or
+a fixed configured channel.
+"""
+from __future__ import annotations
+
+import asyncio
+import json
+import logging
+import re
+import time
+from datetime import datetime, time as dt_time
+from pathlib import Path
+from typing import Any, Dict, Iterable
+
+from ...constant import WORKING_DIR
+
+logger = logging.getLogger(__name__)
+
+# Pattern for "30m", "1h", "2h30m", "90s"
+_EVERY_PATTERN = re.compile(
+    r"^(?:(?P<hours>\d+)h)?(?:(?P<minutes>\d+)m)?(?:(?P<seconds>\d+)s)?$",
+    re.IGNORECASE,
+)
+
+# Default heartbeat target constant
+HEARTBEAT_TARGET_LAST = "last"
+HEARTBEAT_TIMEOUT_SECONDS = 180
+
+
+def _normalize_heartbeat_query(raw_text: str) -> str:
+    """Drop blank lines and comment-only lines from HEARTBEAT.md."""
+    lines: list[str] = []
+    for line in str(raw_text or "").splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("#"):
+            continue
+        lines.append(line.rstrip())
+    return "\n".join(lines).strip()
+
+
+def parse_heartbeat_every(every: str) -> int:
+    """Parse interval string (e.g. '30m', '1h') to total seconds.
+
+    Examples:
+        >>> parse_heartbeat_every('30m')
+        1800
+        >>> parse_heartbeat_every('1h')
+        3600
+        >>> parse_heartbeat_every('2h30m')
+        9000
+        >>> parse_heartbeat_every('')
+        1800
+    """
+    every = (every or "").strip()
+    if not every:
+        return 30 * 60  # default 30 min
+
+    m = _EVERY_PATTERN.match(every)
+    if not m:
+        logger.warning("heartbeat every=%r invalid, using 30m", every)
+        return 30 * 60
+
+    hours = int(m.group("hours") or 0)
+    minutes = int(m.group("minutes") or 0)
+    seconds = int(m.group("seconds") or 0)
+    total = hours * 3600 + minutes * 60 + seconds
+    if total <= 0:
+        return 30 * 60
+    return total
+
+
+def _in_active_hours(active_hours: Any) -> bool:
+    """Return True if current local time is within [start, end].
+
+    Handles wrapping around midnight (e.g. 22:00 - 06:00).
+    """
+    if (
+        not active_hours
+        or not hasattr(active_hours, "start")
+        or not hasattr(active_hours, "end")
+    ):
+        return True
+
+    try:
+        start_parts = active_hours.start.strip().split(":")
+        end_parts = active_hours.end.strip().split(":")
+        start_t = dt_time(
+            int(start_parts[0]),
+            int(start_parts[1]) if len(start_parts) > 1 else 0,
+        )
+        end_t = dt_time(
+            int(end_parts[0]),
+            int(end_parts[1]) if len(end_parts) > 1 else 0,
+        )
+    except (ValueError, IndexError, AttributeError):
+        return True
+
+    now = datetime.now().time()
+    if start_t <= end_t:
+        return start_t <= now <= end_t
+    # Wraps around midnight
+    return now >= start_t or now <= end_t
+
+
+def _extract_text_from_content_items(items: Iterable[Any]) -> str:
+    parts: list[str] = []
+    for item in items:
+        if isinstance(item, dict):
+            item_type = str(item.get("type", "") or "").lower()
+            if item_type == "text":
+                text = str(item.get("text", "") or "").strip()
+                if text:
+                    parts.append(text)
+            continue
+        item_type = str(getattr(item, "type", "") or "").lower()
+        if item_type == "text":
+            text = str(getattr(item, "text", "") or "").strip()
+            if text:
+                parts.append(text)
+    return "\n".join(parts).strip()
+
+
+def _extract_event_text(event: Any) -> str:
+    """Extract the latest textual assistant content from a runner event."""
+    if event is None:
+        return ""
+
+    if isinstance(event, dict):
+        event_type = str(event.get("type", "") or "").lower()
+        if event_type in {"content", "done", "content_replace"}:
+            return str(event.get("content", "") or "").strip()
+
+        data = event.get("data")
+        if isinstance(data, dict):
+            content = data.get("content")
+            if isinstance(content, list):
+                return _extract_text_from_content_items(content)
+        return ""
+
+    obj = str(getattr(event, "object", "") or "").lower()
+    status = str(getattr(event, "status", "") or "").lower()
+    event_type = str(getattr(event, "type", "") or "").lower()
+    if obj == "message" and status == "completed" and event_type == "content":
+        data = getattr(event, "data", None)
+        content = getattr(data, "content", None) if data is not None else None
+        if isinstance(content, list):
+            return _extract_text_from_content_items(content)
+    return ""
+
+
+def _resolve_dispatch_target(hb_config: Any) -> dict[str, str] | None:
+    """Resolve the proactive heartbeat target from config."""
+    if hb_config is None:
+        return None
+
+    target = (getattr(hb_config, "target", "") or "").strip().lower()
+    if not target:
+        return None
+
+    last_dispatch = _get_last_dispatch_safe()
+    if target == HEARTBEAT_TARGET_LAST:
+        if last_dispatch is None:
+            return None
+        channel = str(getattr(last_dispatch, "channel", "") or "").strip().lower()
+        user_id = str(getattr(last_dispatch, "user_id", "") or "").strip()
+        session_id = str(getattr(last_dispatch, "session_id", "") or "").strip()
+        if not channel or not (user_id or session_id):
+            return None
+        return {
+            "channel": channel,
+            "user_id": user_id,
+            "session_id": session_id,
+        }
+
+    channel = str(getattr(hb_config, "channel", "") or target).strip().lower()
+    user_id = str(getattr(hb_config, "user_id", "") or "").strip()
+    session_id = str(getattr(hb_config, "session_id", "") or "").strip()
+
+    if last_dispatch is not None:
+        last_channel = str(getattr(last_dispatch, "channel", "") or "").strip().lower()
+        if last_channel == channel:
+            if not user_id:
+                user_id = str(getattr(last_dispatch, "user_id", "") or "").strip()
+            if not session_id:
+                session_id = str(getattr(last_dispatch, "session_id", "") or "").strip()
+
+    if not channel or not (user_id or session_id):
+        return None
+
+    return {
+        "channel": channel,
+        "user_id": user_id,
+        "session_id": session_id,
+    }
+
+
+async def run_heartbeat_once(
+    *,
+    runner: Any,
+    channel_manager: Any,
+) -> None:
+    """Run one heartbeat and optionally deliver the final reminder text."""
+    working_dir = Path(WORKING_DIR)
+    hb_config = _get_heartbeat_config_safe()
+
+    if hb_config and not bool(getattr(hb_config, "enabled", False)):
+        logger.debug("heartbeat skipped: disabled in config")
+        return
+
+    if hb_config and not _in_active_hours(
+        getattr(hb_config, "active_hours", None),
+    ):
+        logger.debug("heartbeat skipped: outside active hours")
+        return
+
+    path = _get_heartbeat_query_path(working_dir)
+    if not path or not path.is_file():
+        logger.debug("heartbeat skipped: no HEARTBEAT.md file found")
+        return
+
+    query_text = _normalize_heartbeat_query(path.read_text(encoding="utf-8"))
+    if not query_text:
+        logger.debug("heartbeat skipped: empty query file")
+        return
+
+    dispatch_target = _resolve_dispatch_target(hb_config)
+    req: Dict[str, Any] = {
+        "input": [
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": query_text}],
+            },
+        ],
+        "session_id": "main",
+        "user_id": "main",
+    }
+    if dispatch_target:
+        if dispatch_target.get("session_id"):
+            req["session_id"] = dispatch_target["session_id"]
+        if dispatch_target.get("user_id"):
+            req["user_id"] = dispatch_target["user_id"]
+
+    async def _run_only() -> None:
+        async for _ in runner.stream_query(req):
+            pass
+
+    async def _run_and_collect() -> str:
+        final_text = ""
+        async for event in runner.stream_query(req):
+            text = _extract_event_text(event)
+            if text:
+                final_text = text
+        return final_text.strip()
+
+    try:
+        if dispatch_target and channel_manager is not None:
+            final_text = await asyncio.wait_for(_run_and_collect(), timeout=HEARTBEAT_TIMEOUT_SECONDS)
+            if final_text:
+                await channel_manager.send_text(
+                    channel=dispatch_target["channel"],
+                    user_id=dispatch_target.get("user_id", ""),
+                    session_id=dispatch_target.get("session_id", ""),
+                    text=final_text,
+                    meta={"heartbeat": True},
+                )
+            else:
+                logger.debug("heartbeat finished without final text to dispatch")
+        else:
+            await asyncio.wait_for(_run_only(), timeout=HEARTBEAT_TIMEOUT_SECONDS)
+    except asyncio.TimeoutError:
+        logger.warning("heartbeat run timed out")
+        return
+
+    _write_heartbeat_status(working_dir)
+
+
+def _get_heartbeat_config_safe() -> Any:
+    """Safely get heartbeat config, returning None if not available."""
+    try:
+        from ...config import get_heartbeat_config
+
+        return get_heartbeat_config()
+    except (ImportError, Exception):
+        return None
+
+
+def _get_last_dispatch_safe() -> Any:
+    """Safely get last dispatch record from config."""
+    try:
+        from ...config import load_config
+
+        config = load_config()
+        if isinstance(config, dict):
+            last = config.get("last_dispatch")
+            if isinstance(last, dict):
+                from types import SimpleNamespace
+
+                return SimpleNamespace(**last)
+            return None
+        return getattr(config, "last_dispatch", None)
+    except (ImportError, Exception):
+        return None
+
+
+def _get_heartbeat_query_path(working_dir: Path) -> Path | None:
+    """Find the HEARTBEAT.md file in the working directory."""
+    try:
+        from ...config import get_heartbeat_query_path
+
+        return get_heartbeat_query_path()
+    except (ImportError, Exception):
+        pass
+
+    candidates = [
+        working_dir / "md_files" / "HEARTBEAT.md",
+        working_dir / "HEARTBEAT.md",
+    ]
+    for p in candidates:
+        if p.is_file():
+            return p
+    return None
+
+
+def _write_heartbeat_status(working_dir: Path) -> None:
+    """Write heartbeat status file for monitoring."""
+    hb_file = working_dir / "heartbeat.json"
+    hb_file.parent.mkdir(parents=True, exist_ok=True)
+    hb_file.write_text(
+        json.dumps(
+            {"timestamp": time.time(), "status": "alive"},
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )

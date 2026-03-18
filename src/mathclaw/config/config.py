@@ -116,6 +116,9 @@ def build_default_config(overrides: dict[str, Any] | None = None) -> dict[str, A
                     "enabled": False,
                     "every": "30m",
                     "target": "last",
+                    "channel": "",
+                    "user_id": "",
+                    "session_id": "",
                 },
             },
         },
@@ -172,11 +175,20 @@ def get_heartbeat_config() -> Any:
         hb["every"] = str(data.get("heartbeat_every") or "").strip()
     if "heartbeat_target" in data and "target" not in hb:
         hb["target"] = str(data.get("heartbeat_target") or "").strip()
+    if "heartbeat_channel" in data and "channel" not in hb:
+        hb["channel"] = str(data.get("heartbeat_channel") or "").strip()
+    if "heartbeat_user_id" in data and "user_id" not in hb:
+        hb["user_id"] = str(data.get("heartbeat_user_id") or "").strip()
+    if "heartbeat_session_id" in data and "session_id" not in hb:
+        hb["session_id"] = str(data.get("heartbeat_session_id") or "").strip()
 
     merged: dict[str, Any] = {
         "enabled": bool(hb.get("enabled", False)),
         "every": str(hb.get("every") or "30m"),
         "target": str(hb.get("target") or "last"),
+        "channel": str(hb.get("channel") or "").strip(),
+        "user_id": str(hb.get("user_id") or "").strip(),
+        "session_id": str(hb.get("session_id") or "").strip(),
     }
     active = hb.get("active_hours") or hb.get("activeHours")
     if isinstance(active, dict):

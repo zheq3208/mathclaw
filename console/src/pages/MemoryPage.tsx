@@ -20,6 +20,42 @@ function chipList(items?: string[]) {
   return Array.isArray(items) ? items.filter(Boolean).slice(0, 4) : [];
 }
 
+function displayStudentLabel(studentId?: string): string {
+  return studentId === "__global__" ? "GLOBAL" : String(studentId || "");
+}
+
+function formatMemoryEventSource(event?: any): string {
+  const raw = String(event?.source || "manual").trim();
+  const normalized = raw.toLowerCase().replace(/[\s-]+/g, "_");
+  const result = String(event?.result || "").trim().toLowerCase();
+  const note = String(event?.note || "").trim();
+  const mapping: Record<string, string> = {
+    manual: "学习记录",
+    manual_seed: "学习画像更新",
+    manual_mastered: "掌握状态更新",
+    weakness_diag: "薄弱点诊断",
+    micro_quiz: "微测反馈",
+    mastery_update: "掌握状态更新",
+  };
+  const rawMapping: Record<string, string> = {
+    "手动": "学习记录",
+    "手动添加": "学习画像更新",
+    "手动标记已掌握": "掌握状态更新",
+    "掌握度更新": "掌握状态更新",
+  };
+  if (mapping[normalized]) return mapping[normalized];
+  if (rawMapping[raw]) return rawMapping[raw];
+
+  const looksCorrupted = /^[?？�_\-\s]+$/.test(raw) || raw.includes("???");
+  if (looksCorrupted) {
+    if (result === "mastered" || note.includes("已掌握")) return "掌握状态更新";
+    if (result === "correct" || result === "incorrect") return "学习记录";
+    return "系统记录";
+  }
+
+  return raw;
+}
+
 export default function MemoryPage() {
   const [studentId, setStudentId] = useState("");
   const [availableStudents, setAvailableStudents] = useState<string[]>([]);
@@ -90,7 +126,7 @@ export default function MemoryPage() {
             >
               {(availableStudents.length ? availableStudents : ["__global__"]).map((item) => (
                 <option key={item} value={item}>
-                  {item}
+                  {displayStudentLabel(item)}
                 </option>
               ))}
             </select>
@@ -253,7 +289,7 @@ export default function MemoryPage() {
                     <div key={`event-${index}`} className="memory-event-item">
                       <div className="memory-event-title">
                         <BookOpen size={14} />
-                        <span>{String(event?.source || "manual")}</span>
+                        <span>{formatMemoryEventSource(event)}</span>
                         <Badge variant={String(event?.result || "").includes("pass") || String(event?.result || "") === "correct" ? "success" : String(event?.result || "") === "mastered" ? "info" : "warning"}>
                           {String(event?.result || "-")}
                         </Badge>

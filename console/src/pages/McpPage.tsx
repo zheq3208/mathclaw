@@ -10,6 +10,50 @@ import {
 import type { McpClientItem } from "../types";
 import { PageHeader, EmptyState, Badge, Toggle } from "../components/ui";
 
+const MCP_NAME_LABELS: Record<string, string> = {
+  tavily: "\u8054\u7f51\u641c\u7d22",
+  "Tavily Search": "\u8054\u7f51\u641c\u7d22",
+  playwright: "Playwright \u6d4f\u89c8\u5668",
+  "Playwright Browser": "Playwright \u6d4f\u89c8\u5668",
+  filesystem: "\u6587\u4ef6\u7cfb\u7edf",
+  "Exam Filesystem": "\u8bd5\u5377\u6587\u4ef6\u7cfb\u7edf",
+};
+
+const MCP_DESCRIPTION_LABELS: Record<string, string> = {
+  tavily: "\u7528\u4e8e\u8054\u7f51\u641c\u7d22\u548c\u7f51\u9875\u5185\u5bb9\u63d0\u53d6",
+  "Tavily Search": "\u7528\u4e8e\u8054\u7f51\u641c\u7d22\u548c\u7f51\u9875\u5185\u5bb9\u63d0\u53d6",
+  "Remote Tavily MCP for web search and extraction.": "\u7528\u4e8e\u8054\u7f51\u641c\u7d22\u548c\u7f51\u9875\u5185\u5bb9\u63d0\u53d6",
+  playwright: "\u7528\u4e8e\u52a8\u6001\u6559\u80b2\u7f51\u7ad9\u7684\u6d4f\u89c8\u5668\u81ea\u52a8\u5316",
+  "Playwright Browser": "\u7528\u4e8e\u52a8\u6001\u6559\u80b2\u7f51\u7ad9\u7684\u6d4f\u89c8\u5668\u81ea\u52a8\u5316",
+  "Browser automation for dynamic exam and education sites.": "\u7528\u4e8e\u52a8\u6001\u6559\u80b2\u7f51\u7ad9\u7684\u6d4f\u89c8\u5668\u81ea\u52a8\u5316",
+  filesystem: "\u5b89\u5168\u8bbf\u95ee\u8bd5\u5377\u5f52\u6863\u548c\u5de5\u4f5c\u76ee\u5f55",
+  "Exam Filesystem": "\u5b89\u5168\u8bbf\u95ee\u8bd5\u5377\u5f52\u6863\u548c\u5de5\u4f5c\u76ee\u5f55",
+  "Safe file access for exam archives and working directories.": "\u5b89\u5168\u8bbf\u95ee\u8bd5\u5377\u5f52\u6863\u548c\u5de5\u4f5c\u76ee\u5f55",
+};
+
+const MCP_TRANSPORT_LABELS: Record<string, string> = {
+  stdio: "\u6807\u51c6\u8f93\u5165\u8f93\u51fa",
+  streamable_http: "\u6d41\u5f0f HTTP",
+  http: "HTTP",
+  sse: "SSE",
+};
+
+function getMcpDisplayName(item: McpClientItem): string {
+  return MCP_NAME_LABELS[item.key] || MCP_NAME_LABELS[item.name || ""] || item.name || item.key;
+}
+
+function getMcpDescription(item: McpClientItem): string {
+  return MCP_DESCRIPTION_LABELS[item.key]
+    || MCP_DESCRIPTION_LABELS[item.name || ""]
+    || MCP_DESCRIPTION_LABELS[item.description || ""]
+    || item.description
+    || "";
+}
+
+function getTransportLabel(transport?: string): string {
+  return MCP_TRANSPORT_LABELS[String(transport || "")] || String(transport || "-");
+}
+
 export default function McpPage() {
   const [clients, setClients] = useState<McpClientItem[]>([]);
   const [newKey, setNewKey] = useState("");
@@ -17,10 +61,17 @@ export default function McpPage() {
   const [newCommand, setNewCommand] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [loadError, setLoadError] = useState("");
 
   async function onLoad() {
-    setClients(await listMcpClients());
-    setLoaded(true);
+    try {
+      setClients(await listMcpClients());
+      setLoadError("");
+    } catch (error) {
+      setLoadError(error instanceof Error ? error.message : "\u52a0\u8f7d MCP \u5ba2\u6237\u7aef\u5931\u8d25");
+    } finally {
+      setLoaded(true);
+    }
   }
 
   useEffect(() => {
@@ -126,15 +177,21 @@ export default function McpPage() {
         </div>
       )}
 
-      {!loaded && clients.length === 0 && (
+      {loadError && (
+        <div className="skill-creator-status is-error skill-list-status">
+          {loadError}
+        </div>
+      )}
+
+      {loaded && clients.length === 0 && !loadError && (
         <EmptyState
           icon={<Cable size={28} />}
-          title="加载 MCP 客户端"
-          description="管理 Agent 的外部工具和服务连接"
+          title="\u6682\u65e0 MCP \u5ba2\u6237\u7aef"
+          description="\u7ba1\u7406 Agent \u7684\u5916\u90e8\u5de5\u5177\u548c\u670d\u52a1\u8fde\u63a5"
           action={
             <button onClick={onLoad}>
               <RefreshCw size={15} />
-              加载
+              \u91cd\u65b0\u52a0\u8f7d
             </button>
           }
         />
@@ -149,19 +206,22 @@ export default function McpPage() {
                   size={14}
                   style={{ marginRight: 6, verticalAlign: "middle" }}
                 />
-                {item.name || item.key}
+                {getMcpDisplayName(item)}
                 <Badge variant={item.enabled ? "success" : "neutral"}>
                   {item.enabled ? "已启用" : "已禁用"}
                 </Badge>
               </div>
+              {getMcpDescription(item) && (
+                <div className="data-row-meta">{getMcpDescription(item)}</div>
+              )}
               <div className="data-row-meta">
-                Key?{item.key}
+                标识：{item.key}
                 <span style={{ margin: "0 6px" }}>·</span>
-                传输?{item.transport || "-"}
+                传输：{getTransportLabel(item.transport)}
                 {item.command && (
                   <>
                     <span style={{ margin: "0 6px" }}>·</span>
-                    命令?{item.command}
+                    命令：{item.command}
                   </>
                 )}
               </div>

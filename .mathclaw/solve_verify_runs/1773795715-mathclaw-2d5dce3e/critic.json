@@ -1,0 +1,36 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "pass",
+      "strengths": [
+        "正确应用通用知识点推荐规则",
+        "字数严格控制在108字",
+        "内容具体且符合教师语气"
+      ],
+      "issues": [
+        "工具检查报告全角标点问题，但中文文本中属正常"
+      ],
+      "first_conflicting_step": ""
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "准确识别输入数据缺失"
+      ],
+      "issues": [
+        "错误地认为必须有具体薄弱点数据",
+        "输出非提醒内容，违反任务要求"
+      ],
+      "first_conflicting_step": "判断无法生成具体知识点提醒"
+    }
+  ],
+  "consensus_answer": "请复习一元二次方程求根公式，重点练习判别式应用与根的验证。完成2道配方法例题，注意步骤规范性。今日练习后整理错题本，标注易错环节。",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "求解器B在确认数据缺失后，错误地推断无法生成提醒，而planner明确允许在无薄弱点时提供通用建议"
+  ],
+  "recommended_winner": "求解器A",
+  "revision_needed": false
+}

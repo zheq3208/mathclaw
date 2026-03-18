@@ -465,6 +465,7 @@ class AgentRunnerManager:
         message: str,
         session_id: str | None = None,
         attachments: list[dict[str, Any]] | None = None,
+        **kwargs: Any,
     ) -> str:
         """Send a chat message, creating a session if needed."""
         if not self.runner.is_running:
@@ -488,6 +489,7 @@ class AgentRunnerManager:
             message,
             session.session_id,
             attachments=normalized_attachments,
+            **kwargs,
         )
         trace = self._collect_turn_trace()
         trace_file = self._write_turn_trace(
@@ -511,6 +513,7 @@ class AgentRunnerManager:
         message: str,
         session_id: str | None = None,
         attachments: list[dict[str, Any]] | None = None,
+        **kwargs: Any,
     ):
         """Stream a chat response, yielding SSE event dicts."""
         if not self.runner.is_running:
@@ -542,6 +545,7 @@ class AgentRunnerManager:
             message,
             session.session_id,
             attachments=normalized_attachments,
+            **kwargs,
         ):
             if event.get("type") == "done":
                 raw_content = event.get("content", full_content)
@@ -592,6 +596,7 @@ class AgentRunnerManager:
         ).strip() or DEFAULT_CHANNEL
         prompt = self._request_to_prompt(request)
         attachments = self._request_to_attachments(request)
+        heartbeat_mode = bool(self._extract_value(request, "heartbeat_mode", False))
         if not prompt:
             prompt = self._normalize_text(
                 self._extract_value(request, "message", ""),
@@ -618,6 +623,7 @@ class AgentRunnerManager:
                 prompt,
                 session_id=session_id,
                 attachments=attachments,
+                heartbeat_mode=heartbeat_mode,
             ):
                 event_type = self._extract_value(raw_event, "type", "")
                 if event_type == "thinking":

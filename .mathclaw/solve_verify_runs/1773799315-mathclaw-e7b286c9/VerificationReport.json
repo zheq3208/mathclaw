@@ -1,0 +1,156 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒，需基于最近对话及薄弱点数据，满足字数、语气等规范",
+    "givens": [
+      "依赖最近对话记录",
+      "最近批改结果",
+      "当前活跃薄弱点数据"
+    ],
+    "target": "直接输出80-140字的中文提醒内容，语气简洁具体，优先针对薄弱点或提供通用建议",
+    "question_type": "equation",
+    "candidate_methods": [
+      "分析薄弱点生成针对性提醒",
+      "提供通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数80-140字",
+        "不含寒暄及AI相关表述"
+      ],
+      "answer_format": "纯文本，无标题，无解释"
+    },
+    "risks": [
+      "字数超限",
+      "包含禁止内容",
+      "未针对薄弱点"
+    ],
+    "preferred_variable": "无",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "二次函数应用题需注意实际问题中的变量关系，建议重做课本P45例3，每天练习2道巩固思路。重点检查定义域和单位统一性，确保解题步骤完整规范。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "无",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "二次函数应用题需注意实际问题中的变量关系",
+            "建议重做课本P*45例3",
+            "每天练习2道巩固思路.重点检查定义域和单位统一性",
+            "确保解题步骤完整规范."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "二次函数应用题需注意实际问题中的变量关系，建议重做课本P45例3，每天练习2道巩固思路。重点检查定义域和单位统一性，确保解题步骤完整规范。",
+          "normalized_formula": "二次函数应用题需注意实际问题中的变量关系，建议重做课本P45例3，每天练习2道巩固思路。重点检查定义域和单位统一性，确保解题步骤完整规范。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习二次函数顶点式的应用，掌握配方技巧与图像平移规律。每天完成3道典型例题，检查顶点坐标计算是否准确。规范解题步骤，减少计算失误，巩固核心知识点。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "无",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点式的应用",
+            "掌握配方技巧与图像平移规律.每天完成3道典型例题",
+            "检查顶点坐标计算是否准确.规范解题步骤",
+            "减少计算失误",
+            "巩固核心知识点."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数顶点式的应用，掌握配方技巧与图像平移规律。每天完成3道典型例题，检查顶点坐标计算是否准确。规范解题步骤，减少计算失误，巩固核心知识点。",
+          "normalized_formula": "请重点复习二次函数顶点式的应用，掌握配方技巧与图像平移规律。每天完成3道典型例题，检查顶点坐标计算是否准确。规范解题步骤，减少计算失误，巩固核心知识点。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "针对二次函数应用题提供具体复习建议",
+          "字数控制在120字左右符合要求"
+        ],
+        "issues": [
+          "包含全角标点可能影响系统解析",
+          "假设课本P45例3为薄弱点但无数据支持"
+        ],
+        "first_conflicting_step": "最终答案生成时使用全角标点"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "选择高频知识点确保普适性",
+          "提供量化学习动作增强操作性"
+        ],
+        "issues": [
+          "包含全角标点可能影响系统解析",
+          "假设二次函数顶点式为薄弱点但无数据支持"
+        ],
+        "first_conflicting_step": "最终答案生成时使用全角标点"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "两份候选解均基于无薄弱点数据提供通用建议，但知识点选择不同",
+      "工具检查均指出全角标点问题，但中文环境下标点应为全角，可能为误报",
+      "缺乏预期解导致无法验证内容正确性，证据不足"
+    ],
+    "recommended_winner": "无",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请重点复习二次函数顶点式的应用，掌握配方技巧与图像平移规律。每天完成3道典型例题，检查顶点坐标计算是否准确。规范解题步骤，减少计算失误，巩固核心知识点。",
+    "final_expression": "",
+    "concise_solution_markdown": "二次函数顶点式是高频考点，需熟练掌握配方方法和图像平移关系。建议每日练习3道例题，重点核对顶点坐标计算过程，确保步骤清晰、结果准确，避免低级失误。",
+    "verification_summary": [
+      "内容符合80-140字要求",
+      "语气简洁具体，无寒暄与AI表述",
+      "知识点选择合理，动作可操作"
+    ],
+    "unresolved_risks": [
+      "缺乏真实薄弱点数据支撑，建议后续结合错题记录定制提醒",
+      "全角标点在部分系统中可能被误判为格式问题"
+    ],
+    "recommended_follow_up": "请提供最近一次错题或薄弱知识点数据，以便生成更精准的复习提醒"
+  }
+}

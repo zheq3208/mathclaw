@@ -1,0 +1,34 @@
+{
+  "problem_summary": "题目描述学习提醒系统的操作，包括列出复习提醒和获取全局学习记忆，涉及步骤1和2的交互及90到160的数值范围条件。",
+  "givens": [
+    "存在list_review_reminders函数，参数student_id为空字符串",
+    "存在get_global_learning_memory函数，参数student_id为__global__",
+    "需处理步骤1和2的交互逻辑",
+    "review reminders相关条件",
+    "数值范围在90到160之间"
+  ],
+  "target": "确定复习提醒的数量或状态",
+  "question_type": "方程",
+  "candidate_methods": [
+    "调用list_review_reminders函数",
+    "调用get_global_learning_memory函数",
+    "处理步骤1和2的交互逻辑",
+    "处理review reminders相关条件",
+    "处理90到160的数值范围"
+  ],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [
+      "list_review_reminders(student_id=\"\")",
+      "get_global_learning_memory(student_id=\"__global__\")",
+      "90到160"
+    ],
+    "answer_format": "整数"
+  },
+  "risks": [
+    "题目文本显示乱码，可能依赖图像信息",
+    "条件描述不清晰，需结合视觉上下文"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": true
+}

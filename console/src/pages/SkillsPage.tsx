@@ -13,7 +13,6 @@ import type { SkillDraft, SkillItem } from "../types";
 import {
   Badge,
   DetailModal,
-  EmptyState,
   PageHeader,
   Toggle,
 } from "../components/ui";
@@ -129,7 +128,7 @@ function getSkillCategories(skill: SkillItem) {
 export default function SkillsPage() {
   const [skills, setSkills] = useState<SkillItem[]>([]);
   const [active, setActive] = useState<string[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [, setLoaded] = useState(false);
   const [listError, setListError] = useState("");
   const [creatorInput, setCreatorInput] = useState("");
   const [previewing, setPreviewing] = useState(false);
@@ -281,20 +280,6 @@ export default function SkillsPage() {
           </button>
         }
       />
-
-      {!loaded && skills.length === 0 && (
-        <EmptyState
-          icon={<Puzzle size={28} />}
-          title="加载技能列表"
-          description="管理 Agent 可用的技能和能力"
-          action={
-            <button onClick={onLoad}>
-              <RefreshCw size={15} />
-              加载
-            </button>
-          }
-        />
-      )}
 
       {listError && (
         <div className="skill-creator-status is-error skill-list-status">
