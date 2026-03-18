@@ -11,6 +11,10 @@
 </p>
 
 <p align="center">
+  中文 &nbsp｜&nbsp <a href="README_EN.md">English</a>
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/python-3.10%20--%203.13-3776AB">
   <img src="https://img.shields.io/badge/node.js-18%2B-339933">
   <img src="https://img.shields.io/badge/npm-9%2B-CB3837">
@@ -366,3 +370,16 @@ http://127.0.0.1:6008
 
 - 当前代码虽然已转向数学学习场景，但仓库中仍保留了部分历史 `research` 命名和论文相关模块，不影响数学主链路运行。
 - 文档中如提到 `NanoBot`，仅用于说明 QQ 和企业微信的注册思路；实际字段以 MathClaw 当前代码为准。
+
+## 🙏 致谢
+ 
+MathClaw 的开发离不开以下优秀开源项目的支持与启发：
+ 
+- [**ResearchClaw**](https://github.com/HKUDS/ResearchClaw)：MathClaw 的前身，提供了核心架构与早期实现基础。
+- [**nanobot**](https://github.com/HKUDS/nanobot)：超轻量级 AI 助手框架，企业微信和 QQ 通道的接入思路参考自该项目。
+ 
+## 📄 许可证
+ 
+Copyright 2025-2026 MathClaw Contributors
+ 
+本项目基于 [Apache License 2.0](LICENSE) 开源。
