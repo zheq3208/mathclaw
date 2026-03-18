@@ -1,0 +1,37 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "内容简洁",
+        "无标题",
+        "聚焦知识点"
+      ],
+      "issues": [
+        "字数不足（76字 < 80字）"
+      ],
+      "first_conflicting_step": "控制字数在100字左右"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "字数合适（99字）",
+        "内容详细"
+      ],
+      "issues": [
+        "包含标题'数学复习提醒：'，违反不要加标题要求"
+      ],
+      "first_conflicting_step": "生成提醒草稿"
+    }
+  ],
+  "consensus_answer": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并仔细检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，有效提升解题准确率。",
+  "consensus_expression": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并仔细检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，有效提升解题准确率。",
+  "conflict_summary": [
+    "求解器A字数不足",
+    "求解器B包含标题"
+  ],
+  "recommended_winner": "none",
+  "revision_needed": true
+}

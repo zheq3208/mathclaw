@@ -1,12 +1,15 @@
 #!/bin/bash
-# ResearchClaw one-click launcher
+# MathClaw one-click launcher
 # Starts backend + frontend and auto-stops child processes on exit.
 
 set -u
 
-BACKEND_PORT=6006
-FRONTEND_PORT=6008
+BACKEND_PORT="${BACKEND_PORT:-6006}"
+FRONTEND_PORT="${FRONTEND_PORT:-6008}"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+export MATHCLAW_WORKING_DIR="${MATHCLAW_WORKING_DIR:-$PROJECT_DIR/.mathclaw}"
+export MATHCLAW_SECRET_DIR="${MATHCLAW_SECRET_DIR:-$PROJECT_DIR/.mathclaw.secret}"
+mkdir -p "$MATHCLAW_WORKING_DIR" "$MATHCLAW_SECRET_DIR" "$PROJECT_DIR/.runtime"
 
 kill_port() {
     local port="$1"
@@ -19,74 +22,73 @@ kill_port() {
             kill $pids 2>/dev/null || true
         fi
     else
-        echo "[ResearchClaw] Warning: neither fuser nor lsof found, skip pre-clean for port ${port}"
+        echo "[MathClaw] Warning: neither fuser nor lsof found, skip pre-clean for port ${port}"
     fi
 }
 
 cleanup() {
     echo ""
-    echo "[ResearchClaw] Stopping services..."
-    [ -n "${BACKEND_PID:-}" ] && kill "$BACKEND_PID" 2>/dev/null && echo "[ResearchClaw] Backend stopped (PID: $BACKEND_PID)"
-    [ -n "${FRONTEND_PID:-}" ] && kill "$FRONTEND_PID" 2>/dev/null && echo "[ResearchClaw] Frontend stopped (PID: $FRONTEND_PID)"
+    echo "[MathClaw] Stopping services..."
+    [ -n "${BACKEND_PID:-}" ] && kill "$BACKEND_PID" 2>/dev/null && echo "[MathClaw] Backend stopped (PID: $BACKEND_PID)"
+    [ -n "${FRONTEND_PID:-}" ] && kill "$FRONTEND_PID" 2>/dev/null && echo "[MathClaw] Frontend stopped (PID: $FRONTEND_PID)"
     wait 2>/dev/null || true
-    echo "[ResearchClaw] All services stopped"
+    echo "[MathClaw] All services stopped"
     exit 0
 }
 
 trap cleanup EXIT INT TERM HUP
 
-if command -v researchclaw >/dev/null 2>&1; then
-    RESEARCHCLAW_BIN="$(command -v researchclaw)"
-elif [ -x "/root/miniconda3/bin/researchclaw" ]; then
-    RESEARCHCLAW_BIN="/root/miniconda3/bin/researchclaw"
+if [ -n "${MATHCLAW_BIN:-}" ] && [ -x "${MATHCLAW_BIN}" ]; then
+    MATHCLAW_BIN="$MATHCLAW_BIN"
+elif command -v mathclaw >/dev/null 2>&1; then
+    MATHCLAW_BIN="$(command -v mathclaw)"
+elif [ -x "/root/miniconda3/bin/mathclaw" ]; then
+    MATHCLAW_BIN="/root/miniconda3/bin/mathclaw"
 else
-    echo "[ResearchClaw] ERROR: researchclaw command not found"
+    echo "[MathClaw] ERROR: mathclaw command not found"
     exit 1
 fi
 
-# Clean potential stale port holders first
 kill_port "$BACKEND_PORT"
 kill_port "$FRONTEND_PORT"
 
 echo "============================================"
-echo "  ResearchClaw starting..."
+echo "  MathClaw starting..."
 echo "  Backend port : $BACKEND_PORT"
 echo "  Frontend port: $FRONTEND_PORT"
+echo "  Working dir  : $MATHCLAW_WORKING_DIR"
+echo "  Secret dir   : $MATHCLAW_SECRET_DIR"
 echo "============================================"
 
-# Start backend
 cd "$PROJECT_DIR"
-"$RESEARCHCLAW_BIN" app --host 0.0.0.0 --port "$BACKEND_PORT" &
+"$MATHCLAW_BIN" app --host 127.0.0.1 --port "$BACKEND_PORT" &
 BACKEND_PID=$!
-echo "[ResearchClaw] Backend starting (PID: $BACKEND_PID)..."
+echo "[MathClaw] Backend starting (PID: $BACKEND_PID)..."
 sleep 3
 
 if ! kill -0 "$BACKEND_PID" 2>/dev/null; then
-    echo "[ResearchClaw] ERROR: backend failed to start"
+    echo "[MathClaw] ERROR: backend failed to start"
     exit 1
 fi
 
-# Start frontend
 cd "$PROJECT_DIR/console"
-npx vite --host 0.0.0.0 --port "$FRONTEND_PORT" --strictPort &
+npx vite --host 127.0.0.1 --port "$FRONTEND_PORT" --strictPort &
 FRONTEND_PID=$!
-echo "[ResearchClaw] Frontend starting (PID: $FRONTEND_PID)..."
+echo "[MathClaw] Frontend starting (PID: $FRONTEND_PID)..."
 sleep 2
 
 if ! kill -0 "$FRONTEND_PID" 2>/dev/null; then
-    echo "[ResearchClaw] ERROR: frontend failed to start"
+    echo "[MathClaw] ERROR: frontend failed to start"
     exit 1
 fi
 
 echo ""
 echo "============================================"
-echo "  ResearchClaw started"
-echo "  Backend : http://0.0.0.0:$BACKEND_PORT"
-echo "  Frontend: http://0.0.0.0:$FRONTEND_PORT"
+echo "  MathClaw started"
+echo "  Backend : http://127.0.0.1:$BACKEND_PORT"
+echo "  Frontend: http://127.0.0.1:$FRONTEND_PORT"
 echo "  Press Ctrl+C to stop all"
 echo "============================================"
 echo ""
 
-# Wait until one process exits
 wait -n "$BACKEND_PID" "$FRONTEND_PID" 2>/dev/null
-

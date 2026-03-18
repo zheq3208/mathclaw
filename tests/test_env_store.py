@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.envs.store import EnvStore, load_envs
+from mathclaw.envs.store import EnvStore, load_envs
 
 
 def test_env_store_save_get_remove(tmp_path: Path):

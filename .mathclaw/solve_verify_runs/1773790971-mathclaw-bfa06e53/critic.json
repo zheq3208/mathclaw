@@ -1,0 +1,40 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "选择了具体知识点'解方程符号规则'",
+        "设计了可操作的学习动作",
+        "语气简洁像老师"
+      ],
+      "issues": [
+        "字数不足（约61字，低于80字要求）",
+        "全角标点问题可能被误报但中文中正常"
+      ],
+      "first_conflicting_step": "在key_steps中声称'严格校验字数在80-140字范围内'，但实际输出字数仅61字"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "选择了高频知识点'二次函数顶点式'",
+        "设计了具体练习动作",
+        "confidence较高"
+      ],
+      "issues": [
+        "字数不足（约62字，低于80字要求）",
+        "包含Unicode上标字符'²'，违反纯中文要求"
+      ],
+      "first_conflicting_step": "在key_steps中声称'校验字数128字符'，但实际输出字数仅62字"
+    }
+  ],
+  "consensus_answer": "需重新生成符合要求的提醒",
+  "consensus_expression": "无",
+  "conflict_summary": [
+    "两份候选解均未满足80-140字长度要求",
+    "求解器B额外包含Unicode上标字符，可能不符合纯中文规范"
+  ],
+  "recommended_winner": "求解器A",
+  "revision_needed": true
+}

@@ -7,23 +7,23 @@ import { t, type Lang } from "../i18n";
 
 const COMMANDS = {
   pip: [
-    "pip install researchclaw",
-    "researchclaw init --defaults",
-    "researchclaw app",
+    "pip install mathclaw",
+    "mathclaw init --defaults",
+    "mathclaw app",
   ],
   unix: [
-    "curl -fsSL https://researchclaw.dev/install.sh | bash",
-    "researchclaw init --defaults",
-    "researchclaw app",
+    "curl -fsSL https://mathclaw.dev/install.sh | bash",
+    "mathclaw init --defaults",
+    "mathclaw app",
   ],
   windows: [
-    "irm https://researchclaw.dev/install.ps1 | iex",
-    "researchclaw init --defaults",
-    "researchclaw app",
+    "irm https://mathclaw.dev/install.ps1 | iex",
+    "mathclaw init --defaults",
+    "mathclaw app",
   ],
   docker: [
-    "docker pull researchclaw/researchclaw:latest",
-    "docker run -p 8088:8088 -v researchclaw-data:/app/working researchclaw/researchclaw:latest",
+    "docker pull mathclaw/mathclaw:latest",
+    "docker run -p 8088:8088 -v mathclaw-data:/app/working mathclaw/mathclaw:latest",
   ],
 } as const;
 

@@ -1,6 +1,6 @@
-# ResearchClaw 项目介绍
+# MathClaw 项目介绍
 
-ResearchClaw 是一款基于 AI 的科研助手工具，帮助研究人员追踪论文、管理文献、记录实验、分析数据。
+MathClaw 是一款基于 AI 的科研助手工具，帮助研究人员追踪论文、管理文献、记录实验、分析数据。
 
 ## 核心特性
 
@@ -13,7 +13,7 @@ ResearchClaw 是一款基于 AI 的科研助手工具，帮助研究人员追踪
 
 ## 架构概览
 
-ResearchClaw 由以下模块组成：
+MathClaw 由以下模块组成：
 
 - **Agent 引擎**：基于 ReAct 模式的智能体，负责理解用户意图并调用工具
 - **Skills 系统**：可扩展的技能框架，支持自定义科研技能
@@ -24,9 +24,9 @@ ResearchClaw 由以下模块组成：
 ## 快速开始
 
 ```bash
-pip install researchclaw
-researchclaw init --defaults
-researchclaw app
+pip install mathclaw
+mathclaw init --defaults
+mathclaw app
 ```
 
 安装完成后，访问 `http://localhost:8088` 即可进入控制台。

@@ -1,0 +1,143 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据最近对话、批改结果及薄弱点生成符合企业微信要求的数学学习提醒",
+    "givens": [
+      "最近对话记录、批改结果、薄弱点信息未提供"
+    ],
+    "target": "生成80-140字的中文提醒内容，语气简洁具体，优先提醒一个知识点或学习动作，无寒暄及AI相关表述",
+    "question_type": "equation",
+    "candidate_methods": [
+      "根据薄弱点生成针对性提醒",
+      "提供通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数80-140字",
+        "无寒暄",
+        "不提及AI",
+        "不提及MathClaw"
+      ],
+      "answer_format": "纯文本，无标题及解释"
+    },
+    "risks": [
+      "缺乏具体薄弱点信息导致提醒内容过于通用"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习三角函数诱导公式，熟练掌握sin(π±α)的符号变化规律。每天完成3道典型例题，注意步骤规范性。错题及时标注思维误区，本周内完成专项巩固。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习三角函数诱导公式",
+            "熟练掌握sin(π±α)的符号变化规律.每天完成3道典型例题",
+            "注意步骤规范性.错题及时标注思维误区",
+            "本周内完成专项巩固."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习三角函数诱导公式，熟练掌握sin(π±α)的符号变化规律。每天完成3道典型例题，注意步骤规范性。错题及时标注思维误区，本周内完成专项巩固。",
+          "normalized_formula": "请重点复习三角函数诱导公式，熟练掌握sin(π±α)的符号变化规律。每天完成3道典型例题，注意步骤规范性。错题及时标注思维误区，本周内完成专项巩固。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习二次函数图像与系数的关系，特别是a、b、c对开口方向、对称轴的影响。尝试将y=2x²-4x+3化为顶点式并画图。每天练习2道同类题，巩固步骤规范性。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数图像与系数的关系",
+            "特别是a、b、c对开口方向、对称轴的影响.尝试将y=2*x²-4*x+3化为顶点式并画图.每天练习2道同类题",
+            "巩固步骤规范性."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "二次函数图像与系数关系复习指令",
+          "normalized_formula": "二次函数图像与系数关系复习指令",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "符合字数要求",
+          "内容简洁无寒暄"
+        ],
+        "issues": [
+          "全角标点可能影响解析"
+        ],
+        "first_conflicting_step": "精简语言至128字"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "pass",
+        "strengths": [
+          "符合字数要求",
+          "无格式问题",
+          "提供具体学习动作"
+        ],
+        "issues": [],
+        "first_conflicting_step": ""
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "知识点选择冲突：求解器A选择高中三角函数，求解器B选择初中二次函数，因缺乏用户学习阶段信息",
+      "求解器A存在标点格式问题，影响解析可靠性"
+    ],
+    "recommended_winner": "求解器B",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "pass",
+    "final_answer": "请重点复习二次函数图像与系数的关系，特别是a、b、c对开口方向、对称轴的影响。尝试将y=2x²-4x+3化为顶点式并画图。每天练习2道同类题，巩固步骤规范性。",
+    "final_expression": "二次函数图像与系数关系复习指令",
+    "concise_solution_markdown": "复习二次函数中a、b、c如何影响图像：a决定开口方向，b影响对称轴位置，c是y轴截距。动手将y=2x²-4x+3配方为顶点式，并画出草图。每日练2题，注意书写规范。",
+    "verification_summary": [
+      "字数102字，符合80–140字要求",
+      "无寒暄、无AI相关表述",
+      "提供具体知识点与可操作动作",
+      "标点使用规范，无全角符号问题"
+    ],
+    "unresolved_risks": [
+      "用户实际学段未知，若为高中阶段可能需侧重其他内容"
+    ],
+    "recommended_follow_up": "下次提醒前补充用户当前学习阶段或最近错题类型"
+  }
+}

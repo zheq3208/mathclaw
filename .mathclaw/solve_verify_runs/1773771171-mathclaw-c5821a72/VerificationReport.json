@@ -1,0 +1,169 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据最近一次对话、批改结果和薄弱点生成数学学习提醒",
+    "givens": [
+      "最近一次对话",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点"
+    ],
+    "target": "输出一条80到140字的中文提醒，语气简洁具体，优先提醒知识点或学习动作，无薄弱点时给通用建议，无寒暄等",
+    "question_type": "equation",
+    "candidate_methods": [
+      "长度控制在80到140字",
+      "不要寒暄,不要自我介绍,不要提自己是AI,不要提MathClaw"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "提醒内容长度",
+        "内容是否包含禁止元素"
+      ],
+      "answer_format": "纯文本，80到140字中文"
+    },
+    "risks": [
+      "长度超出范围",
+      "包含寒暄或自我介绍",
+      "提及AI或MathClaw"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习勾股定理的应用，完成课本P56例题3-5。注意直角三角形三边关系的灵活运用，画图辅助理解。今日练习后总结常见错误类型，避免重复失分。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习勾股定理的应用",
+            "完成课本P*56例题3-5.注意直角三角形三边关系的灵活运用",
+            "画图辅助理解.今日练习后总结常见错误类型",
+            "避免重复失分."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习勾股定理的应用，完成课本P56例题3-5。注意直角三角形三边关系的灵活运用，画图辅助理解。今日练习后总结常见错误类型，避免重复失分。",
+          "normalized_formula": "请重点复习勾股定理的应用，完成课本P56例题3-5。注意直角三角形三边关系的灵活运用，画图辅助理解。今日练习后总结常见错误类型，避免重复失分。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请复习一元二次方程的求根公式。解三道题目：判别式大于零、等于零、小于零的情况。仔细写出步骤，检查根的正确性。特别注意符号错误。例如：x² - 4x + 4 = 0。坚持练习，提升解题能力。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习一元二次方程的求根公式.解三道题目：判别式大于零、等于零、小于零的情况.仔细写出步骤",
+            "检查根的正确性.特别注意符号错误.例如：x²",
+            "-",
+            "4*x",
+            "+",
+            "4",
+            "=",
+            "0.坚持练习",
+            "提升解题能力."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请复习一元二次方程的求根公式。解三道题目：判别式大于零、等于零、小于零的情况。仔细写出步骤，检查根的正确性。特别注意符号错误。例如：x² - 4x + 4 = 0。坚持练习，提升解题能力。",
+          "normalized_formula": "请复习一元二次方程的求根公式。解三道题目：判别式大于零、等于零、小于零的情况。仔细写出步骤，检查根的正确性。特别注意符号错误。例如：x² - 4x + 4 = 0。坚持练习，提升解题能力。",
+          "issue_count": 3,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            },
+            {
+              "type": "implicit_multiplication",
+              "message": "Contains implicit multiplication such as 2x."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "长度控制在100字左右，符合80-140字要求",
+          "内容简洁具体，无寒暄或AI提及",
+          "知识点选择合理，适合通用复习"
+        ],
+        "issues": [
+          "全角标点可能混淆系统解析"
+        ],
+        "first_conflicting_step": "在最终答案生成时使用了全角标点，工具检查指出可能影响解析"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "知识点具体且有示例增强实用性",
+          "字符数精确为88字，符合要求",
+          "学习动作明确具体"
+        ],
+        "issues": [
+          "Unicode上标字符（如x²）可能不兼容",
+          "隐式乘法（如4x）易引起解析错误",
+          "全角标点问题"
+        ],
+        "first_conflicting_step": "在构建示例时使用x²和4x，引入非标准数学格式，导致解析风险"
+      }
+    ],
+    "consensus_answer": "请复习基础数学知识点，完成指定练习并总结常见错误。注意解题步骤和符号规范，避免重复失分。",
+    "consensus_expression": "请复习基础数学知识点，完成指定练习并总结常见错误。注意解题步骤和符号规范，避免重复失分。",
+    "conflict_summary": [
+      "知识点选择冲突：求解器A选择勾股定理，求解器B选择一元二次方程",
+      "求解器B的数学表达式存在格式风险，影响系统解析",
+      "工具检查无法确认内容正确性，因无预期答案"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请重点复习勾股定理的应用，完成课本P56例题3-5。注意直角三角形三边关系的灵活运用，画图辅助理解。今日练习后总结常见错误类型，避免重复失分。",
+    "final_expression": "请重点复习勾股定理的应用，完成课本P56例题3-5。注意直角三角形三边关系的灵活运用，画图辅助理解。今日练习后总结常见错误类型，避免重复失分。",
+    "concise_solution_markdown": "请重点复习勾股定理的应用，完成课本P56例题3-5。注意直角三角形三边关系的灵活运用，画图辅助理解。今日练习后总结常见错误类型，避免重复失分。",
+    "verification_summary": [
+      "内容长度约100字，符合80-140字要求",
+      "无寒暄、无AI提及，语气简洁具体",
+      "使用全角标点，可能影响系统解析"
+    ],
+    "unresolved_risks": [
+      "全角标点可能干扰企业微信消息解析或后续自动化处理"
+    ],
+    "recommended_follow_up": "将标点统一改为半角，例如将“。”改为“.”，确保兼容性后再发送"
+  }
+}

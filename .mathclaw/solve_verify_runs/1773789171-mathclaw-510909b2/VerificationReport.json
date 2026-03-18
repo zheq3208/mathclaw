@@ -1,0 +1,170 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信规范的数学学习提醒，需简洁具体，避免寒暄及提及AI",
+    "givens": [
+      "最近一次对话记录",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点"
+    ],
+    "target": "输出80-140字的中文提醒内容，语气像老师，优先针对薄弱点或提供通用建议",
+    "question_type": "equation",
+    "candidate_methods": [
+      "检查字数范围",
+      "验证内容合规性",
+      "确认薄弱点优先级"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度控制在80到140字",
+        "无寒暄",
+        "不提及AI或MathClaw"
+      ],
+      "answer_format": "直接输出提醒内容，无标题和解释"
+    },
+    "risks": [
+      "字数超出范围",
+      "包含禁止提及内容",
+      "未针对薄弱点提醒"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习二次函数顶点坐标公式，注意对称轴与最值的关系。完成3道典型例题巩固，重点检查配方法步骤。今日练习后截图反馈，及时查漏补缺。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点坐标公式",
+            "注意对称轴与最值的关系.完成3道典型例题巩固",
+            "重点检查配方法步骤.今日练习后截图反馈",
+            "及时查漏补缺."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数顶点坐标公式，注意对称轴与最值的关系。完成3道典型例题巩固，重点检查配方法步骤。今日练习后截图反馈，及时查漏补缺。",
+          "normalized_formula": "请重点复习二次函数顶点坐标公式，注意对称轴与最值的关系。完成3道典型例题巩固，重点检查配方法步骤。今日练习后截图反馈，及时查漏补缺。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "同学们，近期数学作业中一元二次方程部分错误率较高。请重点复习求根公式及判别式应用，特别是当b²-4ac小于零时的处理。建议完成课本第50页练习题1-5，确保每一步计算准确。每天花10分钟巩固，避免重复错误。注意书写规范，步骤完整。坚持就是进步。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "同学们",
+            "近期数学作业中一元二次方程部分错误率较高.请重点复习求根公式及判别式应用",
+            "特别是当b²-4*ac小于零时的处理.建议完成课本第50页练习题1-5",
+            "确保每一步计算准确.每天花10分钟巩固",
+            "避免重复错误.注意书写规范",
+            "步骤完整.坚持就是进步."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "同学们，近期数学作业中一元二次方程部分错误率较高。请重点复习求根公式及判别式应用，特别是当b²-4ac小于零时的处理。建议完成课本第50页练习题1-5，确保每一步计算准确。每天花10分钟巩固，避免重复错误。注意书写规范，步骤完整。坚持就是进步。",
+          "normalized_formula": "同学们，近期数学作业中一元二次方程部分错误率较高。请重点复习求根公式及判别式应用，特别是当b²-4ac小于零时的处理。建议完成课本第50页练习题1-5，确保每一步计算准确。每天花10分钟巩固，避免重复错误。注意书写规范，步骤完整。坚持就是进步。",
+          "issue_count": 3,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            },
+            {
+              "type": "implicit_multiplication",
+              "message": "Contains implicit multiplication such as 2x."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "conflict",
+        "strengths": [
+          "内容简洁",
+          "无寒暄",
+          "聚焦知识点"
+        ],
+        "issues": [
+          "字数不足80字",
+          "全角标点可能影响解析"
+        ],
+        "first_conflicting_step": "控制字数在100字左右时未达标"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "字数符合范围",
+          "提供具体学习动作"
+        ],
+        "issues": [
+          "包含问候语'同学们'",
+          "使用Unicode上标下标",
+          "隐式乘法表达"
+        ],
+        "first_conflicting_step": "撰写提醒草稿时加入问候语"
+      }
+    ],
+    "consensus_answer": "需调整内容以满足字数及合规要求",
+    "consensus_expression": "需调整内容以满足字数及合规要求",
+    "conflict_summary": [
+      "求解器A输出字数66字，低于80字下限",
+      "求解器B包含问候语'同学们'，违反无寒暄要求",
+      "求解器B使用非标准数学符号"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "请重点复习二次函数顶点坐标公式，注意对称轴与最值的关系。完成3道典型例题巩固，重点检查配方法步骤。今日练习后截图反馈，及时查漏补缺。",
+    "final_expression": "请重点复习二次函数顶点坐标公式，注意对称轴与最值的关系。完成3道典型例题巩固，重点检查配方法步骤。今日练习后截图反馈，及时查漏补缺。",
+    "concise_solution_markdown": "请重点复习二次函数顶点坐标公式，注意对称轴与最值的关系。完成3道典型例题巩固，重点检查配方法步骤。今日练习后截图反馈，及时查漏补缺。",
+    "verification_summary": [
+      "字数仅66字，低于80字下限",
+      "含全角标点，可能影响系统解析",
+      "未提供明确薄弱点依据，属通用建议"
+    ],
+    "unresolved_risks": [
+      "字数不达标",
+      "标点格式不符合企业微信消息规范",
+      "缺乏真实薄弱点支撑，提醒针对性不足"
+    ],
+    "recommended_follow_up": "补充最近一次批改中具体错题类型或薄弱知识点，重新生成符合字数与格式要求的提醒"
+  }
+}

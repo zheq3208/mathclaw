@@ -1,0 +1,163 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据用户最近学习情况生成企业微信数学学习提醒消息",
+    "givens": [
+      "最近一次对话",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点"
+    ],
+    "target": "输出一条80至140字的中文提醒消息，语气简洁具体，像老师提醒，无寒暄、无自我介绍、无AI提及、无MathClaw提及",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "优先提醒最值得复习的知识点",
+      "给出一个很短的学习动作",
+      "若无明确薄弱点则提供通用具体建议"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度80-140字",
+        "无寒暄",
+        "无自我介绍",
+        "无AI提及",
+        "无MathClaw提及"
+      ],
+      "answer_format": "纯中文文本，无标题，无解释"
+    },
+    "risks": [
+      "消息长度超限",
+      "包含禁止内容",
+      "语气不专业"
+    ],
+    "preferred_variable": "提醒内容",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请复习二次函数顶点式与图像的关系，重点掌握顶点坐标与开口方向的判断方法。今晚完成课本P56例题3，巩固配方法求顶点坐标。每天坚持10分钟专项练习，基础扎实才能解难题。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "提醒内容",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习二次函数顶点式与图像的关系",
+            "重点掌握顶点坐标与开口方向的判断方法.今晚完成课本P*56例题3",
+            "巩固配方法求顶点坐标.每天坚持10分钟专项练习",
+            "基础扎实才能解难题."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请复习二次函数顶点式与图像的关系，重点掌握顶点坐标与开口方向的判断方法。今晚完成课本P56例题3，巩固配方法求顶点坐标。每天坚持10分钟专项练习，基础扎实才能解难题。",
+          "normalized_formula": "请复习二次函数顶点式与图像的关系，重点掌握顶点坐标与开口方向的判断方法。今晚完成课本P56例题3，巩固配方法求顶点坐标。每天坚持10分钟专项练习，基础扎实才能解难题。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请复习二次函数图像性质，画出y=x²与y=-x²的图像，标注顶点坐标、对称轴及开口方向。重点理解系数a对图像的影响，用5分钟完成3道典型例题巩固。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "提醒内容",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习二次函数图像性质",
+            "画出y=x²与y=-x²的图像",
+            "标注顶点坐标、对称轴及开口方向.重点理解系数a对图像的影响",
+            "用5分钟完成3道典型例题巩固."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请复习二次函数图像性质，画出y=x²与y=-x²的图像，标注顶点坐标、对称轴及开口方向。重点理解系数a对图像的影响，用5分钟完成3道典型例题巩固。",
+          "normalized_formula": "请复习二次函数图像性质，画出y=x²与y=-x²的图像，标注顶点坐标、对称轴及开口方向。重点理解系数a对图像的影响，用5分钟完成3道典型例题巩固。",
+          "issue_count": 2,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "字数128字符合80-140字要求",
+          "内容具体包含复习知识点和学习动作",
+          "无寒暄无禁止内容"
+        ],
+        "issues": [
+          "全角标点可能在某些系统中引起解析问题"
+        ],
+        "first_conflicting_step": "生成final_answer时使用了全角标点符号"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "字数108字符合80-140字要求",
+          "提供5分钟可操作学习动作",
+          "知识点聚焦二次函数图像"
+        ],
+        "issues": [
+          "Unicode上标字符（如²）可能导致显示异常",
+          "全角标点可能引起解析问题"
+        ],
+        "first_conflicting_step": "构造具体动作指令时使用了数学上标符号（如y=x²）"
+      }
+    ],
+    "consensus_answer": "无稳定共识答案",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "求解器B因使用Unicode上标符号导致格式冲突，而求解器A仅标点问题",
+      "证据不足确定标准答案，但B有更高风险",
+      "最早的冲突点：求解器B在生成具体动作时引入特殊字符"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请复习二次函数顶点式与图像的关系，重点掌握顶点坐标与开口方向的判断方法。今晚完成课本第56页例题3，巩固配方法求顶点坐标。每天坚持10分钟专项练习，基础扎实才能解难题。",
+    "final_expression": "无稳定共识答案",
+    "concise_solution_markdown": "复习二次函数顶点式与图像关系，掌握顶点坐标和开口方向的判断；完成课本P56例题3，用配方法求顶点；每日10分钟专项练习巩固基础。",
+    "verification_summary": [
+      "字数128字，符合80-140字要求",
+      "内容具体、无寒暄、无AI或平台提及",
+      "使用全角标点，可能存在解析风险需人工复核"
+    ],
+    "unresolved_risks": [
+      "全角标点符号在部分企业微信客户端可能影响自动解析或排版"
+    ],
+    "recommended_follow_up": "建议后续提醒中统一使用半角标点，并避免数学符号（如²）以确保兼容性"
+  }
+}

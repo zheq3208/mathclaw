@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.tools import weakness_diag_q3vl as mod
+from mathclaw.agents.tools import weakness_diag_q3vl as mod
 
 
 def test_run_math_weakness_diagnosis_agent_writes_artifacts(monkeypatch, tmp_path: Path) -> None:

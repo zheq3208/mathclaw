@@ -1,10 +1,10 @@
 # MCP (Model Context Protocol)
 
-ResearchClaw 支持 MCP 协议，允许接入外部工具和服务。
+MathClaw 支持 MCP 协议，允许接入外部工具和服务。
 
 ## 什么是 MCP
 
-MCP（Model Context Protocol）是一个标准化协议，允许 AI 助手与外部工具进行交互。通过 MCP，你可以为 ResearchClaw 接入更多工具和数据源。
+MCP（Model Context Protocol）是一个标准化协议，允许 AI 助手与外部工具进行交互。通过 MCP，你可以为 MathClaw 接入更多工具和数据源。
 
 ## 配置 MCP 服务
 

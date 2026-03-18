@@ -1,4 +1,4 @@
-from researchclaw.agents.tools import copaw_compat
+from mathclaw.agents.tools import copaw_compat
 
 
 def test_execute_shell_command_alias_success(monkeypatch) -> None:

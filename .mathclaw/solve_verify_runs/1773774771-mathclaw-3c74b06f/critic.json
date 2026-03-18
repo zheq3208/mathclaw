@@ -1,0 +1,34 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "pass",
+      "strengths": [
+        "字数严格控制在102字，符合80-140字要求",
+        "内容无禁止词汇",
+        "语气简洁具体，符合教师身份"
+      ],
+      "issues": [],
+      "first_conflicting_step": "无"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "选择高频易错知识点",
+        "设计具体学习动作"
+      ],
+      "issues": [
+        "final_answer中包含全角标点，可能影响系统解析"
+      ],
+      "first_conflicting_step": "final_answer中使用了全角标点符号"
+    }
+  ],
+  "consensus_answer": "请复习二次函数顶点公式，注意配方法步骤。每天练习2道典型题，巩固图像与性质的联系。坚持3天，你会更熟练！",
+  "consensus_expression": "二次函数顶点公式复习建议",
+  "conflict_summary": [
+    "工具检查显示求解器B的最终答案包含全角标点，可能导致解析错误，而求解器A无此问题"
+  ],
+  "recommended_winner": "求解器A",
+  "revision_needed": true
+}

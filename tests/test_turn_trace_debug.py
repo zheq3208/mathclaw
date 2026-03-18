@@ -2,8 +2,8 @@ import asyncio
 import json
 from pathlib import Path
 
-import researchclaw.app.runner.manager as manager_module
-import researchclaw.app.runner.session as session_module
+import mathclaw.app.runner.manager as manager_module
+import mathclaw.app.runner.session as session_module
 
 
 class _FakeAgent:
@@ -39,7 +39,7 @@ def test_manager_chat_appends_trace_footer_and_persists_metadata(tmp_path, monke
         "route": "solve_verify",
         "used_skills": ["math_solver_verifier"],
         "used_tools": ["run_math_solve_verify_agent"],
-        "artifacts": [".researchclaw/solve_verify_runs/demo/SolutionAudit.json"],
+        "artifacts": [".mathclaw/solve_verify_runs/demo/SolutionAudit.json"],
         "status": "pass",
     }
     manager = manager_module.AgentRunnerManager()

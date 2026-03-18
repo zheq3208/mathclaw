@@ -1,0 +1,39 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "字数控制在98字，符合80-140字要求",
+        "避免了寒暄和AI提及"
+      ],
+      "issues": [
+        "知识点选择基于假设，无薄弱点数据支持",
+        "包含全角标点符号"
+      ],
+      "first_conflicting_step": "确定通用知识点：选择一元二次方程求根公式及判别式应用"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "confidence较高0.95",
+        "设计了具体学习动作：复习顶点式+完成例题+错题整理"
+      ],
+      "issues": [
+        "知识点选择基于假设，无薄弱点数据支持",
+        "包含全角标点符号"
+      ],
+      "first_conflicting_step": "选择二次函数作为通用薄弱点"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "知识点选择冲突：求解器A选择一元二次方程，求解器B选择二次函数",
+    "输入数据缺失导致无法验证优先薄弱点",
+    "工具检查显示两者均有全角标点问题，影响格式规范"
+  ],
+  "recommended_winner": "无",
+  "revision_needed": true
+}

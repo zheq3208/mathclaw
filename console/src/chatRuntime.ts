@@ -1,7 +1,7 @@
 ﻿import { streamChat } from "./api";
 import type { ChatAttachment, ChatMessage, StreamEvent, ToolCallInfo } from "./types";
 
-const CHAT_STATE_STORAGE_KEY = "researchclaw.chat.state.v1";
+const CHAT_STATE_STORAGE_KEY = "mathclaw.chat.state.v1";
 
 export type ChatRuntimeState = {
   sessionId?: string;

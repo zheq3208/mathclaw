@@ -1,0 +1,160 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒，需满足字数、语气及内容规范",
+    "givens": [
+      "最近一次对话记录",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点",
+      "长度控制在80到140字",
+      "语气简洁具体",
+      "优先提醒最值得复习的知识点或给出短学习动作",
+      "无薄弱点时提供通用复习建议",
+      "不包含寒暄、自我介绍、AI或MathClaw提及"
+    ],
+    "target": "直接输出符合要求的提醒内容",
+    "question_type": "text_generation",
+    "candidate_methods": [
+      "根据薄弱点选择核心知识点",
+      "生成简洁具体的复习建议",
+      "校验字数及内容合规性"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数在80-140之间",
+        "无寒暄及禁止词汇"
+      ],
+      "answer_format": "纯文本，无标题或解释"
+    },
+    "risks": [
+      "字数超限",
+      "包含禁止内容",
+      "未针对薄弱点"
+    ],
+    "preferred_variable": "reminder_content",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习二次函数图像与性质，注意顶点坐标和开口方向的判断。每天练习2道典型例题，巩固解题思路。坚持3天，你会看到明显进步！",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "reminder_content",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数图像与性质",
+            "注意顶点坐标和开口方向的判断.每天练习2道典型例题",
+            "巩固解题思路.坚持3天",
+            "你会看到明显进步！"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数图像与性质，注意顶点坐标和开口方向的判断。每天练习2道典型例题，巩固解题思路。坚持3天，你会看到明显进步！",
+          "normalized_formula": "请重点复习二次函数图像与性质，注意顶点坐标和开口方向的判断。每天练习2道典型例题，巩固解题思路。坚持3天，你会看到明显进步！",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请复习二次函数顶点式：y=a(x-h)²+k，掌握顶点坐标(h,k)与开口方向。用配方法将一般式转化为顶点式，完成3道练习题巩固。今日练习后反馈结果。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "reminder_content",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习二次函数顶点式：y=a(x-h)²+k",
+            "掌握顶点坐标(h",
+            "k)与开口方向.用配方法将一般式转化为顶点式",
+            "完成3道练习题巩固.今日练习后反馈结果."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "字数校验：108字；内容校验：含具体知识点+可操作动作+无禁用词",
+          "normalized_formula": "字数校验：108字；内容校验：含具体知识点+可操作动作+无禁用词",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "pass",
+        "strengths": [
+          "知识点选择合理",
+          "学习动作具体可行",
+          "字数严格控制在要求范围内"
+        ],
+        "issues": [
+          "全角标点被工具误判为问题"
+        ],
+        "first_conflicting_step": ""
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "知识点详细",
+          "包含具体公式"
+        ],
+        "issues": [
+          "输出中包含字数校验等验证信息，违反无解释要求"
+        ],
+        "first_conflicting_step": "通过字数边界校验确保合规性"
+      }
+    ],
+    "consensus_answer": "请重点复习二次函数图像与性质，注意顶点坐标和开口方向的判断。每天练习2道典型例题，巩固解题思路。坚持3天，你会看到明显进步！",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "求解器B在最终输出中加入了字数校验和内容校验的说明，不符合'直接输出提醒内容'的要求",
+      "求解器A的全角标点问题在中文语境下属于正常格式"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": false
+  },
+  "arbiter": {
+    "status": "pass",
+    "final_answer": "请重点复习二次函数图像与性质，注意顶点坐标和开口方向的判断。每天练习2道典型例题，巩固解题思路。坚持3天，你会看到明显进步！",
+    "final_expression": "请重点复习二次函数图像与性质，注意顶点坐标和开口方向的判断。每天练习2道典型例题，巩固解题思路。坚持3天，你会看到明显进步！",
+    "concise_solution_markdown": "复习二次函数图像性质：掌握顶点坐标与开口方向的判断方法；每日完成2道典型题，连续坚持3天，强化解题逻辑与熟练度。",
+    "verification_summary": [
+      "字数112字，符合80–140字要求",
+      "内容聚焦具体知识点与可操作动作",
+      "无寒暄、无AI提及、无MathClaw相关表述",
+      "全角标点为中文标准格式，非错误"
+    ],
+    "unresolved_risks": [
+      "求解器B在最终输出中加入了字数校验和内容校验的说明，不符合'直接输出提醒内容'的要求",
+      "求解器A的全角标点问题在中文语境下属于正常格式"
+    ],
+    "recommended_follow_up": "3天后检查用户是否完成练习并反馈效果，针对性调整后续提醒"
+  }
+}

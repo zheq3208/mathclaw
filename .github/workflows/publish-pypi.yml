@@ -35,9 +35,9 @@ jobs:
 
       - name: Copy console build into package
         run: |
-          rm -rf src/researchclaw/console/*
-          mkdir -p src/researchclaw/console
-          cp -R console/dist/* src/researchclaw/console/
+          rm -rf src/mathclaw/console/*
+          mkdir -p src/mathclaw/console
+          cp -R console/dist/* src/mathclaw/console/
 
       - name: Install build dependencies
         run: |

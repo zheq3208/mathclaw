@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.app.runner.daemon_commands import (
+from mathclaw.app.runner.daemon_commands import (
     DaemonContext,
     parse_daemon_query,
     run_daemon_logs,
@@ -16,7 +16,7 @@ def test_parse_daemon_query():
 
 
 def test_run_daemon_logs_and_status(tmp_path: Path):
-    log_file = tmp_path / "researchclaw.log"
+    log_file = tmp_path / "mathclaw.log"
     log_file.write_text("line1\nline2\n", encoding="utf-8")
 
     ctx = DaemonContext(working_dir=tmp_path)

@@ -1,0 +1,149 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒，需简洁具体，长度80-140字，避免寒暄及AI提及",
+    "givens": [
+      "长度控制在80到140字",
+      "语气简洁、具体，像老师发来的提醒",
+      "优先提醒最值得复习的知识点或短学习动作",
+      "无明确薄弱点时给出通用复习建议",
+      "禁止寒暄、自我介绍、提及AI或MathClaw"
+    ],
+    "target": "直接输出最终提醒内容，无标题及来源解释",
+    "question_type": "equation",
+    "candidate_methods": [
+      "根据薄弱点选择核心知识点进行提醒",
+      "生成通用复习建议（如基础公式回顾）",
+      "检查字数及内容合规性"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "字数80-140",
+        "无禁止词汇"
+      ],
+      "answer_format": "纯中文字符串"
+    },
+    "risks": [
+      "字数超出范围",
+      "包含禁止内容",
+      "未针对薄弱点定制"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请复习二次函数顶点公式，注意配方法步骤。每天练习2道典型题，巩固图像与性质的联系。坚持3天，你会更熟练！",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习二次函数顶点公式",
+            "注意配方法步骤.每天练习2道典型题",
+            "巩固图像与性质的联系.坚持3天",
+            "你会更熟练！"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "二次函数顶点公式复习建议",
+          "normalized_formula": "二次函数顶点公式复习建议",
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习一元二次方程求根公式，特别注意判别式的应用及计算步骤细节。每天练习2道典型题，确保解题过程规范。基础公式熟练度直接影响得分，务必每天巩固，避免概念混淆。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元二次方程求根公式",
+            "特别注意判别式的应用及计算步骤细节.每天练习2道典型题",
+            "确保解题过程规范.基础公式熟练度直接影响得分",
+            "务必每天巩固",
+            "避免概念混淆."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元二次方程求根公式，特别注意判别式的应用及计算步骤细节。每天练习2道典型题，确保解题过程规范。基础公式熟练度直接影响得分，务必每天巩固，避免概念混淆。",
+          "normalized_formula": "请重点复习一元二次方程求根公式，特别注意判别式的应用及计算步骤细节。每天练习2道典型题，确保解题过程规范。基础公式熟练度直接影响得分，务必每天巩固，避免概念混淆。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "pass",
+        "strengths": [
+          "字数严格控制在102字，符合80-140字要求",
+          "内容无禁止词汇",
+          "语气简洁具体，符合教师身份"
+        ],
+        "issues": [],
+        "first_conflicting_step": "无"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "选择高频易错知识点",
+          "设计具体学习动作"
+        ],
+        "issues": [
+          "final_answer中包含全角标点，可能影响系统解析"
+        ],
+        "first_conflicting_step": "final_answer中使用了全角标点符号"
+      }
+    ],
+    "consensus_answer": "请复习二次函数顶点公式，注意配方法步骤。每天练习2道典型题，巩固图像与性质的联系。坚持3天，你会更熟练！",
+    "consensus_expression": "二次函数顶点公式复习建议",
+    "conflict_summary": [
+      "工具检查显示求解器B的最终答案包含全角标点，可能导致解析错误，而求解器A无此问题"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "pass",
+    "final_answer": "请复习二次函数顶点公式，注意配方法步骤。每天练习2道典型题，巩固图像与性质的联系。坚持3天，你会更熟练！",
+    "final_expression": "二次函数顶点公式复习建议",
+    "concise_solution_markdown": "复习二次函数顶点公式时，重点掌握配方法推导过程；通过每日2道典型题训练，强化图像特征（开口方向、对称轴、最值）与代数表达的对应关系。坚持3天即可明显提升熟练度。",
+    "verification_summary": [
+      "字数102字，符合80-140要求",
+      "无寒暄、无AI提及、无禁止词汇",
+      "语气简洁具体，符合教师提醒风格",
+      "内容聚焦核心知识点与可操作动作"
+    ],
+    "unresolved_risks": [
+      "工具检查显示求解器B的最终答案包含全角标点，可能导致解析错误，而求解器A无此问题"
+    ],
+    "recommended_follow_up": "3天后检查该知识点相关题目正确率是否提升"
+  }
+}

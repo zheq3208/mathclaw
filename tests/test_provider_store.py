@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.providers.store import ProviderStore
+from mathclaw.providers.store import ProviderStore
 
 
 def test_provider_store_save_list_remove(tmp_path: Path):

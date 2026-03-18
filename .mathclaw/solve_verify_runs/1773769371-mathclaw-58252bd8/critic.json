@@ -1,0 +1,37 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "pass",
+      "strengths": [
+        "知识点选择合理",
+        "学习动作具体可行",
+        "字数严格控制在要求范围内"
+      ],
+      "issues": [
+        "全角标点被工具误判为问题"
+      ],
+      "first_conflicting_step": ""
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "知识点详细",
+        "包含具体公式"
+      ],
+      "issues": [
+        "输出中包含字数校验等验证信息，违反无解释要求"
+      ],
+      "first_conflicting_step": "通过字数边界校验确保合规性"
+    }
+  ],
+  "consensus_answer": "请重点复习二次函数图像与性质，注意顶点坐标和开口方向的判断。每天练习2道典型例题，巩固解题思路。坚持3天，你会看到明显进步！",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "求解器B在最终输出中加入了字数校验和内容校验的说明，不符合'直接输出提醒内容'的要求",
+    "求解器A的全角标点问题在中文语境下属于正常格式"
+  ],
+  "recommended_winner": "求解器A",
+  "revision_needed": false
+}

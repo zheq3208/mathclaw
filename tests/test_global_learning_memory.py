@@ -1,10 +1,10 @@
 import json
 from pathlib import Path
 
-from researchclaw.agents.react_agent import ScholarAgent
-from researchclaw.agents.skills.mastery_updater import register as mastery_register
-from researchclaw.agents.tools import math_learning
-from researchclaw.agents.tools import weakness_diag_q3vl as weakness_mod
+from mathclaw.agents.react_agent import ScholarAgent
+from mathclaw.agents.skills.mastery_updater import register as mastery_register
+from mathclaw.agents.tools import math_learning
+from mathclaw.agents.tools import weakness_diag_q3vl as weakness_mod
 
 
 class _DummyMemory:

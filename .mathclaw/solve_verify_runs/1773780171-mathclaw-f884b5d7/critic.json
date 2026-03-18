@@ -1,0 +1,40 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "选择高频易错知识点一元二次方程",
+        "设计具体学习动作解题检查",
+        "字数控制在102字"
+      ],
+      "issues": [
+        "包含Unicode上标字符如²",
+        "使用全角标点符号",
+        "存在隐式乘法表示如4ac"
+      ],
+      "first_conflicting_step": "严格校验字数与内容合规性"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "选择核心知识点二次函数图像",
+        "设计具体学习动作完成例题",
+        "字数控制在82字"
+      ],
+      "issues": [
+        "使用全角标点符号"
+      ],
+      "first_conflicting_step": "严格校验字数范围与内容合规性"
+    }
+  ],
+  "consensus_answer": "请重点复习二次函数顶点式与图像的关系，掌握顶点坐标公式和对称轴求法。今晚完成3道典型例题，注意a的正负对开口方向的影响。错题及时整理，每天巩固15分钟，解题能力将稳步提升。",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "工具检查错误应用公式验证规则到文本内容",
+    "Unicode上标和全角标点在中文数学提醒中属正常格式，不应视为问题"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}

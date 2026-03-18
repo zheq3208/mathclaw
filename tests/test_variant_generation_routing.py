@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.react_agent import ScholarAgent
+from mathclaw.agents.react_agent import ScholarAgent
 
 
 class _DummyMemory:

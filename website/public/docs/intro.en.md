@@ -1,6 +1,6 @@
 # Introduction
 
-ResearchClaw is an AI-powered research assistant that helps researchers track papers, manage references, log experiments, and analyze data.
+MathClaw is an AI-powered research assistant that helps researchers track papers, manage references, log experiments, and analyze data.
 
 ## Key Features
 
@@ -13,7 +13,7 @@ ResearchClaw is an AI-powered research assistant that helps researchers track pa
 
 ## Architecture
 
-ResearchClaw consists of the following modules:
+MathClaw consists of the following modules:
 
 - **Agent Engine**: A ReAct-based agent that understands user intent and invokes tools.
 - **Skills System**: An extensible skill framework supporting custom research skills.
@@ -24,9 +24,9 @@ ResearchClaw consists of the following modules:
 ## Quick Start
 
 ```bash
-pip install researchclaw
-researchclaw init --defaults
-researchclaw app
+pip install mathclaw
+mathclaw init --defaults
+mathclaw app
 ```
 
 After installation, visit `http://localhost:8088` to access the console.

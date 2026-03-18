@@ -1,0 +1,37 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "知识点选择合理（二次函数顶点式）",
+        "学习动作具体（重做例题+每日练习）"
+      ],
+      "issues": [
+        "字数74字，低于80字要求",
+        "工具检测到全角标点问题（可能误报）"
+      ],
+      "first_conflicting_step": "最终输出字数未达到80-140字要求"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "知识点实用（分式方程）",
+        "操作指引清晰（符号检查+检验）"
+      ],
+      "issues": [
+        "字数70字，低于80字要求"
+      ],
+      "first_conflicting_step": "最终输出字数未达到80-140字要求"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两份候选解均未满足字数要求：求解器A 74字，求解器B 70字",
+    "长度冲突为最早问题点"
+  ],
+  "recommended_winner": "none",
+  "revision_needed": true
+}

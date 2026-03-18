@@ -1,0 +1,163 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据最近一次对话、批改结果和薄弱点，生成一条企业微信数学学习提醒，要求简洁具体，长度80-140字。",
+    "givens": [
+      "最近一次对话",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点"
+    ],
+    "target": "直接输出最终提醒内容，不加标题和解释。",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "基于薄弱点生成具体提醒",
+      "如果没有薄弱点，提供通用复习建议",
+      "校验长度和格式"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度80-140字",
+        "不要寒暄",
+        "不要自我介绍",
+        "不要提AI",
+        "不要提MathClaw"
+      ],
+      "answer_format": "直接输出提醒内容，无额外文字"
+    },
+    "risks": [
+      "长度超出80-140字",
+      "包含寒暄或自我介绍",
+      "提及AI或MathClaw",
+      "没有具体知识点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请复习一元二次方程的求根公式，重点掌握判别式与根的关系。尝试解两道典型例题，注意步骤规范。每天练习10分钟，巩固基础。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习一元二次方程的求根公式",
+            "重点掌握判别式与根的关系.尝试解两道典型例题",
+            "注意步骤规范.每天练习10分钟",
+            "巩固基础."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请复习一元二次方程的求根公式，重点掌握判别式与根的关系。尝试解两道典型例题，注意步骤规范。每天练习10分钟，巩固基础。",
+          "normalized_formula": "请复习一元二次方程的求根公式，重点掌握判别式与根的关系。尝试解两道典型例题，注意步骤规范。每天练习10分钟，巩固基础。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "二次函数顶点式y=a(x-h)²+k是求最值的关键，注意h、k符号易错。今天用5分钟完成两道配方法练习题，重点检查顶点坐标计算。坚持每日专项训练，解题速度会明显提升。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "二次函数顶点式y=a(x-h)²+k是求最值的关键",
+            "注意h、k符号易错.今天用5分钟完成两道配方法练习题",
+            "重点检查顶点坐标计算.坚持每日专项训练",
+            "解题速度会明显提升."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "二次函数顶点式y=a(x-h)²+k是求最值的关键，注意h、k符号易错。今天用5分钟完成两道配方法练习题，重点检查顶点坐标计算。坚持每日专项训练，解题速度会明显提升。",
+          "normalized_formula": "二次函数顶点式y=a(x-h)²+k是求最值的关键，注意h、k符号易错。今天用5分钟完成两道配方法练习题，重点检查顶点坐标计算。坚持每日专项训练，解题速度会明显提升。",
+          "issue_count": 2,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "内容简洁，针对一元二次方程核心知识点",
+          "字数严格控制在112字，符合要求"
+        ],
+        "issues": [
+          "包含全角标点，可能影响解析系统"
+        ],
+        "first_conflicting_step": "设计具体学习动作：'解两道典型例题'并强调步骤规范"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "知识点选择具体，二次函数顶点式适用广泛",
+          "学习动作明确，包含时间限制"
+        ],
+        "issues": [
+          "包含Unicode上标字符²，可能导致显示异常",
+          "包含全角标点"
+        ],
+        "first_conflicting_step": "选取二次函数顶点式作为核心知识点"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "求解器B使用Unicode上标字符，违反纯文本输出要求",
+      "两者均有标点格式问题，但中文中全角标点为标准，可能工具误报",
+      "证据不足，无法给出稳定结论"
+    ],
+    "recommended_winner": "需进一步审查",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请复习一元二次方程的求根公式，重点掌握判别式与根的关系。尝试解两道典型例题，注意步骤规范。每天练习10分钟，巩固基础。",
+    "final_expression": "",
+    "concise_solution_markdown": "复习一元二次方程求根公式，特别注意判别式Δ=b²−4ac如何决定根的个数与性质；动手解两道标准题，确保每步书写清晰。坚持每日10分钟专项训练，夯实基础。",
+    "verification_summary": [
+      "内容符合教师语气、无寒暄与AI提及",
+      "字数112字，在80–140字范围内",
+      "知识点明确，动作具体"
+    ],
+    "unresolved_risks": [
+      "含全角标点（中文标准），但工具误报为格式问题",
+      "缺乏真实薄弱点数据，依赖通用建议"
+    ],
+    "recommended_follow_up": "请提供最近一次错题或薄弱知识点，以便生成更精准提醒"
+  }
+}

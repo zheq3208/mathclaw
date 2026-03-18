@@ -8,10 +8,10 @@ export interface SiteConfig {
 }
 
 const defaultConfig: SiteConfig = {
-  projectName: "ResearchClaw",
-  projectTaglineEn: "Your AI Research Assistant",
+  projectName: "MathClaw",
+  projectTaglineEn: "Your AI math learning assistant",
   projectTaglineZh: "你的 AI 科研助手",
-  repoUrl: "https://github.com/ymx10086/ResearchClaw",
+  repoUrl: "https://github.com/zheq3208/mathclaw",
   docsPath: "/docs/",
   showTestimonials: true,
 };

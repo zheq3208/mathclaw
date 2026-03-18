@@ -1,0 +1,30 @@
+{
+  "paper_title": "高二数学试题",
+  "questions": [
+    {
+      "question_id": "q1",
+      "question_text": "某质点沿直线运动，位移S(单位:m)与时间t(单位:s)之间的关系为S(t)=2t³-5t²，则当t=3s时该质点的瞬时速度为",
+      "options": [],
+      "student_answer": "B"
+    },
+    {
+      "question_id": "q2",
+      "question_text": "已知航天员选拔时要接受特殊环境的耐受性测试，主要包括前庭功能、超重耐力、失重飞行、飞行跳伞、着陆冲击五项。若这五项测试每天进行一项，连续5天完成，且超重耐力和失重飞行不能安排在相邻两天测试，则选拔测试的安排方案有",
+      "options": [],
+      "student_answer": "D"
+    },
+    {
+      "question_id": "q3",
+      "question_text": "已知函数f(x)=e^x -a lnx在区间(0,1)上单调递减，则a的最小值为",
+      "options": [],
+      "student_answer": "B"
+    },
+    {
+      "question_id": "q4",
+      "question_text": "若C_22^2 = C_22^x，则C_1^x + C_2^x + … + C_x^x的值为",
+      "options": [],
+      "student_answer": "D"
+    }
+  ],
+  "page_summary": ""
+}

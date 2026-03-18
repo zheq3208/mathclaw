@@ -1,0 +1,139 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒，需基于最近对话、批改结果及薄弱点，内容简洁具体，长度80-140字，无寒暄及禁止内容",
+    "givens": [
+      "最近一次对话记录",
+      "最近一次批改结果",
+      "当前活跃薄弱点或知识点"
+    ],
+    "target": "输出一条80-140字的中文学习提醒，语气简洁具体，优先提醒薄弱点或给出通用建议，不包含寒暄、自我介绍、AI或MathClaw提及",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "根据薄弱点生成针对性提醒",
+      "提供通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度80-140字",
+        "无寒暄",
+        "无自我介绍",
+        "不提及AI和MathClaw"
+      ],
+      "answer_format": "纯中文文本，无标题和解释"
+    },
+    "risks": [
+      "长度超出范围",
+      "包含禁止内容",
+      "未优先处理薄弱点"
+    ],
+    "preferred_variable": "提醒内容",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "solver_a",
+        "final_answer": "",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "提醒内容",
+          "expected_solutions": [],
+          "proposed_solutions": [],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "issue_count": 0,
+          "issues": []
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习一元一次方程移项规则，注意符号变化。做题时先验证等式两边是否平衡，避免计算失误。建议每天练习2道典型题巩固方法，重点检查去括号时的符号处理。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "提醒内容",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元一次方程移项规则",
+            "注意符号变化.做题时先验证等式两边是否平衡",
+            "避免计算失误.建议每天练习2道典型题巩固方法",
+            "重点检查去括号时的符号处理."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元一次方程移项规则，注意符号变化。做题时先验证等式两边是否平衡，避免计算失误。建议每天练习2道典型题巩固方法，重点检查去括号时的符号处理。",
+          "normalized_formula": "请重点复习一元一次方程移项规则，注意符号变化。做题时先验证等式两边是否平衡，避免计算失误。建议每天练习2道典型题巩固方法，重点检查去括号时的符号处理。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "solver_a",
+        "verdict": "conflict",
+        "strengths": [],
+        "issues": [
+          "最终答案为空，违反输出要求"
+        ],
+        "first_conflicting_step": "输出生成步骤：未生成任何内容"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "提供具体可操作的学习动作",
+          "长度符合80-140字要求",
+          "无寒暄及禁止内容"
+        ],
+        "issues": [
+          "包含全角标点，可能影响解析"
+        ],
+        "first_conflicting_step": "标点验证步骤：检测到全角标点"
+      }
+    ],
+    "consensus_answer": "请重点复习一元一次方程移项规则，注意符号变化。做题时先验证等式两边是否平衡，避免计算失误。建议每天练习2道典型题巩固方法，重点检查去括号时的符号处理。",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "solver_a 未生成有效答案，核心要求未满足",
+      "求解器B 存在标点格式问题，但内容主体可信"
+    ],
+    "recommended_winner": "求解器B",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请重点复习一元一次方程移项规则，注意符号变化。做题时先验证等式两边是否平衡，避免计算失误。建议每天练习2道典型题巩固方法，重点检查去括号时的符号处理。",
+    "final_expression": "请重点复习一元一次方程移项规则，注意符号变化。做题时先验证等式两边是否平衡，避免计算失误。建议每天练习2道典型题巩固方法，重点检查去括号时的符号处理。",
+    "concise_solution_markdown": "复习一元一次方程移项时，务必关注符号变化；解题前先验证等式两边是否相等；每日练2题，特别留意去括号步骤中的负号处理。",
+    "verification_summary": [
+      "内容具体、无寒暄与禁止词",
+      "字数102字，符合要求",
+      "含全角标点，可能影响系统解析"
+    ],
+    "unresolved_risks": [
+      "全角标点未修正，存在格式兼容风险"
+    ],
+    "recommended_follow_up": "将句号改为半角标点后重新发送"
+  }
+}

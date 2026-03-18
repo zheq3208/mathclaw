@@ -1,0 +1,1 @@
+"""MathClaw app module."""

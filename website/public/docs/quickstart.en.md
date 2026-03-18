@@ -10,20 +10,20 @@
 ### Option 1: pip install (Recommended)
 
 ```bash
-pip install researchclaw
+pip install mathclaw
 ```
 
 ### Option 2: One-click install script (macOS / Linux)
 
 ```bash
-curl -fsSL https://researchclaw.dev/install.sh | bash
+curl -fsSL https://mathclaw.dev/install.sh | bash
 ```
 
 ### Option 3: Docker
 
 ```bash
-docker pull researchclaw/researchclaw:latest
-docker run -p 8088:8088 -v researchclaw-data:/app/working researchclaw/researchclaw:latest
+docker pull mathclaw/mathclaw:latest
+docker run -p 8088:8088 -v mathclaw-data:/app/working mathclaw/mathclaw:latest
 ```
 
 ## Initialize
@@ -31,7 +31,7 @@ docker run -p 8088:8088 -v researchclaw-data:/app/working researchclaw/researchc
 Before first use, initialize the working directory:
 
 ```bash
-researchclaw init --defaults
+mathclaw init --defaults
 ```
 
 This creates default configuration files and the working directory.
@@ -39,7 +39,7 @@ This creates default configuration files and the working directory.
 ## Start
 
 ```bash
-researchclaw app
+mathclaw app
 ```
 
 Visit `http://localhost:8088` to access the console.

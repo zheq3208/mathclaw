@@ -1,0 +1,33 @@
+{
+  "problem_summary": "根据用户最近学习情况生成企业微信数学学习提醒消息",
+  "givens": [
+    "最近一次对话",
+    "最近一次批改结果",
+    "当前活跃的薄弱点或知识点"
+  ],
+  "target": "输出一条80至140字的中文提醒消息，语气简洁具体，像老师提醒，无寒暄、无自我介绍、无AI提及、无MathClaw提及",
+  "question_type": "文本生成",
+  "candidate_methods": [
+    "优先提醒最值得复习的知识点",
+    "给出一个很短的学习动作",
+    "若无明确薄弱点则提供通用具体建议"
+  ],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [
+      "长度80-140字",
+      "无寒暄",
+      "无自我介绍",
+      "无AI提及",
+      "无MathClaw提及"
+    ],
+    "answer_format": "纯中文文本，无标题，无解释"
+  },
+  "risks": [
+    "消息长度超限",
+    "包含禁止内容",
+    "语气不专业"
+  ],
+  "preferred_variable": "提醒内容",
+  "requires_visual_reasoning": false
+}

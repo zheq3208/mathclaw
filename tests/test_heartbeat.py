@@ -2,7 +2,7 @@ import asyncio
 from pathlib import Path
 from types import SimpleNamespace
 
-from researchclaw.app.crons import heartbeat as hb
+from mathclaw.app.crons import heartbeat as hb
 
 
 class _Runner:

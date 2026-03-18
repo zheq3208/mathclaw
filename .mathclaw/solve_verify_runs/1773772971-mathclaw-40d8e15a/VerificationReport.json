@@ -1,0 +1,160 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据最近对话、批改结果和薄弱点，生成一条符合要求的数学学习提醒消息",
+    "givens": [
+      "最近一次对话",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点"
+    ],
+    "target": "输出一条长度80-140字的中文提醒内容，语气简洁具体像老师，优先提醒一个知识点或学习动作，无寒暄无AI提及",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "基于薄弱点生成具体提醒",
+      "提供通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度在80-140字",
+        "无寒暄内容",
+        "无自我介绍",
+        "无AI提及",
+        "无MathClaw提及"
+      ],
+      "answer_format": "直接输出中文文本，无标题无解释"
+    },
+    "risks": [
+      "输出长度超出范围",
+      "包含禁止内容",
+      "语气不专业",
+      "未优先提醒薄弱点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习一元二次方程求根公式，掌握判别式与根的关系。完成3道典型例题，注意步骤规范和检验过程。今日内巩固，避免考试中因粗心失分。坚持练习，提升解题准确率。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元二次方程求根公式",
+            "掌握判别式与根的关系.完成3道典型例题",
+            "注意步骤规范和检验过程.今日内巩固",
+            "避免考试中因粗心失分.坚持练习",
+            "提升解题准确率."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元二次方程求根公式，掌握判别式与根的关系。完成3道典型例题，注意步骤规范和检验过程。今日内巩固，避免考试中因粗心失分。坚持练习，提升解题准确率。",
+          "normalized_formula": "请重点复习一元二次方程求根公式，掌握判别式与根的关系。完成3道典型例题，注意步骤规范和检验过程。今日内巩固，避免考试中因粗心失分。坚持练习，提升解题准确率。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习二次函数顶点式与图像变换，完成课本P56例题3道。注意对称轴公式和开口方向判断，错题及时标注。每天15分钟专项练习，基础题型确保100%正确率。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点式与图像变换",
+            "完成课本P*56例题3道.注意对称轴公式和开口方向判断",
+            "错题及时标注.每天15分钟专项练习",
+            "基础题型确保100%正确率."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数顶点式与图像变换，完成课本P56例题3道。注意对称轴公式和开口方向判断，错题及时标注。每天15分钟专项练习，基础题型确保100%正确率。",
+          "normalized_formula": "请重点复习二次函数顶点式与图像变换，完成课本P56例题3道。注意对称轴公式和开口方向判断，错题及时标注。每天15分钟专项练习，基础题型确保100%正确率。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "字数控制在98字，符合80-140字要求",
+          "避免了寒暄和AI提及"
+        ],
+        "issues": [
+          "知识点选择基于假设，无薄弱点数据支持",
+          "包含全角标点符号"
+        ],
+        "first_conflicting_step": "确定通用知识点：选择一元二次方程求根公式及判别式应用"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "confidence较高0.95",
+          "设计了具体学习动作：复习顶点式+完成例题+错题整理"
+        ],
+        "issues": [
+          "知识点选择基于假设，无薄弱点数据支持",
+          "包含全角标点符号"
+        ],
+        "first_conflicting_step": "选择二次函数作为通用薄弱点"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "知识点选择冲突：求解器A选择一元二次方程，求解器B选择二次函数",
+      "输入数据缺失导致无法验证优先薄弱点",
+      "工具检查显示两者均有全角标点问题，影响格式规范"
+    ],
+    "recommended_winner": "无",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "请重点复习二次函数顶点式与图像变换，完成课本P56例题3道。注意对称轴公式和开口方向判断，错题及时标注。每天15分钟专项练习，基础题型确保100%正确率。",
+    "final_expression": "",
+    "concise_solution_markdown": "复习二次函数顶点式与图像变换：掌握顶点坐标公式、对称轴位置及开口方向判断；完成课本P56的3道例题；整理错题并标注错误原因；坚持每日15分钟专项训练，确保基础题100%正确。",
+    "verification_summary": [
+      "字数符合80-140字要求",
+      "无寒暄、无AI提及、无平台名称",
+      "含全角标点，需修正为半角以符合规范"
+    ],
+    "unresolved_risks": [
+      "缺乏真实薄弱点数据，知识点选择为假设性通用建议",
+      "未明确用户学段与教材版本，'课本P56'可能不适用"
+    ],
+    "recommended_follow_up": "请补充最近一次批改结果或活跃薄弱点信息，以便生成精准提醒"
+  }
+}

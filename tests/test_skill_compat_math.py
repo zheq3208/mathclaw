@@ -1,4 +1,4 @@
-from researchclaw.agents.skill_compat import SkillDoc, select_relevant_skills
+from mathclaw.agents.skill_compat import SkillDoc, select_relevant_skills
 
 
 def test_select_relevant_skills_prefers_executable_tooling() -> None:

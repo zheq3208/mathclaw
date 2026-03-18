@@ -1,6 +1,6 @@
-# ResearchClaw Console
+# MathClaw Console
 
-Minimal web console for ResearchClaw, built with React + Vite.
+Minimal web console for MathClaw, built with React + Vite.
 
 ## Features
 
@@ -31,4 +31,4 @@ npm run build
 
 Build output is written to `console/dist`.
 
-The backend app (`src/researchclaw/app/_app.py`) automatically serves this folder when available.
+The backend app (`src/mathclaw/app/_app.py`) automatically serves this folder when available.

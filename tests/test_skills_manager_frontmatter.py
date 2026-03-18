@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.skills_manager import _parse_skill_md, _read_skill_info
+from mathclaw.agents.skills_manager import _parse_skill_md, _read_skill_info
 
 
 def test_parse_skill_md_yaml_frontmatter() -> None:

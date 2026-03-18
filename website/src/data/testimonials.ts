@@ -19,10 +19,10 @@ export const MOCK_TESTIMONIALS: TestimonialItem[] = [
   {
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=alex",
     quoteEn:
-      "ResearchClaw tracks new ArXiv papers in my field every day and pushes " +
+      "MathClaw tracks new ArXiv papers in my field every day and pushes " +
       "summaries to Feishu. Saves me hours of manual browsing.",
     quoteZh:
-      "ResearchClaw 每天自动追踪我关注领域的 ArXiv 新论文，推摘要到飞书，省了大量手动浏览时间。",
+      "MathClaw 每天自动追踪我关注领域的 ArXiv 新论文，推摘要到飞书，省了大量手动浏览时间。",
     username: "@researcher_a",
     url: "#",
   },

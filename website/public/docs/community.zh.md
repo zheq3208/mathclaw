@@ -1,12 +1,12 @@
 # 社区
 
-欢迎加入 ResearchClaw 社区！
+欢迎加入 MathClaw 社区！
 
 ## 参与方式
 
 ### GitHub
 
-- [项目仓库](https://github.com/MingxinYang/ResearchClaw) — 源码、Issues、Pull Requests
+- [项目仓库](https://github.com/MingxinYang/MathClaw) — 源码、Issues、Pull Requests
 - 提交 Issue 报告 Bug 或提出功能建议
 - 提交 Pull Request 贡献代码
 

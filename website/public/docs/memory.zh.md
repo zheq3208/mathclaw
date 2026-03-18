@@ -1,6 +1,6 @@
 # Memory 记忆系统
 
-ResearchClaw 的 Memory 系统管理对话历史和上下文信息，确保 AI 助手能够理解对话的连续性。
+MathClaw 的 Memory 系统管理对话历史和上下文信息，确保 AI 助手能够理解对话的连续性。
 
 ## 工作原理
 

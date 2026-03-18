@@ -1,0 +1,14 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "run_dir": "/root/autodl-tmp/mathclaw/.mathclaw/solve_verify_runs/1773769371-mathclaw-58252bd8",
+  "original_prompt": "",
+  "model": "qwen3-vl-plus",
+  "candidate_count": 2,
+  "winner": "求解器A",
+  "status": "pass",
+  "planner_path": "/root/autodl-tmp/mathclaw/.mathclaw/solve_verify_runs/1773769371-mathclaw-58252bd8/planner.json",
+  "candidates_path": "/root/autodl-tmp/mathclaw/.mathclaw/solve_verify_runs/1773769371-mathclaw-58252bd8/candidates.json",
+  "critic_path": "/root/autodl-tmp/mathclaw/.mathclaw/solve_verify_runs/1773769371-mathclaw-58252bd8/critic.json",
+  "Solved_md_path": "/root/autodl-tmp/mathclaw/.mathclaw/solve_verify_runs/1773769371-mathclaw-58252bd8/Solved.md",
+  "VerificationReport_json_path": "/root/autodl-tmp/mathclaw/.mathclaw/solve_verify_runs/1773769371-mathclaw-58252bd8/VerificationReport.json"
+}

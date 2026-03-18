@@ -1,0 +1,391 @@
+"""LLM provider management routes."""
+
+from __future__ import annotations
+
+import logging
+from typing import Any
+from urllib.error import URLError
+from urllib.request import Request as UrlRequest, urlopen
+
+from fastapi import APIRouter, HTTPException, Request
+from pydantic import BaseModel, Field
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter()
+
+
+class ProviderConfig(BaseModel):
+    """Provider configuration schema."""
+
+    name: str
+    provider_type: str  # openai | anthropic | ollama | dashscope
+    api_key: str | None = None
+    base_url: str | None = None
+    model_name: str | None = None
+    enabled: bool = False
+    extra: dict[str, Any] = Field(default_factory=dict)
+
+
+class ProviderSettingsUpdate(BaseModel):
+    """Partial settings update for a provider."""
+
+    provider_type: str | None = None
+    api_key: str | None = None
+    base_url: str | None = None
+    model_name: str | None = None
+    extra: dict[str, Any] | None = None
+
+
+class ProviderTestResponse(BaseModel):
+    success: bool
+    message: str
+
+
+class DiscoverModelsResponse(BaseModel):
+    success: bool
+    message: str
+    models: list[dict[str, str]] = Field(default_factory=list)
+
+
+def _mask(providers: list[dict]) -> list[dict]:
+    """Mask API keys for display."""
+    for p in providers:
+        key = p.get("api_key") or ""
+        if key:
+            p["api_key"] = key[:8] + "..." if len(key) > 8 else "***"
+    return providers
+
+
+@router.get("")
+async def list_providers():
+    """List configured LLM providers (API keys masked)."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        providers = store.list_providers()
+        return {"providers": _mask(providers)}
+    except ImportError:
+        return {"providers": [], "note": "Provider store not yet initialized"}
+
+
+@router.post("")
+async def add_provider(config: ProviderConfig):
+    """Add a new provider configuration."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        store.save_provider(config.model_dump())
+        return {"status": "ok", "provider": config.name}
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )
+
+
+@router.post("/{name}/enable")
+async def enable_provider(name: str, req: Request):
+    """Set this provider as the active one; disable all others."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        store.set_enabled(name)
+        return {"status": "ok", "name": name, "enabled": True}
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Provider '{name}' not found",
+        )
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )
+
+
+@router.post("/{name}/disable")
+async def disable_provider(name: str, req: Request):
+    """Disable this provider without affecting others."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        store.set_disabled(name)
+        return {"status": "ok", "name": name, "enabled": False}
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Provider '{name}' not found",
+        )
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )
+
+
+@router.post("/{name}/settings")
+async def update_provider_settings(name: str, update: ProviderSettingsUpdate):
+    """Update settings of an existing provider (partial update)."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        fields = update.model_dump(exclude_none=True)
+        if fields.get("api_key") == "":
+            fields.pop("api_key")
+        updated = store.update_provider_settings(name, fields)
+        result = updated.to_dict()
+        if result.get("api_key"):
+            result["api_key"] = (
+                result["api_key"][:8] + "..."
+                if len(result["api_key"]) > 8
+                else "***"
+            )
+        return {"status": "ok", "provider": result}
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Provider '{name}' not found",
+        )
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )
+
+
+@router.put("/{name}")
+async def update_provider_put(name: str, update: ProviderSettingsUpdate):
+    """Update settings via PUT (alias for POST /{name}/settings)."""
+    return await update_provider_settings(name, update)
+
+
+@router.post("/{name}/apply")
+async def apply_provider(name: str, req: Request):
+    """Apply the provider to the running agent (hot-reload).
+
+    Reads the full config (with real API key) from store and restarts the agent.
+    """
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        provider = store.get_provider(name)
+        if provider is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Provider '{name}' not found",
+            )
+
+        runner = getattr(req.app.state, "runner", None)
+        if runner is None:
+            raise HTTPException(
+                status_code=503,
+                detail="Agent runner not available",
+            )
+
+        model_config = {
+            "provider": provider.provider_type,
+            "model_name": provider.model_name or "",
+            "api_key": provider.api_key or "",
+            "base_url": provider.base_url or "",
+        }
+        if isinstance(provider.extra, dict) and provider.extra:
+            model_config["extra"] = provider.extra
+            if "supports_vision" in provider.extra:
+                model_config["supports_vision"] = bool(
+                    provider.extra.get("supports_vision"),
+                )
+        await runner.apply_provider(model_config)
+        # Also set enabled flag in store
+        store.set_enabled(name)
+        return {"status": "ok", "applied": name}
+    except HTTPException:
+        raise
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )
+    except Exception as e:
+        logger.exception("Failed to apply provider")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/{name}")
+async def remove_provider(name: str):
+    """Remove a provider."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        store.remove_provider(name)
+        return {"status": "deleted", "provider": name}
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Provider {name} not found",
+        )
+
+
+@router.get("/models")
+async def list_available_models():
+    """List available models across all providers."""
+    try:
+        from mathclaw.providers.registry import ModelRegistry
+
+        registry = ModelRegistry()
+        return {"models": registry.list_models()}
+    except ImportError:
+        return {
+            "models": [
+                {"name": "gpt-5", "provider": "openai"},
+                {"name": "gpt-5-mini", "provider": "openai"},
+                {"name": "gpt-5-nano", "provider": "openai"},
+                {"name": "gpt-4o", "provider": "openai"},
+                {"name": "gpt-4o-mini", "provider": "openai"},
+                {"name": "claude-sonnet-4-20250514", "provider": "anthropic"},
+                {"name": "deepseek-chat", "provider": "deepseek"},
+                {"name": "qwen-max", "provider": "dashscope"},
+            ],
+            "note": "Default model list (provider store not initialized)",
+        }
+
+
+def _safe_join_url(base_url: str, suffix: str) -> str:
+    value = (base_url or "").rstrip("/")
+    return f"{value}{suffix}"
+
+
+@router.post("/{name}/test", response_model=ProviderTestResponse)
+async def test_provider(name: str):
+    """Lightweight provider connectivity/config test."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        provider = store.get_provider(name)
+        if provider is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Provider '{name}' not found",
+            )
+
+        ptype = (provider.provider_type or "").lower()
+        base_url = provider.base_url or ""
+
+        if ptype != "ollama" and not provider.api_key:
+            return ProviderTestResponse(
+                success=False,
+                message="API key is empty",
+            )
+
+        # Quick network probe when base_url is available.
+        if base_url:
+            probe_url = (
+                _safe_join_url(base_url, "/models")
+                if ptype != "ollama"
+                else _safe_join_url(base_url.replace("/v1", ""), "/api/tags")
+            )
+            req = UrlRequest(probe_url, method="GET")
+            if provider.api_key and ptype != "ollama":
+                req.add_header("Authorization", f"Bearer {provider.api_key}")
+            try:
+                with urlopen(req, timeout=6) as resp:  # nosec - user config URL
+                    if 200 <= resp.status < 500:
+                        return ProviderTestResponse(
+                            success=True,
+                            message=f"Connected ({resp.status})",
+                        )
+            except URLError as exc:
+                return ProviderTestResponse(
+                    success=False,
+                    message=f"Connection failed: {exc}",
+                )
+            except Exception as exc:
+                return ProviderTestResponse(
+                    success=False,
+                    message=f"Probe error: {exc}",
+                )
+
+        return ProviderTestResponse(
+            success=True,
+            message="Configuration looks valid",
+        )
+    except HTTPException:
+        raise
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )
+
+
+@router.post("/{name}/discover-models", response_model=DiscoverModelsResponse)
+async def discover_models(name: str):
+    """Discover candidate models for a provider."""
+    try:
+        from mathclaw.providers.store import ProviderStore
+
+        store = ProviderStore()
+        provider = store.get_provider(name)
+        if provider is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Provider '{name}' not found",
+            )
+
+        ptype = (provider.provider_type or "").lower()
+        if ptype == "ollama":
+            try:
+                from mathclaw.providers.ollama_manager import OllamaModelManager
+                from mathclaw.providers.store import get_ollama_host
+
+                models = [
+                    {"name": m.name, "provider": "ollama"}
+                    for m in OllamaModelManager.list_models(
+                        host=get_ollama_host(),
+                    )
+                ]
+                return DiscoverModelsResponse(
+                    success=True,
+                    message=f"Discovered {len(models)} models from Ollama",
+                    models=models,
+                )
+            except Exception as exc:
+                return DiscoverModelsResponse(
+                    success=False,
+                    message=f"Ollama discovery failed: {exc}",
+                    models=[],
+                )
+
+        # Fallback to static registry list for remote providers.
+        from mathclaw.providers.registry import ModelRegistry
+
+        models = [
+            item
+            for item in ModelRegistry().list_models()
+            if str(item.get("provider", "")).lower() == ptype
+        ]
+        return DiscoverModelsResponse(
+            success=True,
+            message=f"Returned {len(models)} built-in model suggestions",
+            models=models,
+        )
+    except HTTPException:
+        raise
+    except ImportError:
+        raise HTTPException(
+            status_code=500,
+            detail="Provider store not available",
+        )

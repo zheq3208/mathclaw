@@ -1,0 +1,38 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "内容简洁，针对一元二次方程核心知识点",
+        "字数严格控制在112字，符合要求"
+      ],
+      "issues": [
+        "包含全角标点，可能影响解析系统"
+      ],
+      "first_conflicting_step": "设计具体学习动作：'解两道典型例题'并强调步骤规范"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "知识点选择具体，二次函数顶点式适用广泛",
+        "学习动作明确，包含时间限制"
+      ],
+      "issues": [
+        "包含Unicode上标字符²，可能导致显示异常",
+        "包含全角标点"
+      ],
+      "first_conflicting_step": "选取二次函数顶点式作为核心知识点"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "求解器B使用Unicode上标字符，违反纯文本输出要求",
+    "两者均有标点格式问题，但中文中全角标点为标准，可能工具误报",
+    "证据不足，无法给出稳定结论"
+  ],
+  "recommended_winner": "需进一步审查",
+  "revision_needed": true
+}

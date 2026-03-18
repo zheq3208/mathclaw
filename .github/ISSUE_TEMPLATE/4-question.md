@@ -12,7 +12,7 @@ assignees: []
 
 ## Context
 
-[Relevant setup: ResearchClaw version, channel, skill, or use case. This helps others answer.]
+[Relevant setup: MathClaw version, channel, skill, or use case. This helps others answer.]
 
 ## Tried so far
 
@@ -20,4 +20,4 @@ assignees: []
 
 ---
 
-**Note:** For general questions or ideas, [GitHub Discussions](https://github.com/MingxinYang/ResearchClaw/discussions) may get more visibility. Use this template when the answer might lead to a bug report, feature request, or doc change.
+**Note:** For general questions or ideas, [GitHub Discussions](https://github.com/MingxinYang/mathclaw/discussions) may get more visibility. Use this template when the answer might lead to a bug report, feature request, or doc change.

@@ -3,14 +3,14 @@ requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "researchclaw"
+name = "mathclaw"
 dynamic = ["version"]
-description = "ResearchClaw – Your AI Research Assistant. An intelligent agent-powered assistant designed specifically for academic researchers, supporting paper search, literature review, citation management, data analysis, and more."
+description = "MathClaw ? An AI-first math learning assistant for OCR-based problem solving, verification, guided explanation, weakness diagnosis, and variant generation."
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.10, <3.14"
 authors = [
-    { name = "ResearchClaw Team" },
+    { name = "MathClaw Team" },
 ]
 keywords = [
     "ai-assistant",
@@ -100,7 +100,7 @@ ollama = [
     "ollama>=0.1",
 ]
 all = [
-    "researchclaw[latex,local]",
+    "mathclaw[latex,local]",
 ]
 dev = [
     "pre-commit>=3.0",
@@ -112,23 +112,23 @@ dev = [
 ]
 
 [project.scripts]
-researchclaw = "researchclaw.cli.main:cli"
+mathclaw = "mathclaw.cli.main:cli"
 
 [project.urls]
-Homepage = "https://github.com/researchclaw/researchclaw"
-Documentation = "https://researchclaw.github.io"
-Repository = "https://github.com/researchclaw/researchclaw"
-Issues = "https://github.com/researchclaw/researchclaw/issues"
+Homepage = "https://github.com/zheq3208/mathclaw"
+Documentation = "https://github.com/zheq3208/mathclaw#readme"
+Repository = "https://github.com/zheq3208/mathclaw"
+Issues = "https://github.com/zheq3208/mathclaw/issues"
 
 # ── Setuptools configuration ─────────────────────────────────────
 [tool.setuptools.dynamic]
-version = { attr = "researchclaw.__version__.__version__" }
+version = { attr = "mathclaw.__version__.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-researchclaw = [
+mathclaw = [
     "console/**/*",
     "agents/md_files/**/*",
     "agents/skills/**/*",
@@ -145,7 +145,7 @@ select = ["E", "F", "W", "I", "UP", "B", "SIM"]
 ignore = ["E501"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["researchclaw"]
+known-first-party = ["mathclaw"]
 
 # ── Pytest configuration ─────────────────────────────────────────
 [tool.pytest.ini_options]

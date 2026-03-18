@@ -1,6 +1,6 @@
 # Contributing
 
-Thank you for your interest in contributing to ResearchClaw!
+Thank you for your interest in contributing to MathClaw!
 
 ## Development Setup
 
@@ -8,8 +8,8 @@ Thank you for your interest in contributing to ResearchClaw!
 
 ```bash
 # Clone the repository
-git clone https://github.com/MingxinYang/ResearchClaw.git
-cd ResearchClaw
+git clone https://github.com/MingxinYang/MathClaw.git
+cd MathClaw
 
 # Create virtual environment
 python -m venv .venv

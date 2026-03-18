@@ -1,10 +1,10 @@
 # Console
 
-ResearchClaw includes a built-in web console for visual management.
+MathClaw includes a built-in web console for visual management.
 
 ## Access
 
-After starting ResearchClaw, visit `http://localhost:8088` to access the console.
+After starting MathClaw, visit `http://localhost:8088` to access the console.
 
 ## Features
 

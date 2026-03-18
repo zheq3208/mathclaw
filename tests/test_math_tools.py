@@ -1,12 +1,12 @@
-from researchclaw.agents.skills.mastery_updater import register as mastery_register
-from researchclaw.agents.skills.micro_quiz import register as micro_quiz_register
-from researchclaw.agents.skills.review_scheduler import register as review_scheduler_register
-from researchclaw.agents.skills.problem_json_normalizer import (
+from mathclaw.agents.skills.mastery_updater import register as mastery_register
+from mathclaw.agents.skills.micro_quiz import register as micro_quiz_register
+from mathclaw.agents.skills.review_scheduler import register as review_scheduler_register
+from mathclaw.agents.skills.problem_json_normalizer import (
     register as normalizer_register,
 )
-from researchclaw.agents.tools import math_learning
-from researchclaw.agents.tools.math_input import normalize_problem_json
-from researchclaw.agents.tools.math_learning import (
+from mathclaw.agents.tools import math_learning
+from mathclaw.agents.tools.math_input import normalize_problem_json
+from mathclaw.agents.tools.math_learning import (
     cancel_review_reminder,
     choose_hint_level,
     diagnose_math_weakness,
@@ -18,7 +18,7 @@ from researchclaw.agents.tools.math_learning import (
     schedule_review_reminder,
     update_math_mastery,
 )
-from researchclaw.agents.tools.math_reasoning import (
+from mathclaw.agents.tools.math_reasoning import (
     sympy_check_equivalence,
     sympy_simplify_expression,
     sympy_solve_equation,

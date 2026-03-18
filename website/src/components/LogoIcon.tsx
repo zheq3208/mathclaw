@@ -1,5 +1,5 @@
 /**
- * ResearchClaw branding logo (logo.png).
+ * MathClaw branding logo (logo.png).
  */
 interface LogoIconProps {
   size: number;

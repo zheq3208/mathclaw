@@ -1,0 +1,41 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "conflict",
+      "strengths": [
+        "内容简洁",
+        "无寒暄",
+        "聚焦知识点"
+      ],
+      "issues": [
+        "字数不足80字",
+        "全角标点可能影响解析"
+      ],
+      "first_conflicting_step": "控制字数在100字左右时未达标"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "conflict",
+      "strengths": [
+        "字数符合范围",
+        "提供具体学习动作"
+      ],
+      "issues": [
+        "包含问候语'同学们'",
+        "使用Unicode上标下标",
+        "隐式乘法表达"
+      ],
+      "first_conflicting_step": "撰写提醒草稿时加入问候语"
+    }
+  ],
+  "consensus_answer": "需调整内容以满足字数及合规要求",
+  "consensus_expression": "需调整内容以满足字数及合规要求",
+  "conflict_summary": [
+    "求解器A输出字数66字，低于80字下限",
+    "求解器B包含问候语'同学们'，违反无寒暄要求",
+    "求解器B使用非标准数学符号"
+  ],
+  "recommended_winner": "求解器A",
+  "revision_needed": true
+}

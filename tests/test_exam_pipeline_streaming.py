@@ -2,9 +2,9 @@ import asyncio
 import json
 from pathlib import Path
 
-import researchclaw.app.runner.manager as manager_module
-import researchclaw.app.runner.session as session_module
-from researchclaw.agents.react_agent import ScholarAgent
+import mathclaw.app.runner.manager as manager_module
+import mathclaw.app.runner.session as session_module
+from mathclaw.agents.react_agent import ScholarAgent
 
 
 class _DummyMemory:

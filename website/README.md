@@ -1,6 +1,6 @@
-# ResearchClaw Website
+# MathClaw Website
 
-Static site (Vite + React) for the ResearchClaw product. Built output is served with a minimal Node server that supports SPA fallback.
+Static site (Vite + React) for the MathClaw product. Built output is served with a minimal Node server that supports SPA fallback.
 
 ## Prerequisites
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.tools import solve_verify_q3vl as mod
+from mathclaw.agents.tools import solve_verify_q3vl as mod
 
 
 def test_candidate_exact_check_passes_simple_equation() -> None:

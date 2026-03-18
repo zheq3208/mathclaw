@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🔬 ResearchClaw
+# 🔬 MathClaw
 
 **你的 AI 科研助手**
 
@@ -15,9 +15,9 @@
 
 ---
 
-## ✨ 什么是 ResearchClaw？
+## ✨ 什么是 MathClaw？
 
-ResearchClaw 是一个运行在**你自己机器上**的 AI 科研助手。基于 [AgentScope](https://github.com/modelscope/agentscope) 框架构建，使用 ReAct Agent + 专业科研工具，帮助你：
+MathClaw 是一个运行在**你自己机器上**的 AI 科研助手。基于 [AgentScope](https://github.com/modelscope/agentscope) 框架构建，使用 ReAct Agent + 专业科研工具，帮助你：
 
 - 📄 **搜索与发现论文** — ArXiv、Semantic Scholar、Google Scholar
 - 📚 **管理参考文献** — BibTeX 导入/导出、引用网络探索
@@ -40,15 +40,15 @@ pip install -e ".[dev]"
 ### 初始化
 
 ```bash
-researchclaw init --defaults --accept-security
+mathclaw init --defaults --accept-security
 ```
 
-这将设置你的工作目录 (`~/.researchclaw`) 并配置 LLM 提供商。
+这将设置你的工作目录 (`~/.mathclaw`) 并配置 LLM 提供商。
 
 ### 启动
 
 ```bash
-researchclaw app
+mathclaw app
 ```
 
 在浏览器中打开 [http://127.0.0.1:8088/](http://127.0.0.1:8088/)。
@@ -58,7 +58,7 @@ researchclaw app
 先启动后端：
 
 ```bash
-researchclaw app
+mathclaw app
 ```
 
 在另一个终端启动前端开发服务器：
@@ -84,7 +84,7 @@ npm run build
 ### 一键安装
 
 ```bash
-curl -fsSL https://researchclaw.github.io/install.sh | bash
+curl -fsSL https://mathclaw.github.io/install.sh | bash
 ```
 
 ## 🏗️ 架构
@@ -93,7 +93,7 @@ curl -fsSL https://researchclaw.github.io/install.sh | bash
 用户 ─→ 控制台 (Web UI) / CLI / Slack / 邮件
           │
           ▼
-     ResearchClaw App (FastAPI + Uvicorn)
+     MathClaw App (FastAPI + Uvicorn)
           │
           ▼
      ScholarAgent (ReActAgent)
@@ -124,7 +124,7 @@ curl -fsSL https://researchclaw.github.io/install.sh | bash
 
 ## 📦 可扩展技能
 
-ResearchClaw 内置了面向科研的技能，且支持自定义扩展：
+MathClaw 内置了面向科研的技能，且支持自定义扩展：
 
 - **arxiv** — 高级 ArXiv 搜索与分类过滤
 - **paper_summarizer** — 多级论文总结
@@ -132,15 +132,15 @@ ResearchClaw 内置了面向科研的技能，且支持自定义扩展：
 - **citation_network** — 探索引用图谱
 - **experiment_tracker** — 记录实验参数和结果
 - **figure_generator** — 创建出版级图表
-- **research_notes** — 结构化笔记与标签管理
+- **math_notes** — 结构化笔记与标签管理
 - **pdf** — 高级 PDF 处理
 
 ## ⚙️ 配置
 
-ResearchClaw 将所有数据存储在本地 `~/.researchclaw/`：
+MathClaw 将所有数据存储在本地 `~/.mathclaw/`：
 
 ```
-~/.researchclaw/
+~/.mathclaw/
 ├── config.json          # 主配置
 ├── .env                 # API 密钥
 ├── jobs.json            # 定时任务
@@ -163,5 +163,5 @@ Apache License 2.0 — 详见 [LICENSE](LICENSE)。
 
 ## 🙏 致谢
 
-ResearchClaw 在通道、定时任务与控制台交互等设计上参考了 [CoPaw](https://github.com/agentscope-ai/CoPaw) 的架构。  
+MathClaw 在通道、定时任务与控制台交互等设计上参考了 [CoPaw](https://github.com/agentscope-ai/CoPaw) 的架构。  
 感谢 CoPaw 项目提供了可落地、经过验证的实现思路。

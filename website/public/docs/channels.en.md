@@ -1,6 +1,6 @@
 # Channels
 
-Channels bridge ResearchClaw to external IM platforms. By configuring channels, you can interact with the AI assistant from your favorite messaging tools.
+Channels bridge MathClaw to external IM platforms. By configuring channels, you can interact with the AI assistant from your favorite messaging tools.
 
 ## Supported Channels
 

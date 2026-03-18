@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from researchclaw.agents.hooks.bootstrap import BootstrapHook
+from mathclaw.agents.hooks.bootstrap import BootstrapHook
 
 
 class _DummyAgent:

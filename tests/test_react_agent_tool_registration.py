@@ -1,6 +1,6 @@
 import asyncio
 
-from researchclaw.agents.react_agent import ScholarAgent
+from mathclaw.agents.react_agent import ScholarAgent
 
 
 def _make_agent(namesake_strategy: str) -> ScholarAgent:

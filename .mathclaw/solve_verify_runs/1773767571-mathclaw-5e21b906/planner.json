@@ -1,0 +1,34 @@
+{
+  "problem_summary": "根据最近一次对话、批改结果和薄弱点，生成一条企业微信数学学习提醒，要求简洁具体，长度80-140字。",
+  "givens": [
+    "最近一次对话",
+    "最近一次批改结果",
+    "当前活跃的薄弱点或知识点"
+  ],
+  "target": "直接输出最终提醒内容，不加标题和解释。",
+  "question_type": "文本生成",
+  "candidate_methods": [
+    "基于薄弱点生成具体提醒",
+    "如果没有薄弱点，提供通用复习建议",
+    "校验长度和格式"
+  ],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [
+      "长度80-140字",
+      "不要寒暄",
+      "不要自我介绍",
+      "不要提AI",
+      "不要提MathClaw"
+    ],
+    "answer_format": "直接输出提醒内容，无额外文字"
+  },
+  "risks": [
+    "长度超出80-140字",
+    "包含寒暄或自我介绍",
+    "提及AI或MathClaw",
+    "没有具体知识点"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": false
+}

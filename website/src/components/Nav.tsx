@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, BookOpen, Github, Globe } from "lucide-react";
-import { ResearchClawMascot } from "./ResearchClawMascot";
+import { MathClawMascot } from "./MathClawMascot";
 import { t, type Lang } from "../i18n";
 
 interface NavProps {
@@ -60,7 +60,7 @@ export function Nav({
             className="nav-brand-logo"
             style={{ display: "flex" }}
           >
-            <ResearchClawMascot size={180} />
+            <MathClawMascot size={180} />
           </span>
         </Link>
         <div
@@ -97,7 +97,7 @@ export function Nav({
             target="_blank"
             rel="noopener noreferrer"
             className={linkClass}
-            title="ResearchClaw on GitHub"
+            title="MathClaw on GitHub"
           >
             <Github size={18} strokeWidth={1.5} aria-hidden />
             <span>{t(lang, "nav.github")}</span>
@@ -155,7 +155,7 @@ export function Nav({
           rel="noopener noreferrer"
           className={linkClass}
           onClick={() => setOpen(false)}
-          title="ResearchClaw on GitHub"
+          title="MathClaw on GitHub"
         >
           <Github size={18} /> {t(lang, "nav.github")}
         </a>

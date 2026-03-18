@@ -1,0 +1,29 @@
+{
+  "problem_summary": "根据最近一次对话、批改结果和薄弱点生成数学学习提醒",
+  "givens": [
+    "最近一次对话",
+    "最近一次批改结果",
+    "当前活跃的薄弱点或知识点"
+  ],
+  "target": "输出一条80到140字的中文提醒，语气简洁具体，优先提醒知识点或学习动作，无薄弱点时给通用建议，无寒暄等",
+  "question_type": "equation",
+  "candidate_methods": [
+    "长度控制在80到140字",
+    "不要寒暄,不要自我介绍,不要提自己是AI,不要提MathClaw"
+  ],
+  "exact_check_targets": {
+    "equation": "",
+    "expressions": [
+      "提醒内容长度",
+      "内容是否包含禁止元素"
+    ],
+    "answer_format": "纯文本，80到140字中文"
+  },
+  "risks": [
+    "长度超出范围",
+    "包含寒暄或自我介绍",
+    "提及AI或MathClaw"
+  ],
+  "preferred_variable": "",
+  "requires_visual_reasoning": false
+}

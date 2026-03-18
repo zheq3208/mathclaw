@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.tools import mess_to_clean_q3vl as mod
+from mathclaw.agents.tools import mess_to_clean_q3vl as mod
 
 
 def test_fuse_candidates_merges_consensus_boxes() -> None:

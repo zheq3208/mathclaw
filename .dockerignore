@@ -38,8 +38,8 @@ console/.vite
 node_modules
 **/node_modules
 **/dist
-!src/researchclaw/console/dist
-!src/researchclaw/console/dist/**
+!src/mathclaw/console/dist
+!src/mathclaw/console/dist/**
 **/.vite
 
 # Example and local config (mount at runtime instead)

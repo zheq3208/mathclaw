@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.skill_compat import (
+from mathclaw.agents.skill_compat import (
     SkillDoc,
     build_skill_context_prompt,
     explain_skill_selection,

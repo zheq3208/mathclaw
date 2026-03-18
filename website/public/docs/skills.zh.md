@@ -1,10 +1,10 @@
 # Skills
 
-Skills 是 ResearchClaw 的可扩展技能系统，为 AI 助手提供专业的科研能力。
+Skills 是 MathClaw 的可扩展技能系统，为 AI 助手提供专业的科研能力。
 
 ## 内置 Skills
 
-ResearchClaw 内置了多种科研相关技能：
+MathClaw 内置了多种科研相关技能：
 
 - **论文搜索**：在 ArXiv、Semantic Scholar 等平台搜索论文
 - **论文追踪**：定期追踪指定领域或关键词的最新论文

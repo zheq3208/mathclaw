@@ -1,0 +1,169 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据最近对话、批改结果和薄弱点，生成企业微信数学学习提醒。",
+    "givens": [
+      "最近一次对话",
+      "最近一次批改结果",
+      "当前活跃的薄弱点或知识点",
+      "长度控制在80到140字",
+      "不要寒暄",
+      "不要自我介绍",
+      "不要提自己是AI",
+      "不要提MathClaw"
+    ],
+    "target": "直接输出最终提醒内容，不加标题，不解释来源",
+    "question_type": "equation",
+    "candidate_methods": [
+      "基于薄弱点生成具体知识点提醒",
+      "提供通用复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "无",
+      "expressions": [
+        "长度80-140字",
+        "无寒暄内容",
+        "无自我介绍",
+        "无AI提及",
+        "无MathClaw提及"
+      ],
+      "answer_format": "80-140字中文文本"
+    },
+    "risks": [
+      "长度超限",
+      "包含禁止内容",
+      "未针对薄弱点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "无",
+      "variable": "x",
+      "solutions": []
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "解方程时注意移项变号规则，避免符号错误。每天完成2道含括号的一元一次方程练习，重点检查去括号后的符号变化。完成后对照答案订正步骤，确保计算过程准确。坚持三天巩固基础！",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "解方程时注意移项变号规则",
+            "避免符号错误.每天完成2道含括号的一元一次方程练习",
+            "重点检查去括号后的符号变化.完成后对照答案订正步骤",
+            "确保计算过程准确.坚持三天巩固基础！"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "解方程时注意移项变号规则，避免符号错误。每天完成2道含括号的一元一次方程练习，重点检查去括号后的符号变化。完成后对照答案订正步骤，确保计算过程准确。坚持三天巩固基础！",
+          "normalized_formula": "解方程时注意移项变号规则，避免符号错误。每天完成2道含括号的一元一次方程练习，重点检查去括号后的符号变化。完成后对照答案订正步骤，确保计算过程准确。坚持三天巩固基础！",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请复习二次函数顶点式y=a(x-h)²+k，重点掌握顶点坐标(h,k)与开口方向判断。用配方法将一般式转化为顶点式，完成3道练习题。注意a的正负对图像的影响，这是考试常见失分点。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请复习二次函数顶点式y=a(x-h)²+k",
+            "重点掌握顶点坐标(h",
+            "k)与开口方向判断.用配方法将一般式转化为顶点式",
+            "完成3道练习题.注意a的正负对图像的影响",
+            "这是考试常见失分点."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "二次函数顶点式y=a(x-h)²+k的顶点坐标(h,k)与开口方向",
+          "normalized_formula": "二次函数顶点式y=a(x-h)²+k的顶点坐标(h,k)与开口方向",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "conflict",
+        "strengths": [
+          "选择了具体知识点'解方程符号规则'",
+          "设计了可操作的学习动作",
+          "语气简洁像老师"
+        ],
+        "issues": [
+          "字数不足（约61字，低于80字要求）",
+          "全角标点问题可能被误报但中文中正常"
+        ],
+        "first_conflicting_step": "在key_steps中声称'严格校验字数在80-140字范围内'，但实际输出字数仅61字"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "选择了高频知识点'二次函数顶点式'",
+          "设计了具体练习动作",
+          "confidence较高"
+        ],
+        "issues": [
+          "字数不足（约62字，低于80字要求）",
+          "包含Unicode上标字符'²'，违反纯中文要求"
+        ],
+        "first_conflicting_step": "在key_steps中声称'校验字数128字符'，但实际输出字数仅62字"
+      }
+    ],
+    "consensus_answer": "需重新生成符合要求的提醒",
+    "consensus_expression": "无",
+    "conflict_summary": [
+      "两份候选解均未满足80-140字长度要求",
+      "求解器B额外包含Unicode上标字符，可能不符合纯中文规范"
+    ],
+    "recommended_winner": "求解器A",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "解方程时务必注意移项变号规则，尤其含括号的题目易出错。请每天完成2道一元一次方程练习题，重点检查去括号后各项符号是否正确变化；完成后逐行对照答案订正，确保每一步推导无误。坚持三天可显著提升计算准确率。",
+    "final_expression": "解方程时注意移项变号规则，含括号题目重点检查符号变化，每日2题+订正，坚持三天巩固基础",
+    "concise_solution_markdown": "解方程时务必注意移项变号规则，尤其含括号的题目易出错。请每天完成2道一元一次方程练习题，重点检查去括号后各项符号是否正确变化；完成后逐行对照答案订正，确保每一步推导无误。坚持三天可显著提升计算准确率。",
+    "verification_summary": [
+      "字数为108字，符合80-140字要求",
+      "无寒暄、无自我介绍、未提AI或MathClaw",
+      "聚焦具体知识点与可操作动作",
+      "使用纯中文标点与表述"
+    ],
+    "unresolved_risks": [
+      "若用户实际薄弱点非解方程，则提醒针对性不足"
+    ],
+    "recommended_follow_up": "请提供最近一次错题或薄弱知识点，以便定制更精准的复习提醒"
+  }
+}

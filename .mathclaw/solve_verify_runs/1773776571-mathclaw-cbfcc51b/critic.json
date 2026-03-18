@@ -1,0 +1,38 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "内容覆盖全面",
+        "包含具体学习动作"
+      ],
+      "issues": [
+        "提到了根与系数的关系，可能偏离核心知识点",
+        "全角标点问题"
+      ],
+      "first_conflicting_step": "在生成复习建议内容时，对知识点的选择不同"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "聚焦判别式，更具体",
+        "字数控制良好"
+      ],
+      "issues": [
+        "全角标点问题"
+      ],
+      "first_conflicting_step": "在生成复习建议内容时，对知识点的选择不同"
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "两个候选解在知识点选择上存在差异：求解器A强调根与系数的关系，求解器B强调判别式的三种情况",
+    "工具检查显示两者均有全角标点问题，但中文环境下可能非实质问题",
+    "缺乏精确解验证，无法确定最优内容"
+  ],
+  "recommended_winner": "需人工审查",
+  "revision_needed": true
+}

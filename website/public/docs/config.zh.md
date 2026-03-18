@@ -2,12 +2,12 @@
 
 ## 工作目录
 
-ResearchClaw 的所有数据和配置文件都存储在工作目录中。默认工作目录为 `~/.researchclaw/`。
+MathClaw 的所有数据和配置文件都存储在工作目录中。默认工作目录为 `~/.mathclaw/`。
 
 ### 目录结构
 
 ```
-~/.researchclaw/
+~/.mathclaw/
 ├── config.yaml          # 主配置文件
 ├── channels.yaml        # 频道配置
 ├── mcp.yaml             # MCP 配置
@@ -55,7 +55,7 @@ server:
 
 | 变量名                     | 说明              |
 | -------------------------- | ----------------- |
-| `RESEARCHCLAW_WORKING_DIR` | 工作目录路径      |
+| `MATHCLAW_WORKING_DIR` | 工作目录路径      |
 | `OPENAI_API_KEY`           | OpenAI API Key    |
 | `ANTHROPIC_API_KEY`        | Anthropic API Key |
 
@@ -64,6 +64,6 @@ server:
 使用 CLI 命令管理配置：
 
 ```bash
-researchclaw config show     # 显示当前配置
-researchclaw config set key value  # 设置配置项
+mathclaw config show     # 显示当前配置
+mathclaw config set key value  # 设置配置项
 ```

@@ -9,9 +9,9 @@ export const i18n: Record<Lang, Record<string, string>> = {
     "hero.sub":
       "论文搜索与追踪、文献管理、实验记录、数据分析——一站式科研辅助工具，支持多端接入。",
     "hero.cta": "查看文档",
-    "brandstory.title": "Why ResearchClaw？",
+    "brandstory.title": "Why MathClaw？",
     "brandstory.para1":
-      "ResearchClaw 取自 Research（科研）和 Claw（利爪），寓意为你的科研之路披荆斩棘、深入挖掘。",
+      "MathClaw 取自 Research（科研）和 Claw（利爪），寓意为你的科研之路披荆斩棘、深入挖掘。",
     "brandstory.para2":
       "我们希望它成为你最得力的科研伙伴，帮你追踪最新论文、管理文献、分析数据，让你专注于真正的创新。",
     "features.title": "核心能力",
@@ -35,7 +35,7 @@ export const i18n: Record<Lang, Record<string, string>> = {
       "数据本地存储，研究笔记与实验记录由你掌控，支持云端部署。",
     "testimonials.title": "社区怎么说",
     "testimonials.viewAll": "查看全部",
-    "usecases.title": "你可以用 ResearchClaw 做什么",
+    "usecases.title": "你可以用 MathClaw 做什么",
     "usecases.sub": "",
     "usecases.category.literature": "文献与论文",
     "usecases.category.writing": "学术写作",
@@ -64,7 +64,7 @@ export const i18n: Record<Lang, Record<string, string>> = {
     "quickstart.title": "快速开始",
     "quickstart.hintBefore": "安装 → 初始化 → 启动；频道配置见 ",
     "quickstart.hintLink": "文档",
-    "quickstart.hintAfter": "，即可开始使用 ResearchClaw。",
+    "quickstart.hintAfter": "，即可开始使用 MathClaw。",
     "quickstart.optionPip": "pip 安装",
     "quickstart.badgeRecommended": "推荐",
     "quickstart.badgeBeta": "Beta",
@@ -84,7 +84,7 @@ export const i18n: Record<Lang, Record<string, string>> = {
     "quickstart.tabPipShort": "pip",
     "quickstart.tabUnixShort": "Mac/Linux",
     "quickstart.tabWindowsShort": "Windows",
-    footer: "ResearchClaw — 你的 AI 科研助手",
+    footer: "MathClaw — 你的 AI 科研助手",
     "footer.builtWith": "基于 Python + FastAPI 构建",
     "docs.backToTop": "返回顶部",
     "docs.copy": "复制",
@@ -104,11 +104,11 @@ export const i18n: Record<Lang, Record<string, string>> = {
     "hero.sub":
       "Paper search & tracking, reference management, experiment logging, data analysis — an all-in-one research assistant with multi-channel support.",
     "hero.cta": "Read the docs",
-    "brandstory.title": "Why ResearchClaw?",
+    "brandstory.title": "Why MathClaw?",
     "brandstory.para1":
-      "ResearchClaw combines Research and Claw — a sharp tool that digs deep into academic knowledge on your behalf.",
+      "MathClaw combines Research and Claw — a sharp tool that digs deep into academic knowledge on your behalf.",
     "brandstory.para2":
-      "More than a cold tool, ResearchClaw is your dedicated research companion — tracking papers, managing references, analyzing data — so you can focus on innovation.",
+      "More than a cold tool, MathClaw is your dedicated research companion — tracking papers, managing references, analyzing data — so you can focus on innovation.",
     "features.title": "Key capabilities",
     "features.papers.title": "Paper search & tracking",
     "features.papers.desc":
@@ -130,7 +130,7 @@ export const i18n: Record<Lang, Record<string, string>> = {
       "Data stored locally, research notes under your control. Cloud deployment supported.",
     "testimonials.title": "What people say",
     "testimonials.viewAll": "View all",
-    "usecases.title": "What you can do with ResearchClaw",
+    "usecases.title": "What you can do with MathClaw",
     "usecases.sub": "",
     "usecases.category.literature": "Literature & papers",
     "usecases.category.writing": "Academic writing",
@@ -184,7 +184,7 @@ export const i18n: Record<Lang, Record<string, string>> = {
     "quickstart.tabPipShort": "pip",
     "quickstart.tabUnixShort": "Mac/Linux",
     "quickstart.tabWindowsShort": "Windows",
-    footer: "ResearchClaw — Your AI Research Assistant",
+    footer: "MathClaw — Your AI Research Assistant",
     "footer.builtWith": "Built with Python + FastAPI",
     "docs.backToTop": "Back to top",
     "docs.copy": "Copy",

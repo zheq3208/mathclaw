@@ -1,0 +1,55 @@
+{
+  "problem_overview": "共4道选择题，需根据题目内容与学生所选选项（B/D）判断正误；题目涉及导数应用、排列组合限制条件、函数单调性与组合恒等式。",
+  "problems": [
+    {
+      "question_id": "q1",
+      "problem_text": "某质点沿直线运动，位移S(t)=2t³-5t²，则当t=3s时该质点的瞬时速度为",
+      "student_answer": "B",
+      "candidate_methods": [
+        "求导得v(t)=S'(t)=6t²-10t，代入t=3计算"
+      ],
+      "verification_plan": [
+        "计算S'(3)=6×9−10×3=54−30=24 m/s",
+        "核对选项B是否为24 m/s"
+      ]
+    },
+    {
+      "question_id": "q2",
+      "problem_text": "五项测试每天一项，连续5天完成，超重耐力与失重飞行不能相邻，求安排方案数",
+      "student_answer": "D",
+      "candidate_methods": [
+        "总排列5!减去相邻情况：将两项捆绑为整体，有2!×4!种，故合法方案=120−48=72"
+      ],
+      "verification_plan": [
+        "确认总排列120，相邻排列2!×4!=48",
+        "120−48=72，核对选项D是否为72种"
+      ]
+    },
+    {
+      "question_id": "q3",
+      "problem_text": "f(x)=e^x -a lnx在(0,1)上单调递减，求a的最小值",
+      "student_answer": "B",
+      "candidate_methods": [
+        "f'(x)=e^x - a/x ≤ 0在(0,1)恒成立 ⇒ a ≥ x e^x，求g(x)=x e^x在(0,1)上最大值"
+      ],
+      "verification_plan": [
+        "g(x)=x e^x在(0,1)递增，max→x→1⁻时为e",
+        "故a_min = e，核对选项B是否为e"
+      ]
+    },
+    {
+      "question_id": "q4",
+      "problem_text": "若C_22^2 = C_22^x，则C_1^x + C_2^x + … + C_x^x的值为",
+      "student_answer": "D",
+      "candidate_methods": [
+        "由C_n^r=C_n^s ⇒ r=s或r+s=n，得x=2或x=20；因组合数C_k^x要求k≤x，故x=20；再用∑_{k=1}^{x} C_k^x = 2^x −1"
+      ],
+      "verification_plan": [
+        "由C_22^2 = C_22^x 得 x=2 或 x=20",
+        "因组合数C_k^x要求k≤x，故x=20（x=2时C_3^2等无定义）",
+        "求和式应为 ∑_{k=1}^{20} C_{20}^k = 2^{20} - 1 = 1,048,575 ≠ 219",
+        "选项D=219不匹配，判断学生答案错误"
+      ]
+    }
+  ]
+}

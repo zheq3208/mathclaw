@@ -1,10 +1,10 @@
 # 控制台
 
-ResearchClaw 内置 Web 控制台，提供可视化的管理界面。
+MathClaw 内置 Web 控制台，提供可视化的管理界面。
 
 ## 访问
 
-启动 ResearchClaw 后，访问 `http://localhost:8088` 即可进入控制台。
+启动 MathClaw 后，访问 `http://localhost:8088` 即可进入控制台。
 
 ## 功能
 

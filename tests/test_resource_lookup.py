@@ -1,4 +1,4 @@
-from researchclaw.agents.resource_lookup import (
+from mathclaw.agents.resource_lookup import (
     RankedResourceResult,
     build_resource_query_context,
     format_resource_lookup_response,

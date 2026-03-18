@@ -1,0 +1,169 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信规范的数学学习提醒，需基于薄弱点或通用建议，严格遵循字数及内容限制",
+    "givens": [
+      "最近一次对话记录",
+      "最近一次批改结果",
+      "当前活跃薄弱知识点（未提供具体数据）"
+    ],
+    "target": "输出80-140字的中文提醒内容，语气简洁具体，优先针对薄弱点或提供通用建议",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "根据薄弱点选择核心知识点提醒",
+      "若无薄弱点则提供通用复习建议",
+      "校验字数及内容合规性"
+    ],
+    "exact_check_targets": {
+      "equation": "",
+      "expressions": [
+        "长度80-140字",
+        "无寒暄/自我介绍/AI提及/MathClaw提及",
+        "包含具体知识点或学习动作"
+      ],
+      "answer_format": "纯文本无标题"
+    },
+    "risks": [
+      "字数超出范围",
+      "包含禁止内容",
+      "未针对薄弱点且建议不具体"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": null,
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习二次函数顶点式。尝试将y=2x²-4x+3化为顶点式，标出对称轴和顶点坐标。每天完成1道典型题，强化计算准确性。这是中考常考内容，务必掌握。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点式.尝试将y=2*x²-4*x+3化为顶点式",
+            "标出对称轴和顶点坐标.每天完成1道典型题",
+            "强化计算准确性.这是中考常考内容",
+            "务必掌握."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数顶点式。尝试将y=2x²-4x+3化为顶点式，标出对称轴和顶点坐标。每天完成1道典型题，强化计算准确性。这是中考常考内容，务必掌握。",
+          "normalized_formula": "请重点复习二次函数顶点式。尝试将y=2x²-4x+3化为顶点式，标出对称轴和顶点坐标。每天完成1道典型题，强化计算准确性。这是中考常考内容，务必掌握。",
+          "issue_count": 3,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            },
+            {
+              "type": "implicit_multiplication",
+              "message": "Contains implicit multiplication such as 2x."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "请重点复习二次函数顶点式，理解a、h、k对图像的影响。用8分钟完成课本P72例题2，画出y=(x-1)²+2的图像并标注顶点坐标，总结参数变化规律巩固应用。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数顶点式",
+            "理解a、h、k对图像的影响.用8分钟完成课本P*72例题2",
+            "画出y=(x-1)²+2的图像并标注顶点坐标",
+            "总结参数变化规律巩固应用."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数顶点式，理解a、h、k对图像的影响。用8分钟完成课本P72例题2，画出y=(x-1)²+2的图像并标注顶点坐标，总结参数变化规律巩固应用。",
+          "normalized_formula": "请重点复习二次函数顶点式，理解a、h、k对图像的影响。用8分钟完成课本P72例题2，画出y=(x-1)²+2的图像并标注顶点坐标，总结参数变化规律巩固应用。",
+          "issue_count": 2,
+          "issues": [
+            {
+              "type": "unicode_super_subscript",
+              "message": "Contains unicode superscript or subscript characters."
+            },
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "conflict",
+        "strengths": [
+          "选择了二次函数作为高频考点",
+          "提供了具体计算步骤"
+        ],
+        "issues": [
+          "字数不足80字",
+          "包含隐式乘法表达式如2x"
+        ],
+        "first_conflicting_step": "严格控制字数在80-140字区间"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "设计了8分钟内可完成的学习动作",
+          "避免了隐式乘法问题"
+        ],
+        "issues": [
+          "字数不足80字",
+          "课本P72引用可能不通用"
+        ],
+        "first_conflicting_step": "严格控制字数在80-140字区间"
+      }
+    ],
+    "consensus_answer": "",
+    "consensus_expression": "",
+    "conflict_summary": [
+      "最早的冲突点在字数控制步骤，实际输出均低于80字下限",
+      "冲突原因：两份候选解均未正确校验最终字数",
+      "无法给出稳定结论，需重新生成符合长度要求的提醒内容"
+    ],
+    "recommended_winner": "无",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "",
+    "final_expression": "",
+    "concise_solution_markdown": "请重点复习二次函数顶点式：掌握y=a(x-h)²+k中a、h、k的几何意义，能快速写出对称轴x=h与顶点(h,k)；尝试将y=2x²−4x+3配方为顶点式，并画出草图标注关键点。每天练习1题，确保5分钟内完成。",
+    "verification_summary": [
+      "两候选解字数均不足80字，违反长度要求",
+      "含Unicode上标与隐式乘法（如2x），影响可读性与解析",
+      "课本页码引用不具普适性"
+    ],
+    "unresolved_risks": [
+      "缺乏真实薄弱点数据，通用建议可能不够精准",
+      "未校验最终输出字数是否达标"
+    ],
+    "recommended_follow_up": "补充用户最近错题或薄弱知识点后，重新生成针对性提醒"
+  }
+}

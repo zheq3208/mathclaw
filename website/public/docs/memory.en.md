@@ -1,6 +1,6 @@
 # Memory System
 
-ResearchClaw's Memory system manages conversation history and context, ensuring the AI assistant understands conversational continuity.
+MathClaw's Memory system manages conversation history and context, ensuring the AI assistant understands conversational continuity.
 
 ## How It Works
 

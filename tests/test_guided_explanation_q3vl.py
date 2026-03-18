@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.tools import guided_explanation_q3vl as mod
+from mathclaw.agents.tools import guided_explanation_q3vl as mod
 
 
 def test_run_guided_explanation_agent_writes_artifacts(monkeypatch, tmp_path: Path) -> None:

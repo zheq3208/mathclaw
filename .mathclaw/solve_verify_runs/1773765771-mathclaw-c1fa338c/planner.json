@@ -1,0 +1,27 @@
+{
+  "problem_summary": "生成符合企业微信要求的数学学习提醒，需简洁具体，80-140字，不提及AI或MathClaw",
+  "givens": [
+    "最近对话及薄弱点信息未提供"
+  ],
+  "target": "输出一条80-140字的中文学习提醒，语气像老师，具体且无寒暄",
+  "question_type": "equation",
+  "candidate_methods": [
+    "根据通用知识点生成建议",
+    "检查字数与内容合规性"
+  ],
+  "exact_check_targets": {
+    "equation": "无",
+    "expressions": [
+      "字数80-140",
+      "不含寒暄语、AI或MathClaw提及"
+    ],
+    "answer_format": "纯文本字符串"
+  },
+  "risks": [
+    "字数超限",
+    "包含禁止内容",
+    "语气不符合要求"
+  ],
+  "preferred_variable": "none",
+  "requires_visual_reasoning": false
+}

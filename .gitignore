@@ -16,7 +16,7 @@ cookbook/_build
 /build
 dist/
 # Console frontend build (generated in Docker/CI, do not commit)
-src/researchclaw/console/dist/
+src/mathclaw/console/dist/
 
 # Console build artifacts
 console/dist/

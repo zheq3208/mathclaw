@@ -1,13 +1,13 @@
 import asyncio
 from types import SimpleNamespace
 
-from researchclaw.app._app import _build_channel_runtime_config
-from researchclaw.app.channels.base import ImageContent, TextContent
-from researchclaw.app.channels.qq import QQChannel
-from researchclaw.app.channels.registry import get_channel_registry
-from researchclaw.app.channels.wecom import WecomChannel
-from researchclaw.app.runner.manager import AgentRunnerManager
-from researchclaw.config.watcher import ConfigWatcher
+from mathclaw.app._app import _build_channel_runtime_config
+from mathclaw.app.channels.base import ImageContent, TextContent
+from mathclaw.app.channels.qq import QQChannel
+from mathclaw.app.channels.registry import get_channel_registry
+from mathclaw.app.channels.wecom import WecomChannel
+from mathclaw.app.runner.manager import AgentRunnerManager
+from mathclaw.config.watcher import ConfigWatcher
 
 
 async def _noop_process(request):

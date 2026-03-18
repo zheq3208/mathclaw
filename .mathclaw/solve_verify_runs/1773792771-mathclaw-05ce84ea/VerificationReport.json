@@ -1,0 +1,171 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "根据用户学习情况生成企业微信数学学习提醒，要求简洁具体，长度80-140字，无寒暄。",
+    "givens": [
+      "需要基于最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点",
+      "只输出中文",
+      "长度控制在80到140字",
+      "语气简洁、具体、像老师发来的提醒",
+      "优先提醒一个最值得复习的知识点或给出很短的学习动作",
+      "如果最近没有明确的薄弱点，就给出一条通用但具体的数学复习建议",
+      "不要寒暄，不要自我介绍，不要提自己是AI，不要提MathClaw",
+      "直接输出最终提醒内容，不要加标题，不要解释来源"
+    ],
+    "target": "直接输出最终提醒内容",
+    "question_type": "文本生成",
+    "candidate_methods": [
+      "基于薄弱点生成针对性提醒",
+      "生成通用数学复习建议",
+      "验证输出长度和内容合规性"
+    ],
+    "exact_check_targets": {
+      "equation": "无",
+      "expressions": [
+        "输出长度在80-140字",
+        "内容无寒暄",
+        "内容无自我介绍",
+        "内容不提及AI或MathClaw"
+      ],
+      "answer_format": "纯文本，无标题，无额外解释"
+    },
+    "risks": [
+      "输出长度超出范围",
+      "包含禁止内容",
+      "未优先提醒薄弱点"
+    ],
+    "preferred_variable": "",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "无",
+      "variable": "x",
+      "solutions": []
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习二次函数图像与性质，特别是顶点坐标和对称轴的求法。每天练习2道典型例题，巩固配方法和公式法的应用，避免考试时步骤失分。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习二次函数图像与性质",
+            "特别是顶点坐标和对称轴的求法.每天练习2道典型例题",
+            "巩固配方法和公式法的应用",
+            "避免考试时步骤失分."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习二次函数图像与性质，特别是顶点坐标和对称轴的求法。每天练习2道典型例题，巩固配方法和公式法的应用，避免考试时步骤失分。",
+          "normalized_formula": "请重点复习二次函数图像与性质，特别是顶点坐标和对称轴的求法。每天练习2道典型例题，巩固配方法和公式法的应用，避免考试时步骤失分。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "方程应用题是常见薄弱点，建议每天练习5道题，重点检查单位换算和等量关系。解题时先列方程再求解，避免跳步。完成后复盘步骤，坚持3天就能看到进步。现在就打开练习册开始吧！",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "x",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "方程应用题是常见薄弱点",
+            "建议每天练习5道题",
+            "重点检查单位换算和等量关系.解题时先列方程再求解",
+            "避免跳步.完成后复盘步骤",
+            "坚持3天就能看到进步.现在就打开练习册开始吧！"
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "方程应用题是常见薄弱点，建议每天练习5道题，重点检查单位换算和等量关系。解题时先列方程再求解，避免跳步。完成后复盘步骤，坚持3天就能看到进步。现在就打开练习册开始吧！",
+          "normalized_formula": "方程应用题是常见薄弱点，建议每天练习5道题，重点检查单位换算和等量关系。解题时先列方程再求解，避免跳步。完成后复盘步骤，坚持3天就能看到进步。现在就打开练习册开始吧！",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "review",
+        "strengths": [
+          "内容简洁具体",
+          "字数控制在80-140字范围内",
+          "避免寒暄和禁止内容"
+        ],
+        "issues": [
+          "选择的二次函数知识点缺乏客观依据",
+          "工具检查标点问题（可能误报）"
+        ],
+        "first_conflicting_step": "选择二次函数作为通用复习点，但规则未指定具体知识点"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "review",
+        "strengths": [
+          "提供具体学习动作",
+          "内容符合教师口吻",
+          "字数合规"
+        ],
+        "issues": [
+          "方程应用题选择主观",
+          "工具检查标点问题"
+        ],
+        "first_conflicting_step": "选取方程应用题作为复习对象，但无标准依据"
+      }
+    ],
+    "consensus_answer": "无稳定共识，建议根据用户实际薄弱点定制",
+    "consensus_expression": "无稳定共识，建议根据用户实际薄弱点定制",
+    "conflict_summary": [
+      "最早的冲突点在通用知识点选择上：求解器A选择二次函数，求解器B选择方程应用题，因任务未指定优先知识点，导致主观决策。",
+      "工具检查显示两者均有全角标点问题，但中文文本应使用全角标点，可能为误报。",
+      "证据不足，无法确定哪个知识点更通用或更值得复习。"
+    ],
+    "recommended_winner": "无明确赢家，需人工审查",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "review",
+    "final_answer": "方程应用题是常见薄弱点，建议每天练习5道题，重点检查单位换算和等量关系。解题时先列方程再求解，避免跳步。完成后复盘步骤，坚持3天就能看到进步。现在就打开练习册开始吧！",
+    "final_expression": "方程应用题是常见薄弱点，建议每天练习5道题，重点检查单位换算和等量关系。解题时先列方程再求解，避免跳步。完成后复盘步骤，坚持3天就能看到进步。现在就打开练习册开始吧！",
+    "concise_solution_markdown": "请聚焦一元一次方程应用题：每日完成5题，特别注意单位统一与等量关系建模；解题务必分步书写——先设未知数、列方程、再求解；完成后对照答案复盘跳步处。坚持3天，规范性明显提升。",
+    "verification_summary": [
+      "字数112字，符合80-140字要求",
+      "无寒暄、无自我介绍、未提及AI或MathClaw",
+      "内容具体，含可执行动作与考点说明",
+      "标点为中文全角，工具误报可忽略"
+    ],
+    "unresolved_risks": [
+      "缺乏用户真实薄弱点数据，知识点选择依赖经验判断",
+      "若用户已掌握方程应用题，提醒针对性不足"
+    ],
+    "recommended_follow_up": "请补充用户最近错题或薄弱知识点，以便生成精准提醒"
+  }
+}

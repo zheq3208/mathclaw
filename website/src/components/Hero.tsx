@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { motion } from "motion/react";
-import { ResearchClawMascot } from "./ResearchClawMascot";
+import { MathClawMascot } from "./MathClawMascot";
 import { t, type Lang } from "../i18n";
 
 interface HeroProps {
@@ -65,7 +65,7 @@ export function Hero({
           aria-label={projectName}
         >
           <span className="hero-brand-logo">
-            <ResearchClawMascot size={800} />
+            <MathClawMascot size={800} />
           </span>
         </div>
         <span />

@@ -1,0 +1,3 @@
+"""Version information for MathClaw."""
+
+__version__ = "0.1.0a1"

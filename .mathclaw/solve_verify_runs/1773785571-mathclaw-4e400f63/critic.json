@@ -1,0 +1,35 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "求解器A",
+      "verdict": "review",
+      "strengths": [
+        "符合字数要求",
+        "内容简洁无寒暄"
+      ],
+      "issues": [
+        "全角标点可能影响解析"
+      ],
+      "first_conflicting_step": "精简语言至128字"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "pass",
+      "strengths": [
+        "符合字数要求",
+        "无格式问题",
+        "提供具体学习动作"
+      ],
+      "issues": [],
+      "first_conflicting_step": ""
+    }
+  ],
+  "consensus_answer": "",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "知识点选择冲突：求解器A选择高中三角函数，求解器B选择初中二次函数，因缺乏用户学习阶段信息",
+    "求解器A存在标点格式问题，影响解析可靠性"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}

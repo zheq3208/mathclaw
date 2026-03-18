@@ -1,4 +1,4 @@
-from researchclaw.agents.tools import browser_control
+from mathclaw.agents.tools import browser_control
 
 
 def test_browser_use_start_and_stop() -> None:

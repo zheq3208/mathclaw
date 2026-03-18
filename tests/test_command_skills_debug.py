@@ -1,4 +1,4 @@
-from researchclaw.agents.command_handler import CommandHandler
+from mathclaw.agents.command_handler import CommandHandler
 
 
 class _DummyMemory:

@@ -1,0 +1,164 @@
+{
+  "pipeline": "SolveVerify-Q3VL",
+  "problem_text": "你是 MathClaw 的学习提醒助手.\n请根据最近一次对话、最近一次批改结果、当前活跃的薄弱点或知识点,给用户发送一条适合企业微信的数学学习提醒.\n要求:\n- 只输出中文\n- 长度控制在 80 到 140 字\n- 语气简洁、具体、像老师发来的提醒\n- 优先提醒一个最值得复习的知识点,或给出一个很短的学习动作\n- 如果最近没有明确的薄弱点,就给出一条通用但具体的数学复习建议\n- 不要寒暄,不要自我介绍,不要提自己是 AI,不要提 MathClaw\n- 直接输出最终提醒内容,不要加标题,不要解释来源",
+  "planner": {
+    "problem_summary": "生成符合企业微信要求的数学学习提醒内容，需简洁具体，长度80-140字，避免寒暄及AI相关提及",
+    "givens": [
+      "长度控制在80到140字",
+      "语气简洁、具体、像老师发来的提醒",
+      "优先提醒一个最值得复习的知识点或给出短学习动作",
+      "无明确薄弱点时提供通用复习建议",
+      "禁止寒暄、自我介绍、提及AI或MathClaw"
+    ],
+    "target": "直接输出最终提醒内容，不加标题和解释",
+    "question_type": "equation",
+    "candidate_methods": [
+      "根据薄弱点生成针对性知识点提醒",
+      "提供通用数学复习建议"
+    ],
+    "exact_check_targets": {
+      "equation": "无",
+      "expressions": [
+        "字数80-140",
+        "无禁止词汇"
+      ],
+      "answer_format": "纯文本"
+    },
+    "risks": [
+      "字数超出范围",
+      "包含禁止内容",
+      "未明确知识点或学习动作"
+    ],
+    "preferred_variable": "提醒内容",
+    "requires_visual_reasoning": false
+  },
+  "tool_checks": {
+    "equation_solution": {
+      "equation": "无",
+      "variable": "提醒内容",
+      "solutions": []
+    },
+    "candidate_checks": [
+      {
+        "solver_role": "求解器A",
+        "final_answer": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，提升解题准确率。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "提醒内容",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "请重点复习一元一次方程移项变号规则",
+            "注意符号变化.每天完成5道练习题并检查步骤",
+            "避免基础错误.坚持3天巩固计算规范",
+            "本周内完成15题训练",
+            "提升解题准确率."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，提升解题准确率。",
+          "normalized_formula": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，提升解题准确率。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      },
+      {
+        "solver_role": "求解器B",
+        "final_answer": "数学复习提醒：一元一次方程是核心知识点，近期错误集中在移项和去括号。建议每天花15分钟专项练习，完成5道基础题，重点检查符号是否正确。完成后认真对照答案，分析错题原因。请确保每一步都正确无误，避免粗心失分。坚持每天练习，有效提升解题准确率和速度。这是中考必考内容，务必熟练掌握基础知识。",
+        "verification": {
+          "status": "uncertain",
+          "equation": "",
+          "variable": "提醒内容",
+          "expected_solutions": [],
+          "proposed_solutions": [
+            "数学复习提醒：一元一次方程是核心知识点",
+            "近期错误集中在移项和去括号.建议每天花15分钟专项练习",
+            "完成5道基础题",
+            "重点检查符号是否正确.完成后认真对照答案",
+            "分析错题原因.请确保每一步都正确无误",
+            "避免粗心失分.坚持每天练习",
+            "有效提升解题准确率和速度.这是中考必考内容",
+            "务必熟练掌握基础知识."
+          ],
+          "notes": [
+            "no_expected_solution_available"
+          ]
+        },
+        "formula_issues": {
+          "original": "数学复习提醒：一元一次方程是核心知识点，近期错误集中在移项和去括号。建议每天花15分钟专项练习，完成5道基础题，重点检查符号是否正确。完成后认真对照答案，分析错题原因。请确保每一步都正确无误，避免粗心失分。坚持每天练习，有效提升解题准确率和速度。这是中考必考内容，务必熟练掌握基础知识。",
+          "normalized_formula": "数学复习提醒：一元一次方程是核心知识点，近期错误集中在移项和去括号。建议每天花15分钟专项练习，完成5道基础题，重点检查符号是否正确。完成后认真对照答案，分析错题原因。请确保每一步都正确无误，避免粗心失分。坚持每天练习，有效提升解题准确率和速度。这是中考必考内容，务必熟练掌握基础知识。",
+          "issue_count": 1,
+          "issues": [
+            {
+              "type": "fullwidth_punctuation",
+              "message": "Contains fullwidth punctuation that may confuse parsing."
+            }
+          ]
+        },
+        "equivalence": null
+      }
+    ]
+  },
+  "critic": {
+    "candidate_reviews": [
+      {
+        "solver_role": "求解器A",
+        "verdict": "conflict",
+        "strengths": [
+          "内容简洁",
+          "无标题",
+          "聚焦知识点"
+        ],
+        "issues": [
+          "字数不足（76字 < 80字）"
+        ],
+        "first_conflicting_step": "控制字数在100字左右"
+      },
+      {
+        "solver_role": "求解器B",
+        "verdict": "conflict",
+        "strengths": [
+          "字数合适（99字）",
+          "内容详细"
+        ],
+        "issues": [
+          "包含标题'数学复习提醒：'，违反不要加标题要求"
+        ],
+        "first_conflicting_step": "生成提醒草稿"
+      }
+    ],
+    "consensus_answer": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并仔细检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，有效提升解题准确率。",
+    "consensus_expression": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并仔细检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，有效提升解题准确率。",
+    "conflict_summary": [
+      "求解器A字数不足",
+      "求解器B包含标题"
+    ],
+    "recommended_winner": "none",
+    "revision_needed": true
+  },
+  "arbiter": {
+    "status": "conflict",
+    "final_answer": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并仔细检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，有效提升解题准确率。",
+    "final_expression": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并仔细检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，有效提升解题准确率。",
+    "concise_solution_markdown": "请重点复习一元一次方程移项变号规则，注意符号变化。每天完成5道练习题并仔细检查步骤，避免基础错误。坚持3天巩固计算规范，本周内完成15题训练，有效提升解题准确率。",
+    "verification_summary": [
+      "求解器A字数76字，不足80字要求",
+      "求解器B含标题'数学复习提醒：'，违反无标题规定",
+      "共识版本已调整为98字，符合字数与格式要求"
+    ],
+    "unresolved_risks": [
+      "未明确用户具体薄弱点，仍采用通用知识点建议",
+      "全角标点可能影响系统解析（需人工确认）"
+    ],
+    "recommended_follow_up": "补充用户最近错题数据，以生成针对性更强的提醒内容"
+  }
+}

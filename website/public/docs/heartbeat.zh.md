@@ -1,6 +1,6 @@
 # Heartbeat 心跳
 
-Heartbeat 是 ResearchClaw 的定时心跳机制，用于执行周期性任务。
+Heartbeat 是 MathClaw 的定时心跳机制，用于执行周期性任务。
 
 ## 工作原理
 

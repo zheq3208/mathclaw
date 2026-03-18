@@ -1,6 +1,6 @@
 # Commands
 
-ResearchClaw supports commands in chat to control system behavior.
+MathClaw supports commands in chat to control system behavior.
 
 ## Available Commands
 

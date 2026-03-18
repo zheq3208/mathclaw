@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from researchclaw.agents.tools import variant_generation_q3vl as mod
+from mathclaw.agents.tools import variant_generation_q3vl as mod
 
 
 def test_build_variant_generation_case_parses_count_and_focus() -> None:

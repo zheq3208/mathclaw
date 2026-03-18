@@ -1,0 +1,34 @@
+{
+  "candidate_reviews": [
+    {
+      "solver_role": "solver_a",
+      "verdict": "conflict",
+      "strengths": [],
+      "issues": [
+        "最终答案为空，违反输出要求"
+      ],
+      "first_conflicting_step": "输出生成步骤：未生成任何内容"
+    },
+    {
+      "solver_role": "求解器B",
+      "verdict": "review",
+      "strengths": [
+        "提供具体可操作的学习动作",
+        "长度符合80-140字要求",
+        "无寒暄及禁止内容"
+      ],
+      "issues": [
+        "包含全角标点，可能影响解析"
+      ],
+      "first_conflicting_step": "标点验证步骤：检测到全角标点"
+    }
+  ],
+  "consensus_answer": "请重点复习一元一次方程移项规则，注意符号变化。做题时先验证等式两边是否平衡，避免计算失误。建议每天练习2道典型题巩固方法，重点检查去括号时的符号处理。",
+  "consensus_expression": "",
+  "conflict_summary": [
+    "solver_a 未生成有效答案，核心要求未满足",
+    "求解器B 存在标点格式问题，但内容主体可信"
+  ],
+  "recommended_winner": "求解器B",
+  "revision_needed": true
+}

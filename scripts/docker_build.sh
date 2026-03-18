@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-IMAGE_NAME=${1:-researchclaw:latest}
+IMAGE_NAME=${1:-mathclaw:latest}
 
 docker build -f deploy/Dockerfile -t "$IMAGE_NAME" .
 

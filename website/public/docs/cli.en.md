@@ -1,11 +1,11 @@
 # CLI (Command Line Interface)
 
-ResearchClaw provides CLI tools for initialization, startup, and management.
+MathClaw provides CLI tools for initialization, startup, and management.
 
 ## Commands
 
 ```bash
-researchclaw <command> [options]
+mathclaw <command> [options]
 ```
 
 ## Command Reference
@@ -15,18 +15,18 @@ researchclaw <command> [options]
 Initialize the working directory:
 
 ```bash
-researchclaw init             # Interactive init
-researchclaw init --defaults  # Init with defaults
+mathclaw init             # Interactive init
+mathclaw init --defaults  # Init with defaults
 ```
 
 ### `app`
 
-Start the ResearchClaw application:
+Start the MathClaw application:
 
 ```bash
-researchclaw app                    # Start
-researchclaw app --port 9090        # Specify port
-researchclaw app --host 0.0.0.0     # Specify host
+mathclaw app                    # Start
+mathclaw app --port 9090        # Specify port
+mathclaw app --host 0.0.0.0     # Specify host
 ```
 
 ### `skills`
@@ -34,9 +34,9 @@ researchclaw app --host 0.0.0.0     # Specify host
 Manage Skills:
 
 ```bash
-researchclaw skills list              # List installed skills
-researchclaw skills install <url>     # Install skill from GitHub
-researchclaw skills uninstall <name>  # Uninstall skill
+mathclaw skills list              # List installed skills
+mathclaw skills install <url>     # Install skill from GitHub
+mathclaw skills uninstall <name>  # Uninstall skill
 ```
 
 ### `config`
@@ -44,8 +44,8 @@ researchclaw skills uninstall <name>  # Uninstall skill
 Manage configuration:
 
 ```bash
-researchclaw config show              # Show config
-researchclaw config set <key> <value> # Set a config value
+mathclaw config show              # Show config
+mathclaw config set <key> <value> # Set a config value
 ```
 
 ### `version`
@@ -53,7 +53,7 @@ researchclaw config set <key> <value> # Set a config value
 Show version info:
 
 ```bash
-researchclaw version
+mathclaw version
 ```
 
 ## Global Options

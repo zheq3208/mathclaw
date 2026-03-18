@@ -1,7 +1,7 @@
 import asyncio
 import time
 
-from researchclaw.app.runner.runner import AgentRunner
+from mathclaw.app.runner.runner import AgentRunner
 
 
 class _SlowAgent:

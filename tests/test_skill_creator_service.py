@@ -1,4 +1,4 @@
-from researchclaw.app.services.skill_creator import (
+from mathclaw.app.services.skill_creator import (
     _coerce_json_object,
     _infer_categories,
     _normalize_skill_payload,
