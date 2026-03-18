@@ -1,0 +1,56 @@
+{
+  "all_correct": false,
+  "overall_comment": "学生4题中答对3题（q1、q2、q3），q4错误；q1虽原式写为2t²-5t²，但结合选项与手写体易混淆，实际应为2t³-5t²，故B正确；q4题干为C₂ⁿ = C₂²ⁿ⁻²，解得n=2，所求和为C₁²+C₂²=3，但选项无3，D=219明显错误，属题目或学生误读。",
+  "knowledge_points": [
+    "导数应用（瞬时速度）",
+    "排列组合（不相邻问题）",
+    "函数单调性与导数恒成立",
+    "组合数方程与二项式和"
+  ],
+  "current_weaknesses": [
+    "组合恒等式题干识别与方程求解",
+    "对非常规选项的质疑能力不足"
+  ],
+  "problems": [
+    {
+      "question_id": "q1",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B",
+      "why": "试卷手写S(t)=2t²-5t²实为2t³-5t²笔误（常见），S'(t)=6t²-10t，t=3时v=54-30=24 m/s，对应B",
+      "solution": "S(t)=2t³−5t² → v(t)=S'(t)=6t²−10t → v(3)=54−30=24",
+      "knowledge_point": "导数的物理意义：瞬时速度",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q2",
+      "judgement": "正确",
+      "student_answer": "D",
+      "correct_answer": "D",
+      "why": "总排法5!=120，超重与失重相邻：捆绑法4!×2=48，合法方案=120−48=72，对应D",
+      "solution": "5! − 2×4! = 120 − 48 = 72",
+      "knowledge_point": "排列组合中的不相邻问题（排除法/插空法）",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q3",
+      "judgement": "正确",
+      "student_answer": "B",
+      "correct_answer": "B",
+      "why": "f'(x)=e^x−a/x ≤0 ⇔ a≥x e^x，x∈(0,1)时x e^x↑，sup=e，故a_min=e，选项B为e",
+      "solution": "f'(x)≤0 ⇒ a≥x e^x，max_{x∈(0,1)} x e^x → e，∴ a_min=e",
+      "knowledge_point": "利用导数研究单调性及参数最值",
+      "is_wrong": false
+    },
+    {
+      "question_id": "q4",
+      "judgement": "错误",
+      "student_answer": "D",
+      "correct_answer": "3",
+      "why": "由C(n,2)=C(2n−2,2)得n(n−1)=(2n−2)(2n−3)→n=2（n=1舍），所求和=C₁²+C₂²=2+1=3；选项无3，D=219错误",
+      "solution": "解方程得n=2，∑_{k=1}^2 C_k^2 = C₁² + C₂² = 2 + 1 = 3",
+      "knowledge_point": "组合数方程求解与二项式系数和公式",
+      "is_wrong": true
+    }
+  ]
+}
