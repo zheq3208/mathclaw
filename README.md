@@ -11,10 +11,6 @@
 </p>
 
 <p align="center">
-  中文 &nbsp｜&nbsp <a href="README_EN.md">English</a>
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/python-3.10%20--%203.13-3776AB">
   <img src="https://img.shields.io/badge/node.js-18%2B-339933">
   <img src="https://img.shields.io/badge/npm-9%2B-CB3837">
